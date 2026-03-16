@@ -12,32 +12,32 @@ export default function SettingsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-[#0a0a0a]">Account Profile</h1>
-        <p className="text-sm text-[#6b7280] font-medium mt-2">Update your personal information and public profile.</p>
+        <h1 className="text-4xl font-black tracking-tight text-foreground">Account Profile</h1>
+        <p className="text-sm text-muted-foreground font-medium mt-2">Update your personal information and public profile.</p>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-[#e5e7eb] shadow-sm overflow-hidden">
+      <div className="bg-card rounded-[2.5rem] border border-border shadow-sm overflow-hidden">
         <div className="p-8 md:p-12 lg:p-16">
           <div className="flex flex-col lg:flex-row gap-16">
             {/* Avatar Section */}
             <div className="flex flex-col items-center gap-6 shrink-0">
                <div className="relative group cursor-pointer">
-                  <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-[#2970ff] to-[#6da1ff] p-1 shadow-2xl shadow-[#2970ff]/20 group-hover:scale-105 transition-transform duration-500">
-                    <div className="w-full h-full rounded-[2.3rem] bg-white flex items-center justify-center overflow-hidden">
+                  <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-primary to-accent p-1 shadow-2xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-full h-full rounded-[2.3rem] bg-card flex items-center justify-center overflow-hidden">
                       {user?.image ? (
                         <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-5xl font-black text-[#2970ff]">{user?.name?.substring(0, 2).toUpperCase() || 'AF'}</span>
+                        <span className="text-5xl font-black text-primary">{user?.name?.substring(0, 2).toUpperCase() || 'AF'}</span>
                       )}
                     </div>
                   </div>
-                  <button className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-[#0a0a0a] border-4 border-white text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                  <button className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-foreground border-4 border-card text-background flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                     <Camera size={20} />
                   </button>
                </div>
                <div className="text-center">
-                 <p className="text-xs font-black text-[#0a0a0a] uppercase tracking-widest mb-1">Upload New</p>
-                 <p className="text-[10px] text-[#9ca3af] font-bold">Max 5MB • JPG, PNG</p>
+                 <p className="text-xs font-black text-foreground uppercase tracking-widest mb-1">Upload New</p>
+                 <p className="text-[10px] text-muted-foreground font-bold">Max 5MB • JPG, PNG</p>
                </div>
             </div>
 
@@ -52,17 +52,17 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-black text-[#374151] uppercase tracking-widest block ml-1">About / Bio</label>
+                <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">About / Bio</label>
                 <textarea 
                   rows={4}
                   placeholder="Tell us a little about yourself..."
-                  className="w-full bg-[#f9fafb] border border-[#e5e7eb] focus:bg-white focus:border-[#2970ff]/30 focus:ring-4 focus:ring-[#2970ff]/5 p-5 rounded-3xl text-sm font-bold transition-all outline-none resize-none"
+                  className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 p-5 rounded-3xl text-sm font-bold transition-all outline-none resize-none"
                   defaultValue="Helping brands connect with their customers through smart, interactive physical packaging funnels."
                 />
               </div>
 
-              <div className="pt-6 border-t border-[#f3f4f6] flex justify-end">
-                <button className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-[#0a0a0a] text-sm font-bold text-white hover:bg-[#2970ff] transition-all shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[#2970ff]/30">
+              <div className="pt-6 border-t border-border flex justify-end">
+                <button className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30">
                   <Save size={18} />
                   Save Profile Changes
                 </button>
@@ -78,17 +78,18 @@ export default function SettingsPage() {
 function ProfileInput({ label, icon: Icon, defaultValue, className }: { label: string, icon: any, defaultValue: string, className?: string }) {
   return (
     <div className={cn("space-y-3", className)}>
-      <label className="text-xs font-black text-[#374151] uppercase tracking-widest block ml-1">{label}</label>
+      <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">{label}</label>
       <div className="relative group">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Icon size={18} className="text-[#9ca3af] group-focus-within:text-[#2970ff] transition-colors" />
+          <Icon size={18} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
         </div>
         <input 
           type="text"
           defaultValue={defaultValue}
-          className="w-full bg-[#f9fafb] border border-[#e5e7eb] focus:bg-white focus:border-[#2970ff]/30 focus:ring-4 focus:ring-[#2970ff]/5 py-4 pl-14 pr-5 rounded-2xl text-sm font-bold transition-all outline-none"
+          className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 py-4 pl-14 pr-5 rounded-2xl text-sm font-bold transition-all outline-none"
         />
       </div>
     </div>
   );
 }
+

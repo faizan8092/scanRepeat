@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Shield, Mail, Smartphone, Globe, Info, Save } from 'lucide-react';
+import { Shield, Mail, Smartphone, Info, Save } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
 export default function NotificationsPage() {
@@ -11,8 +11,8 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-[#0a0a0a]">Notifications</h1>
-        <p className="text-sm text-[#6b7280] font-medium mt-2">Manage how you receive updates and alerts.</p>
+        <h1 className="text-4xl font-black tracking-tight text-foreground">Notifications</h1>
+        <p className="text-sm text-muted-foreground font-medium mt-2">Manage how you receive updates and alerts.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -44,12 +44,12 @@ export default function NotificationsPage() {
             key={activeTab}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2.5rem] border border-[#e5e7eb] p-8 md:p-12 shadow-sm"
+            className="bg-card rounded-[2.5rem] border border-border p-8 md:p-12 shadow-sm"
           >
             <div className="space-y-8">
-              <div className="border-b border-[#f3f4f6] pb-6">
-                <h2 className="text-2xl font-black text-[#0a0a0a] tracking-tight capitalize">{activeTab} Notifications</h2>
-                <p className="text-[#6b7280] text-sm font-medium mt-1">Configure your preferences for {activeTab} delivery.</p>
+              <div className="border-b border-border pb-6">
+                <h2 className="text-2xl font-black text-foreground tracking-tight capitalize">{activeTab} Notifications</h2>
+                <p className="text-muted-foreground text-sm font-medium mt-1">Configure your preferences for {activeTab} delivery.</p>
               </div>
 
               <div className="space-y-6">
@@ -76,7 +76,7 @@ export default function NotificationsPage() {
               </div>
 
               <div className="pt-10 flex justify-end">
-                <button className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#0a0a0a] text-sm font-bold text-white hover:bg-[#2970ff] transition-all shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[#2970ff]/30">
+                <button className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30">
                   <Save size={18} />
                   Save Preferences
                 </button>
@@ -96,11 +96,11 @@ function TabButton({ active, onClick, icon: Icon, label }: { active: boolean, on
       className={cn(
         "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all border outline-none",
         active 
-          ? "bg-[#2970ff] border-[#2970ff] text-white shadow-[0_10px_20px_rgba(41,112,255,0.2)]" 
-          : "bg-white border-[#e5e7eb] text-[#6b7280] hover:bg-[#f9fafb] hover:border-[#d1d5db]"
+          ? "bg-primary border-primary text-background shadow-lg shadow-primary/20" 
+          : "bg-card border-border text-muted-foreground hover:bg-secondary hover:border-muted-foreground/30"
       )}
     >
-      <Icon size={18} className={cn(active ? "text-white" : "text-[#2970ff]")} />
+      <Icon size={18} className={cn(active ? "text-background" : "text-primary")} />
       {label}
     </button>
   );
@@ -110,21 +110,21 @@ function NotificationToggle({ title, description, defaultEnabled }: { title: str
   const [enabled, setEnabled] = React.useState(defaultEnabled);
   
   return (
-    <div className="flex items-center justify-between p-6 rounded-3xl bg-[#f9fafb]/50 border border-[#f3f4f6] group hover:bg-white hover:border-[#e5e7eb] hover:shadow-xl hover:shadow-[#2970ff]/5 transition-all duration-300">
+    <div className="flex items-center justify-between p-6 rounded-3xl bg-secondary/50 border border-border/50 group hover:bg-card hover:border-border hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
       <div className="flex-1 pr-6">
-        <h3 className="text-sm font-black text-[#0a0a0a] group-hover:text-[#2970ff] transition-colors">{title}</h3>
-        <p className="text-xs text-[#6b7280] font-medium mt-1 leading-relaxed">{description}</p>
+        <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{title}</h3>
+        <p className="text-xs text-muted-foreground font-medium mt-1 leading-relaxed">{description}</p>
       </div>
       <button 
         onClick={() => setEnabled(!enabled)}
         className={cn(
           "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 outline-none",
-          enabled ? "bg-[#2970ff]" : "bg-[#e5e7eb]"
+          enabled ? "bg-primary" : "bg-muted"
         )}
       >
         <span 
           className={cn(
-            "inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 shadow-sm",
+            "inline-block h-5 w-5 transform rounded-full bg-background transition-transform duration-300 shadow-sm",
             enabled ? "translate-x-6" : "translate-x-1"
           )}
         />
@@ -132,3 +132,4 @@ function NotificationToggle({ title, description, defaultEnabled }: { title: str
     </div>
   );
 }
+
