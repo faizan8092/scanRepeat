@@ -188,3 +188,21 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* Final Global Overrides for Cursor */
+a, 
+button, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  cursor: pointer !important;
+}
+
+button:disabled,
+input:disabled {
+  cursor: pointer !important; /* Force pointer even if disabled as per request */
+}
