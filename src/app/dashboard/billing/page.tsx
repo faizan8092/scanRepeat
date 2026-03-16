@@ -74,7 +74,7 @@ export default function BillingPage() {
             
             <div className="p-6 rounded-3xl border border-border bg-secondary/50 flex items-center justify-between group hover:border-primary/30 hover:bg-card transition-all duration-300">
               <div className="flex items-center gap-6">
-                <div className="w-16 h-10 bg-gradient-to-br from-foreground to-foreground/80 rounded-xl flex items-center justify-center text-background text-[10px] font-black italic shadow-lg">
+                <div className="w-16 h-10 bg-gradient-to-br from-foreground to-foreground/80 rounded-2xl flex items-center justify-center text-background text-[10px] font-black italic shadow-lg">
                   VISA
                 </div>
                 <div>
@@ -133,14 +133,14 @@ function PlanFeature({ text }: { text: string }) {
 
 function InvoiceItem({ date, amount, status }: { date: string, amount: string, status: string }) {
   return (
-    <div className="flex items-center justify-between py-4 group">
+    <div className="flex items-center justify-between p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300 group">
       <div>
         <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{date}</p>
         <p className="text-[10px] text-muted-foreground font-bold mt-0.5">{status}</p>
       </div>
       <div className="flex items-center gap-4">
         <span className="text-sm font-black text-foreground">{amount}</span>
-        <button className="p-2.5 rounded-xl bg-secondary text-muted-foreground hover:text-foreground hover:bg-border transition-all">
+        <button className="p-2.5 rounded-2xl bg-secondary text-muted-foreground hover:text-foreground hover:bg-border transition-all">
           <Download size={16} />
         </button>
       </div>

@@ -132,8 +132,8 @@ function SecurityInput({ label, type, placeholder }: { label: string, type: stri
 
 function SessionItem({ device, location, status, icon }: { device: string, location: string, status: string, icon: 'laptop' | 'phone' }) {
   return (
-    <div className="flex items-center gap-4 group">
-      <div className="p-3 rounded-xl bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-background transition-all duration-300">
+    <div className="flex items-center gap-4 group p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300">
+      <div className="p-3 rounded-2xl bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-background transition-all duration-300">
         <Smartphone size={18} />
       </div>
       <div>

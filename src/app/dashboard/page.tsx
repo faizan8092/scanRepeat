@@ -98,7 +98,7 @@ export default function DashboardPage() {
           <motion.div 
             key={i} 
             variants={item}
-            className="p-8 rounded-[2rem] bg-card border border-border shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all group"
+            className="p-8 rounded-[2.5rem] bg-card border border-border shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all group"
           >
             <div className="flex items-center justify-between mb-6">
               <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-300", stat.bg)}>
@@ -127,8 +127,8 @@ export default function DashboardPage() {
                 <h2 className="text-2xl font-black text-foreground tracking-tight">Scan Activity</h2>
                 <p className="text-sm text-muted-foreground font-medium">Real-time engagement across your physical branding.</p>
               </div>
-              <div className="flex items-center gap-2 p-1 bg-secondary rounded-xl font-bold text-xs text-muted-foreground">
-                <button className="px-3 py-2 bg-card text-foreground rounded-lg shadow-sm">Daily</button>
+              <div className="flex items-center gap-2 p-1 bg-secondary rounded-2xl font-bold text-xs text-muted-foreground">
+                <button className="px-3 py-2 bg-card text-foreground rounded-xl shadow-sm">Daily</button>
                 <button className="px-3 py-2 hover:text-foreground transition-colors">Weekly</button>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-black text-foreground tracking-tight">Recent Products</h2>
             <p className="text-sm text-muted-foreground font-medium">Monitoring the performance of your top packaging funnels.</p>
           </div>
-          <button className="p-3 rounded-xl bg-card border border-border hover:bg-secondary text-muted-foreground transition-all">
+          <button className="p-3 rounded-2xl bg-card border border-border hover:bg-secondary text-muted-foreground transition-all">
             <Filter size={20} />
           </button>
         </div>
