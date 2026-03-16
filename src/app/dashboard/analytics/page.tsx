@@ -27,6 +27,7 @@ import {
   Line
 } from 'recharts';
 import { Calendar, Download, Filter } from 'lucide-react';
+import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
 
 const scanData = [
   { name: 'Jan', scans: 4000 },
@@ -56,6 +57,7 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = React.useState('30');
+  const [isZeroData, setIsZeroData] = React.useState(false);
 
   return (
     <div className="space-y-8">
@@ -67,6 +69,12 @@ export default function AnalyticsPage() {
           </Typography>
         </div>
         <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => setIsZeroData(!isZeroData)}
+            className="flex items-center gap-2 px-5 py-2 rounded-2xl bg-warning/10 border border-warning/20 text-sm font-bold text-warning hover:bg-warning/20 transition-all shadow-sm h-[40px]"
+          >
+            {isZeroData ? 'Show Mock Data' : 'Zero State'}
+          </button>
           <FormControl size="small" className="min-w-[150px]">
             <InputLabel>Time Range</InputLabel>
             <Select
@@ -86,6 +94,11 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {isZeroData ? (
+        <div className="mt-8">
+          <ZeroDataView />
+        </div>
+      ) : (
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, lg: 8 }}>
           <Paper className="p-6 border shadow-sm rounded-xl">
@@ -193,6 +206,7 @@ export default function AnalyticsPage() {
           </Paper>
         </Grid>
       </Grid>
+      )}
     </div>
   );
 }

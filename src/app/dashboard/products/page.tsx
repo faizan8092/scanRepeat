@@ -6,6 +6,7 @@ import { Toaster, toast } from 'sonner';
 import { Product, loadProducts, saveProducts } from '@/src/types/product';
 import { ProductCard } from '@/src/components/products/ProductCard';
 import { CreateProductModal } from '@/src/components/products/CreateProductModal';
+import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
 
 type StatusFilter = 'all' | 'published' | 'draft' | 'archived';
 
@@ -14,6 +15,7 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<StatusFilter>('all');
   const [showCreate, setShowCreate] = useState(false);
+  const [isZeroData, setIsZeroData] = useState(false);
 
   // Load on mount
   useEffect(() => {
@@ -69,6 +71,8 @@ export default function ProductsPage() {
     { key: 'archived', label: 'Archived', count: counts.archived },
   ];
 
+  const showZeroState = isZeroData || products.length === 0;
+
   return (
     <>
       <Toaster position="bottom-right" richColors />
@@ -84,12 +88,20 @@ export default function ProductsPage() {
               {counts.draft > 0 && ` · ${counts.draft} draft`}
             </p>
           </div>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm"
-          >
-            <Plus size={18} /> Create Product
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsZeroData(!isZeroData)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-warning/10 border border-warning/20 text-sm font-bold text-warning hover:bg-warning/20 transition-all shadow-sm"
+            >
+              {isZeroData ? 'Show Mock Data' : 'Zero State'}
+            </button>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm"
+            >
+              <Plus size={18} /> Create Product
+            </button>
+          </div>
         </div>
 
         {/* ── Filter + Search bar ─────────────────────────────────────── */}
@@ -133,7 +145,11 @@ export default function ProductsPage() {
         </div>
 
         {/* ── Product List ────────────────────────────────────────────── */}
-        {filtered.length > 0 ? (
+        {showZeroState ? (
+          <div className="mt-8">
+            <ZeroDataView />
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="space-y-4">
             {filtered.map(product => (
               <ProductCard
@@ -143,21 +159,6 @@ export default function ProductsPage() {
                 onDelete={handleDelete}
               />
             ))}
-          </div>
-        ) : products.length === 0 ? (
-          /* Empty state — no products at all */
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-5">
-              <Package size={36} className="text-primary" />
-            </div>
-            <h2 className="text-lg font-bold text-slate-800 mb-2">No products yet</h2>
-            <p className="text-sm text-slate-500 mb-6 max-w-xs">Create your first product QR to get started. Your customers will scan it to see a beautiful mobile page.</p>
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 px-5 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors"
-            >
-              <Plus size={18} /> Create Product
-            </button>
           </div>
         ) : (
           /* Empty state — filter/search has no results */

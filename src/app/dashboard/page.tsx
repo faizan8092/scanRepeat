@@ -24,6 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import { cn } from '@/src/lib/utils';
 import Link from 'next/link';
+import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
 
 const data = [
   { name: 'Mon', scans: 450, unique: 380 },
@@ -58,6 +59,8 @@ const item = {
 };
 
 export default function DashboardPage() {
+  const [isZeroData, setIsZeroData] = React.useState(false);
+
   return (
     <div className="space-y-10">
       {/* --- HEADER SECTION --- */}
@@ -71,6 +74,12 @@ export default function DashboardPage() {
         </div>
         
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsZeroData(!isZeroData)}
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-warning/10 border border-warning/20 text-sm font-bold text-warning hover:bg-warning/20 transition-all shadow-sm"
+          >
+            {isZeroData ? 'Show Mock Data' : 'Zero State'}
+          </button>
           <button className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-card border border-border text-sm font-bold text-muted-foreground hover:bg-secondary transition-all shadow-sm">
             <Download size={18} />
              Export
@@ -82,6 +91,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {isZeroData ? (
+        <ZeroDataView />
+      ) : (
+        <div className="space-y-10">
       {/* --- STATS GRID --- */}
       <motion.div 
         variants={containers}
@@ -281,6 +294,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      </div>
+      )}
     </div>
   );
 }
@@ -304,5 +319,3 @@ function UsageLine({ label, value, max, unit }: { label: string, value: number, 
     </div>
   );
 }
-
-
