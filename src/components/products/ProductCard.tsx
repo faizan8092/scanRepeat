@@ -8,6 +8,7 @@ import {
 import { Product, upsertProduct, deleteProduct, archiveProduct } from '@/src/types/product';
 import { QRCodeModal } from './QRCodeModal';
 import { QRCustomizer } from './QRCustomizer';
+import { QRCodeDisplay } from './QRCodeDisplay';
 
 interface ProductCardProps {
   product: Product;
@@ -182,7 +183,7 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
       >
         <style>{`@keyframes cardIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>
 
-        <div className="flex items-start gap-4 p-5">
+        <div className="flex items-start gap-5 p-5">
           {/* Thumbnail */}
           <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border bg-slate-50">
             <Thumbnail product={product} />
@@ -190,75 +191,96 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-3 mb-1.5">
-              <div className="flex-1 min-w-0">
-                {renaming ? (
-                  <input
-                    autoFocus
-                    value={renameDraft}
-                    onChange={e => setRenameDraft(e.target.value)}
-                    onBlur={handleRename}
-                    onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setRenaming(false); }}
-                    className="text-base font-bold text-slate-900 border-b-2 border-primary outline-none bg-transparent w-full"
-                  />
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0 py-1">
+                <div className="mb-1.5 min-h-[32px] flex items-center">
+                  {renaming ? (
+                    <input
+                      autoFocus
+                      value={renameDraft}
+                      onChange={e => setRenameDraft(e.target.value)}
+                      onBlur={handleRename}
+                      onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setRenaming(false); }}
+                      className="text-lg font-bold text-slate-900 border-b-2 border-primary outline-none bg-transparent w-full"
+                    />
+                  ) : (
+                    <h3 className="text-lg font-bold text-slate-900 truncate">{product.name}</h3>
+                  )}
+                </div>
+
+                {/* Type badge + Dates */}
+                <div className="flex items-center gap-2 flex-wrap mb-3">
+                  <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${meta.color}`}>
+                    {meta.icon} {meta.label}
+                  </span>
+                  <span className="text-xs text-slate-400">·</span>
+                  <span className="text-xs text-slate-400">Created {formatDate(product.createdAt)}</span>
+                </div>
+
+                {/* Short URL */}
+                <div className="flex items-center gap-1.5 mb-4">
+                  <span className="text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded-lg border truncate max-w-[200px]">{shortUrl}</span>
+                  <button onClick={copyUrl} className={`p-1.5 rounded-lg border transition-colors ${copied ? 'border-green-400 text-green-600 bg-green-50' : 'border-slate-200 text-slate-400 hover:text-primary hover:border-primary/40'}`}>
+                    {copied ? <span className="text-[10px] font-bold px-1">✓</span> : <Copy size={12} />}
+                  </button>
+                </div>
+
+                {/* Stats */}
+                {product.scans > 0 || product.type === 'page_builder' ? (
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total Scans</span>
+                      <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                        <BarChart3 size={14} className="text-primary" /> {product.scans.toLocaleString()}
+                      </span>
+                    </div>
+                    {product.countries > 0 && (
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Reach</span>
+                        <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                          <Globe size={14} className="text-primary" /> {product.countries} {product.countries === 1 ? 'Country' : 'Countries'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <h3 className="text-base font-bold text-slate-900 truncate">{product.name}</h3>
+                  <span className="text-xs text-slate-400 italic">No scans recorded yet</span>
                 )}
               </div>
-              <StatusBadge status={product.status} />
-            </div>
 
-            {/* Type badge + Dates */}
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${meta.color}`}>
-                {meta.icon} {meta.label}
-              </span>
-              <span className="text-xs text-slate-400">·</span>
-              <span className="text-xs text-slate-400">Created {formatDate(product.createdAt)}</span>
-            </div>
-
-            {/* Short URL */}
-            <div className="flex items-center gap-1.5 mb-3">
-              <span className="text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded-lg border truncate max-w-xs">{shortUrl}</span>
-              <button onClick={copyUrl} className={`text-xs px-2 py-1 rounded-lg border transition-colors ${copied ? 'border-green-400 text-green-600 bg-green-50' : 'border-slate-200 text-slate-400 hover:text-primary hover:border-primary/40'}`}>
-                {copied ? '✓' : <Copy size={11} />}
-              </button>
-            </div>
-
-            {/* Stats */}
-            {product.scans > 0 || product.type === 'page_builder' ? (
-              <div className="flex flex-wrap gap-3">
-                <span className="text-xs text-slate-600 flex items-center gap-1.5">
-                  <BarChart3 size={14} className="text-slate-400" /> {product.scans.toLocaleString()} scans
-                </span>
-                {product.countries > 0 && (
-                  <span className="text-xs text-slate-600 flex items-center gap-1.5">
-                    <Globe size={14} className="text-slate-400" /> {product.countries} {product.countries === 1 ? 'country' : 'countries'}
-                  </span>
-                )}
-                {product.mobilePercent > 0 && (
-                  <span className="text-xs text-slate-600 flex items-center gap-1.5">
-                    <Smartphone size={14} className="text-slate-400" /> {product.mobilePercent}% mobile
-                  </span>
-                )}
-                {product.type === 'page_builder' && product.reorders > 0 && (
-                  <span className="text-xs text-slate-600 flex items-center gap-1.5">
-                    <Repeat size={14} className="text-slate-400" /> {product.reorders} reorders
-                  </span>
-                )}
+              {/* Right Side Info Area with QR and Status */}
+              <div className="flex items-start gap-4 shrink-0">
+                <button 
+                  onClick={() => setShowQRModal(true)}
+                  className="relative group/qr-preview"
+                >
+                  <div className="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-100 group-hover/qr-preview:border-primary/30 group-hover/qr-preview:shadow-xl group-hover/qr-preview:shadow-primary/5 transition-all duration-300">
+                    <QRCodeDisplay 
+                      url={`https://${shortUrl}`} 
+                      settings={product.qr} 
+                      size={110} 
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/qr-preview:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                    <div className="bg-primary text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg transform scale-90 opacity-0 group-hover/qr-preview:scale-100 group-hover/qr-preview:opacity-100 transition-all">
+                      VIEW FULL
+                    </div>
+                  </div>
+                </button>
+                <div className="pt-2">
+                  <StatusBadge status={product.status} />
+                </div>
               </div>
-            ) : (
-              <span className="text-xs text-slate-400 italic">No scans yet</span>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Action bar */}
-        <div className="flex items-center gap-2 px-5 py-3 border-t bg-slate-50/70 flex-wrap">
+        {/* Action bar divider */}
+        <div className="flex items-center gap-2 px-5 py-3 border-t bg-slate-50/70 relative">
           <Link
             href={`/p/${product.shortCode}`}
             target="_blank"
-            className="h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-colors text-xs font-medium"
+            className="h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors text-xs font-medium"
           >
             <Eye size={13} /> Preview
           </Link>
@@ -286,14 +308,7 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
             <QrCode size={13} /> QR Code
           </button>
 
-          <Link
-            href={`/dashboard/analytics/${product.id}`}
-            className="h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors text-xs font-medium"
-          >
-            <BarChart2 size={13} /> Analytics
-          </Link>
-
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
             <MoreMenu
               product={product}
               onRename={() => { setRenaming(true); setRenameDraft(product.name); }}
@@ -304,10 +319,12 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
           </div>
 
           {delConfirm && (
-            <div className="flex items-center gap-2 ml-1 animate-in rounded-lg bg-red-50 px-3 py-1.5 border border-red-200">
-              <span className="text-xs text-red-600 font-medium">Delete forever?</span>
-              <button onClick={handleDelete} className="text-xs font-bold text-red-600 hover:underline">Yes, delete</button>
-              <button onClick={() => setDelConfirm(false)} className="text-xs text-slate-500 hover:underline">Cancel</button>
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex items-center justify-center gap-4 px-5">
+              <span className="text-sm text-red-600 font-bold">Delete campaign forever?</span>
+              <div className="flex gap-2">
+                <button onClick={handleDelete} className="px-4 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700">Delete</button>
+                <button onClick={() => setDelConfirm(false)} className="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Cancel</button>
+              </div>
             </div>
           )}
         </div>
