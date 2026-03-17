@@ -4,9 +4,21 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { CreditCard, CheckCircle2, Download, Plus, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { useToast } from '@/src/lib/toast-context';
 
 export default function BillingPage() {
   const [isFreePlan, setIsFreePlan] = React.useState(false);
+  const { addToast } = useToast();
+
+  const togglePlan = () => {
+    const nextState = !isFreePlan;
+    setIsFreePlan(nextState);
+    addToast(
+      nextState ? 'warning' : 'success', 
+      nextState ? 'Switched to Free Plan' : 'Switched to Growth Plan',
+      nextState ? 'Features are now limited to basic explorer tiers.' : 'All premium features have been unlocked.'
+    );
+  };
 
   return (
     <div className="space-y-10">
@@ -17,7 +29,7 @@ export default function BillingPage() {
         </div>
         <div className="flex items-center gap-3">
            <button 
-             onClick={() => setIsFreePlan(!isFreePlan)}
+             onClick={togglePlan}
              className="flex items-center gap-2 px-5 py-2 rounded-2xl bg-warning/10 border border-warning/20 text-sm font-bold text-warning hover:bg-warning/20 transition-all shadow-sm"
            >
              {isFreePlan ? 'Show Paid Plan' : 'Show Free Plan'}

@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/src/lib/toast-context';
 
 interface AuthContextType {
   user: any;
   login: (email: string) => Promise<void>;
   signup: (email: string) => Promise<void>;
   logout: () => void;
+  updateUser: (data: any) => void;
   isLoading: boolean;
 }
 
@@ -17,6 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<any>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const router = useRouter();
+  const { addToast } = useToast();
 
   React.useEffect(() => {
     // Mock session check
@@ -35,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(mockUser);
     localStorage.setItem('user', JSON.stringify(mockUser));
     setIsLoading(false);
+    addToast('success', 'Welcome back!', `Logged in as ${mockUser.name}`);
     router.push('/dashboard');
   };
 
@@ -46,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(mockUser);
     localStorage.setItem('user', JSON.stringify(mockUser));
     setIsLoading(false);
+    addToast('success', 'Account created!', "Welcome to ScanRepeat. Let's build something great.");
     router.push('/dashboard');
   };
 
@@ -55,8 +60,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/');
   };
 
+  const updateUser = (data: any) => {
+    const updatedUser = { ...user, ...data };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updateUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

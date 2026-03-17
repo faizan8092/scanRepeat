@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Package } from 'lucide-react';
-import { Toaster, toast } from 'sonner';
+import { Plus, Search } from 'lucide-react';
 import { Product, loadProducts, saveProducts } from '@/src/types/product';
+import { useToast } from '@/src/lib/toast-context';
 import { ProductCard } from '@/src/components/products/ProductCard';
 import { CreateProductModal } from '@/src/components/products/CreateProductModal';
 import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
@@ -12,6 +12,7 @@ type StatusFilter = 'all' | 'published' | 'draft' | 'archived';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const { addToast } = useToast();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<StatusFilter>('all');
   const [showCreate, setShowCreate] = useState(false);
@@ -29,8 +30,8 @@ export default function ProductsPage() {
       saveProducts(next);
       return next;
     });
-    toast.success(`"${updated.name}" updated`);
-  }, []);
+    addToast('success', `"${updated.name}" updated`, 'Product details have been synchronized.');
+  }, [addToast]);
 
   const handleDelete = useCallback((id: string) => {
     setProducts(prev => {
@@ -38,8 +39,8 @@ export default function ProductsPage() {
       saveProducts(next);
       return next;
     });
-    toast.success('Product deleted');
-  }, []);
+    addToast('delete', 'Product deleted', 'The record has been permanently removed.');
+  }, [addToast]);
 
   const handleCreated = useCallback((product: Product) => {
     setProducts(prev => {
@@ -47,8 +48,8 @@ export default function ProductsPage() {
       saveProducts(next);
       return next;
     });
-    toast.success(`✓ "${product.name}" created successfully!`);
-  }, []);
+    addToast('success', `"${product.name}" created successfully!`, 'New product is now live on your dashboard.');
+  }, [addToast]);
 
   // Filtered + searched
   const filtered = products.filter(p => {
@@ -75,8 +76,6 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Toaster position="bottom-right" richColors />
-
       <div className="space-y-6">
         {/* ── Header ─────────────────────────────────────────────────── */}
         <div className="flex items-start justify-between">

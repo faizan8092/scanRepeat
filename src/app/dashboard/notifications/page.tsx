@@ -4,9 +4,15 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Mail, Smartphone, Info, Save } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { useToast } from '@/src/lib/toast-context';
 
 export default function NotificationsPage() {
   const [activeTab, setActiveTab] = React.useState('email');
+  const { addToast } = useToast();
+
+  const handleSavePreferences = () => {
+    addToast('success', 'Preferences saved', 'Your notification settings have been updated.');
+  };
 
   return (
     <div className="space-y-10">
@@ -76,7 +82,10 @@ export default function NotificationsPage() {
               </div>
 
               <div className="pt-10 flex justify-end">
-                <button className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30">
+                <button 
+                  onClick={handleSavePreferences}
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30"
+                >
                   <Save size={18} />
                   Save Preferences
                 </button>

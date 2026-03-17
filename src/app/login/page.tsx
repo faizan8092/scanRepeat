@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { QrCode, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
-import { FaGoogle, FaApple } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 import { useAuth } from '@/src/lib/auth-context';
 
 export default function LoginPage() {
@@ -41,14 +41,10 @@ export default function LoginPage() {
             <p className="text-[#6b7280]">Login to continue your brand journey</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <button className="flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium">
+          <div className="mb-8">
+            <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium">
               <FaGoogle className="w-5 h-5 text-[#ea4335]" />
-              <span>Google</span>
-            </button>
-            <button className="flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium">
-              <FaApple className="w-5 h-5" />
-              <span>Apple</span>
+              <span>Continue with Google</span>
             </button>
           </div>
 

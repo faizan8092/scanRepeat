@@ -5,9 +5,19 @@ import { motion } from 'framer-motion';
 import { Key, Eye, EyeOff, Smartphone, LogOut, ChevronRight, Save, Trash2, AlertCircle } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
+import { useToast } from '@/src/lib/toast-context';
 
 export default function SecurityPage() {
   const { logout } = useAuth();
+  const { addToast } = useToast();
+
+  const handleUpdatePassword = () => {
+    addToast('success', 'Password updated', 'Your account security has been strengthened.');
+  };
+
+  const handleDeleteAccount = () => {
+    addToast('delete', 'Account deletion requested', 'A confirmation link has been sent to your email.');
+  };
 
   return (
     <div className="space-y-10">
@@ -36,7 +46,10 @@ export default function SecurityPage() {
               <SecurityInput label="Confirm New Password" type="password" placeholder="••••••••" />
               
               <div className="pt-4">
-                <button className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl">
+                <button 
+                  onClick={handleUpdatePassword}
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl"
+                >
                   <Save size={18} />
                   Update Password
                 </button>
@@ -96,8 +109,8 @@ export default function SecurityPage() {
              <p className="text-muted-foreground text-[11px] font-bold leading-relaxed mb-8 uppercase tracking-wider">Deleting your account is permanent and cannot be undone.</p>
              <button className="w-full py-4 rounded-2xl bg-destructive text-background font-bold text-sm shadow-xl shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2">
                 <Trash2 size={16} /> Delete Account
-             </button>
-           </div>
+              </button>
+            </div>
         </div>
       </div>
     </div>

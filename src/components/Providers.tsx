@@ -7,6 +7,8 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { store } from '@/src/lib/store';
 import { theme } from '@/src/lib/theme';
 import { AuthProvider } from '@/src/lib/auth-context';
+import { ToastProvider } from '@/src/lib/toast-context';
+import { ToastContainer } from '@/src/components/ui/ToastContainer';
 import '@fontsource/tektur';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -15,9 +17,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
         <MUIThemeProvider theme={theme}>
           <CssBaseline />
-          <AuthProvider>
-            {children}
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              {children}
+              <ToastContainer />
+            </AuthProvider>
+          </ToastProvider>
         </MUIThemeProvider>
       </NextThemesProvider>
     </ReduxProvider>
