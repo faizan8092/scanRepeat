@@ -10,9 +10,56 @@ import { useToast } from '@/src/lib/toast-context';
 export default function SecurityPage() {
   const { logout } = useAuth();
   const { addToast } = useToast();
+  
+  const [passwords, setPasswords] = React.useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
+  
+  const [errors, setErrors] = React.useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
+
+  const validatePassword = (pass: string) => {
+    const minLength = pass.length >= 8;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+
+    if (!minLength || !hasUpper || !hasDigit || !hasSpecial) {
+      return 'Password must be at least 8 characters with an uppercase letter, digit, and special character.';
+    }
+    return '';
+  };
 
   const handleUpdatePassword = () => {
-    addToast('success', 'Password updated', 'Your account security has been strengthened.');
+    const currentPassError = !passwords.current ? 'Current password is required.' : '';
+    const newPassError = validatePassword(passwords.new);
+    let sameAsOldError = '';
+    
+    if (passwords.new && passwords.current && passwords.new === passwords.current) {
+      sameAsOldError = 'New password cannot be the same as the current password.';
+    }
+
+    const finalNewPassError = newPassError || sameAsOldError;
+    const confirmPassError = passwords.new !== passwords.confirm ? "Passwords don't match." : "";
+    
+    setErrors({
+      current: currentPassError,
+      new: finalNewPassError,
+      confirm: confirmPassError
+    });
+
+    if (!currentPassError && !finalNewPassError && !confirmPassError) {
+      addToast('success', 'Password updated', 'Your account security has been strengthened.');
+      setPasswords({ current: '', new: '', confirm: '' });
+      setErrors({ current: '', new: '', confirm: '' });
+    } else {
+      addToast('error', 'Update Failed', 'Please fix the errors in the form.');
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -41,9 +88,61 @@ export default function SecurityPage() {
             </div>
 
             <div className="space-y-6 max-w-xl">
-              <SecurityInput label="Current Password" type="password" placeholder="••••••••" />
-              <SecurityInput label="New Password" type="password" placeholder="••••••••" />
-              <SecurityInput label="Confirm New Password" type="password" placeholder="••••••••" />
+              <SecurityInput 
+                label="Current Password" 
+                type="password" 
+                placeholder="••••••••"
+                value={passwords.current}
+                error={errors.current}
+                onChange={(val) => {
+                  setPasswords(prev => ({ ...prev, current: val }));
+                  if (errors.current) setErrors(prev => ({ ...prev, current: !val ? 'Current password is required.' : '' }));
+                }}
+              />
+              {errors.current && (
+                <p className="text-[10px] font-bold text-destructive px-1 ml-1 -mt-4">
+                  {errors.current}
+                </p>
+              )}
+              
+              <div className="space-y-2">
+                <SecurityInput 
+                  label="New Password" 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={passwords.new}
+                  error={errors.new}
+                  onChange={(val) => {
+                    setPasswords(prev => ({ ...prev, new: val }));
+                    if (errors.new) setErrors(prev => ({ ...prev, new: validatePassword(val) }));
+                  }}
+                />
+                <p className={cn(
+                  "text-[10px] font-bold transition-all duration-300 px-1 ml-1",
+                  errors.new ? "text-destructive" : "text-muted-foreground opacity-60"
+                )}>
+                  {errors.new || "Min. 8 chars with uppercase, digit & special char."}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <SecurityInput 
+                  label="Confirm New Password" 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={passwords.confirm}
+                  error={errors.confirm}
+                  onChange={(val) => {
+                    setPasswords(prev => ({ ...prev, confirm: val }));
+                    if (errors.confirm) setErrors(prev => ({ ...prev, confirm: val !== passwords.new ? "Passwords don't match." : "" }));
+                  }}
+                />
+                {errors.confirm && (
+                  <p className="text-[10px] font-bold text-destructive px-1 ml-1">
+                    {errors.confirm}
+                  </p>
+                )}
+              </div>
               
               <div className="pt-4">
                 <button 
@@ -117,7 +216,21 @@ export default function SecurityPage() {
   );
 }
 
-function SecurityInput({ label, type, placeholder }: { label: string, type: string, placeholder: string }) {
+function SecurityInput({ 
+  label, 
+  type, 
+  placeholder, 
+  value, 
+  onChange, 
+  error 
+}: { 
+  label: string, 
+  type: string, 
+  placeholder: string,
+  value: string,
+  onChange: (val: string) => void,
+  error?: string
+}) {
   const [show, setShow] = React.useState(false);
   const isPassword = type === 'password';
 
@@ -128,7 +241,14 @@ function SecurityInput({ label, type, placeholder }: { label: string, type: stri
         <input 
           type={isPassword ? (show ? 'text' : 'password') : type}
           placeholder={placeholder}
-          className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 py-4 px-5 rounded-2xl text-sm font-bold transition-all outline-none"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn(
+            "w-full bg-secondary/50 border focus:bg-card focus:ring-4 py-4 px-5 rounded-2xl text-sm font-bold transition-all outline-none",
+            error 
+              ? "border-destructive focus:border-destructive focus:ring-destructive/5" 
+              : "border-border focus:border-primary/30 focus:ring-primary/5"
+          )}
         />
         {isPassword && (
           <button 

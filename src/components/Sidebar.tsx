@@ -8,7 +8,6 @@ import {
   Package, 
   BarChart3, 
   Settings, 
-  QrCode,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Logo } from './Logo';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -51,21 +51,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       {/* Header / Logo */}
       <div className="h-20 flex items-center px-6 relative border-b border-border/50">
         <Link href="/dashboard" className="flex items-center gap-3 group overflow-hidden">
-          <div className="w-10 h-10 shrink-0 rounded-2xl bg-foreground flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-110 transition-transform duration-300">
-            <QrCode className="h-5 w-5 text-background" />
-          </div>
-          <AnimatePresence>
-            {!isCollapsed && (
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="font-tektur text-xl font-black tracking-tight text-foreground"
-              >
-                ScanRepeat
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <Logo size={32} showText={!isCollapsed} />
         </Link>
         
         {/* Toggle Button */}

@@ -16,28 +16,28 @@ import { cn } from '@/src/lib/utils';
 const toastConfig = {
   success: {
     icon: CheckCircle2,
-    className: 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400',
-    iconClassName: 'text-emerald-500',
+    className: 'bg-white border-emerald-500/30 text-emerald-950 dark:bg-emerald-950 dark:border-emerald-500/30 dark:text-emerald-400',
+    iconClassName: 'text-emerald-600 dark:text-emerald-500',
   },
   error: {
     icon: AlertCircle,
-    className: 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-500/10 dark:border-rose-500/20 dark:text-rose-400',
-    iconClassName: 'text-rose-500',
+    className: 'bg-white border-rose-500/30 text-rose-950 dark:bg-rose-950 dark:border-rose-500/30 dark:text-rose-400',
+    iconClassName: 'text-rose-600 dark:text-rose-500',
   },
   warning: {
     icon: AlertTriangle,
-    className: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400',
-    iconClassName: 'text-amber-50',
+    className: 'bg-white border-amber-500/30 text-amber-950 dark:bg-amber-950 dark:border-amber-500/30 dark:text-amber-400',
+    iconClassName: 'text-amber-600 dark:text-amber-500',
   },
   info: {
     icon: Info,
-    className: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400',
-    iconClassName: 'text-blue-500',
+    className: 'bg-white border-blue-500/30 text-blue-950 dark:bg-blue-950 dark:border-blue-500/30 dark:text-blue-400',
+    iconClassName: 'text-blue-600 dark:text-blue-500',
   },
   delete: {
     icon: Trash2,
-    className: 'bg-slate-50 border-slate-200 text-slate-800 dark:bg-slate-500/10 dark:border-slate-500/20 dark:text-slate-400',
-    iconClassName: 'text-slate-500',
+    className: 'bg-white border-slate-500/30 text-slate-950 dark:bg-slate-950 dark:border-slate-500/30 dark:text-slate-400',
+    iconClassName: 'text-slate-600 dark:text-slate-500',
   },
 };
 
@@ -59,26 +59,26 @@ export function ToastContainer() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
               className={cn(
-                "pointer-events-auto flex items-start gap-4 p-4 rounded-[1.5rem] border shadow-2xl backdrop-blur-xl",
+                "pointer-events-auto flex items-start gap-4 p-4 rounded-2xl border shadow-xl backdrop-blur-xl",
                 config.className
               )}
             >
-              <div className={cn("p-2 rounded-xl bg-white/50 dark:bg-black/20", config.iconClassName)}>
+              <div className={cn("p-2 rounded-xl bg-white/40 dark:bg-black/20 shrink-0", config.iconClassName)}>
                 <Icon size={20} />
               </div>
               
               <div className="flex-1 pt-0.5">
-                <p className="text-sm font-black tracking-tight">{toast.message}</p>
+                <p className="text-sm font-semibold tracking-tight leading-tight">{toast.message}</p>
                 {toast.description && (
-                  <p className="text-xs font-bold opacity-70 mt-1">{toast.description}</p>
+                  <p className="text-xs font-medium opacity-80 mt-1 leading-snug">{toast.description}</p>
                 )}
               </div>
 
               <button 
                 onClick={() => removeToast(toast.id)}
-                className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors mt-0.5"
+                className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-lg transition-colors mt-0.5"
               >
-                <X size={16} className="opacity-50" />
+                <X size={16} className="opacity-40 hover:opacity-100 transition-opacity" />
               </button>
             </motion.div>
           );

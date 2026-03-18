@@ -1,30 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { QrCode, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { Logo } from './Logo';
 
 export function Navbar() {
   return (
-    <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="fixed top-0 z-50 w-full border-b border-[#e5e7eb]/80 bg-white/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center space-x-2">
-          <QrCode className="h-6 w-6 text-primary" />
-          <span className="font-tektur text-xl font-bold tracking-tight">ScanRepeat</span>
+        <Link href="/">
+          <Logo size={26} />
         </Link>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
-          <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
-          <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
+        <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold">
+          <Link href="/#features" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">Features</Link>
+          <Link href="/pricing" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">Pricing</Link>
+          <Link href="/#faq" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">FAQ</Link>
         </nav>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <ThemeToggle />
-          <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">Login</Link>
+          <Link href="/login" className="text-sm font-semibold text-[#374151] hover:text-[#0a0a0a] transition-colors px-3 py-2">Login</Link>
           <Link 
             href="/signup" 
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-[#0a0a0a] hover:bg-[#2970ff] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
-            Start Free <ArrowRight className="ml-2 h-4 w-4" />
+            Start Free <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
           </Link>
         </div>
       </div>

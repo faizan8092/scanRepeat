@@ -3,18 +3,37 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { QrCode, Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { FaGoogle } from 'react-icons/fa';
+import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, UserPlus } from 'lucide-react';
+import { Logo } from '@/src/components/Logo';
 import { useAuth } from '@/src/lib/auth-context';
+import { cn } from '@/src/lib/utils';
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState('');
   const { signup, isLoading } = useAuth();
+
+  const validatePassword = (pass: string) => {
+    const minLength = pass.length >= 8;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+
+    if (!minLength || !hasUpper || !hasDigit || !hasSpecial) {
+      setPasswordError('Password must be at least 8 characters with an uppercase letter, digit, and special character.');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signup(email);
+    if (validatePassword(password)) {
+      await signup(email);
+    }
   };
 
   return (
@@ -33,9 +52,8 @@ export default function SignupPage() {
           className="max-w-[440px] w-full mx-auto"
         >
           <div className="mb-10 text-center lg:text-left">
-            <Link href="/" className="inline-flex items-center gap-2 mb-8">
-              <QrCode className="w-8 h-8 text-[#2970ff]" />
-              <span className="text-2xl font-bold tracking-tight">ScanRepeat</span>
+            <Link href="/" className="inline-flex mb-8">
+              <Logo size={42} />
             </Link>
             <h1 className="text-4xl font-bold tracking-tight mb-2">Create account</h1>
             <p className="text-[#6b7280]">Join 500+ brands turning physical into digital</p>
@@ -43,7 +61,7 @@ export default function SignupPage() {
 
           <div className="mb-8">
             <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium text-sm">
-              <FaGoogle className="w-5 h-5 text-[#ea4335]" />
+              <img src="/assets/google-sso.svg" alt="Google" className="w-5 h-5" />
               <span>Sign up with Google</span>
             </button>
           </div>
@@ -92,13 +110,24 @@ export default function SignupPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-[#374151]">Password</label>
+              <div className="flex flex-col mb-1">
+                <label className="text-sm font-semibold text-[#374151] leading-none">Security Password</label>
+                <span className="text-[10px] text-[#6b7280] font-medium mt-1 leading-none">Update your login credentials regularly.</span>
+              </div>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
                   placeholder="••••••••"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) validatePassword(e.target.value);
+                  }}
+                  className={cn(
+                    "w-full px-4 py-3 rounded-xl border outline-none transition-all placeholder:text-[#9ca3af]",
+                    passwordError ? "border-rose-500 focus:ring-rose-500/20" : "border-[#e5e7eb] focus:ring-[#2970ff]/20 focus:border-[#2970ff]"
+                  )}
                 />
                 <button 
                   type="button"
@@ -108,14 +137,27 @@ export default function SignupPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              <p className={cn(
+                "text-[10px] font-medium transition-all duration-300 px-1",
+                passwordError ? "text-rose-500" : "text-[#6b7280]"
+              )}>
+                {passwordError || "Min. 8 chars with uppercase, digit & special char."}
+              </p>
             </div>
 
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#171717] hover:bg-[#2970ff] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-[#171717] hover:bg-[#2970ff] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 group"
             >
-              {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Get Started Free'}
+              {isLoading ? (
+                <Loader2 className="animate-spin" size={20} />
+              ) : (
+                <>
+                  <UserPlus size={20} className="transition-transform group-hover:scale-110" />
+                  <span>Get Started Free</span>
+                </>
+              )}
             </button>
           </form>
 

@@ -3,18 +3,54 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { QrCode, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
-import { FaGoogle } from 'react-icons/fa';
+import { Eye, EyeOff, Loader2, ArrowLeft, LogIn, AlertCircle } from 'lucide-react';
+import { Logo } from '@/src/components/Logo';
 import { useAuth } from '@/src/lib/auth-context';
+import { cn } from '@/src/lib/utils';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState('');
+  const [loginError, setLoginError] = React.useState(false);
   const { login, isLoading } = useAuth();
+
+  const validatePassword = (pass: string) => {
+    const minLength = pass.length >= 8;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+
+    if (!minLength || !hasUpper || !hasDigit || !hasSpecial) {
+      setPasswordError('Password must be at least 8 characters with an uppercase letter, digit, and special character.');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email);
+    setLoginError(false);
+
+    const isValid = validatePassword(password);
+    if (!isValid) return;
+
+    // Hardcoded testing credentials
+    const testEmail = 'test@admin.com';
+    const testPass = 'Password123!';
+
+    if (email === testEmail && password === testPass) {
+      try {
+        await login(email);
+      } catch (err) {
+        setLoginError(true);
+      }
+    } else {
+      // Show the error message for any other combination
+      setLoginError(true);
+    }
   };
 
   return (
@@ -33,9 +69,8 @@ export default function LoginPage() {
           className="max-w-[440px] w-full mx-auto"
         >
           <div className="mb-10 text-center lg:text-left">
-            <Link href="/" className="inline-flex items-center gap-2 mb-8">
-              <QrCode className="w-8 h-8 text-[#2970ff]" />
-              <span className="text-2xl font-bold tracking-tight">ScanRepeat</span>
+            <Link href="/" className="inline-flex mb-8">
+              <Logo size={42} />
             </Link>
             <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back</h1>
             <p className="text-[#6b7280]">Login to continue your brand journey</p>
@@ -43,7 +78,7 @@ export default function LoginPage() {
 
           <div className="mb-8">
             <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium">
-              <FaGoogle className="w-5 h-5 text-[#ea4335]" />
+              <img src="/assets/google-sso.svg" alt="Google" className="w-5 h-5" />
               <span>Continue with Google</span>
             </button>
           </div>
@@ -56,6 +91,22 @@ export default function LoginPage() {
               <span className="bg-white px-4 text-[#9ca3af] font-medium tracking-wider">Or</span>
             </div>
           </div>
+          
+          {loginError && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-8 p-4 rounded-xl bg-rose-50 border border-rose-100 flex items-start gap-3"
+            >
+              <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-rose-900 leading-relaxed font-medium">
+                Incorrect email or password. Please try again,{' '}
+                <Link href="/forgot-password" className="text-[#2970ff] hover:underline">reset your password</Link>
+                {' '}or{' '}
+                <Link href="/signup" className="text-[#2970ff] hover:underline">sign up</Link>
+              </p>
+            </motion.div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
@@ -71,16 +122,27 @@ export default function LoginPage() {
             </div>
             
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-semibold text-[#374151]">Password</label>
-                <Link href="#" className="text-sm font-medium text-[#2970ff] hover:underline">Forgot password?</Link>
+              <div className="flex justify-between items-end mb-1">
+                <div>
+                  <label className="text-sm font-semibold text-[#374151] block leading-none">Security Password</label>
+                  <span className="text-[10px] text-[#6b7280] font-medium leading-none">Update your login credentials regularly.</span>
+                </div>
+                <Link href="/forgot-password" className="text-sm font-medium text-[#2970ff] hover:underline">Forgot password?</Link>
               </div>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
                   placeholder="••••••••"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) validatePassword(e.target.value);
+                  }}
+                  className={cn(
+                    "w-full px-4 py-3 rounded-xl border outline-none transition-all placeholder:text-[#9ca3af]",
+                    passwordError ? "border-rose-500 focus:ring-rose-500/20" : "border-[#e5e7eb] focus:ring-[#2970ff]/20 focus:border-[#2970ff]"
+                  )}
                 />
                 <button 
                   type="button"
@@ -90,14 +152,27 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              <p className={cn(
+                "text-[10px] font-medium transition-all duration-300 px-1",
+                passwordError ? "text-rose-500" : "text-[#6b7280]"
+              )}>
+                {passwordError || "Min. 8 chars with uppercase, digit & special char."}
+              </p>
             </div>
 
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#171717] hover:bg-[#2970ff] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-all duration-300 disabled:opacity-50 disabled:hover:bg-[#171717] flex items-center justify-center gap-2"
+              className="w-full bg-[#171717] hover:bg-[#2970ff] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-all duration-300 disabled:opacity-50 disabled:hover:bg-[#171717] flex items-center justify-center gap-2 group"
             >
-              {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Login'}
+              {isLoading ? (
+                <Loader2 className="animate-spin" size={20} />
+              ) : (
+                <>
+                  <LogIn size={20} className="transition-transform group-hover:translate-x-1" />
+                  <span>Login</span>
+                </>
+              )}
             </button>
           </form>
 
