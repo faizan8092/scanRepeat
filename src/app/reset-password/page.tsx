@@ -6,9 +6,13 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, Lock } from 'lucide-react';
 import { Logo } from '@/src/components/Logo';
 import { cn } from '@/src/lib/utils';
-import { useRouter } from 'next/navigation';
+import { resetPassword } from '@/src/lib/auth-service';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ResetPasswordPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token') ?? '';
+
   const [showPassword, setShowPassword] = React.useState(false);
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -16,6 +20,7 @@ export default function ResetPasswordPage() {
   const [confirmError, setConfirmError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const router = useRouter();
 
   const validatePassword = (pass: string) => {
@@ -32,19 +37,29 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError(null);
+
     const passErr = validatePassword(password);
     const matchErr = password !== confirmPassword ? "Passwords don't match." : "";
-    
+
     setPasswordError(passErr);
     setConfirmError(matchErr);
 
+    if (!token) {
+      setError('Missing password reset token. Please use the link we emailed you.');
+      return;
+    }
+
     if (!passErr && !matchErr) {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setIsLoading(false);
-      setIsDone(true);
+      try {
+        await resetPassword({ token, password, confirmPassword });
+        setIsDone(true);
+      } catch (err: any) {
+        setError(err?.message || 'Unable to reset password. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -96,6 +111,11 @@ export default function ResetPasswordPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-left">
+          {error && (
+            <div className="rounded-xl bg-rose-50 border border-rose-100 p-4 text-sm text-rose-700">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
             <div className="relative group">
               <input 

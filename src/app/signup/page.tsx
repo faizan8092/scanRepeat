@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { GoogleLogin } from "@react-oauth/google";
 import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, UserPlus } from 'lucide-react';
 import { Logo } from '@/src/components/Logo';
 import { useAuth } from '@/src/lib/auth-context';
@@ -10,10 +12,19 @@ import { cn } from '@/src/lib/utils';
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [passwordError, setPasswordError] = React.useState('');
-  const { signup, isLoading } = useAuth();
+  const { user, signup, loginWithGoogle, isLoading } = useAuth();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (user && !isLoading) {
+      router.push('/dashboard');
+    }
+  }, [user, isLoading, router]);
 
   const validatePassword = (pass: string) => {
     const minLength = pass.length >= 8;
@@ -32,7 +43,7 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validatePassword(password)) {
-      await signup(email);
+      await signup(email, password, `${firstName} ${lastName}`.trim());
     }
   };
 
@@ -59,11 +70,36 @@ export default function SignupPage() {
             <p className="text-[#6b7280]">Join 500+ brands turning physical into digital</p>
           </div>
 
-          <div className="mb-8">
-            <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium text-sm">
-              <img src="/assets/google-sso.svg" alt="Google" className="w-5 h-5" />
-              <span>Sign up with Google</span>
-            </button>
+          <div className="mb-8 relative h-[52px] group">
+            {/* 1. Custom themed button (Visual Only) */}
+            <div 
+              className="absolute inset-0 w-full h-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl bg-white hover:bg-[#f9fafb] hover:border-[#d1d5db] transition-all duration-300 font-medium pointer-events-none text-sm group"
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="text-[#374151]">Sign up with Google</span>
+            </div>
+
+            {/* 2. Official Google Login (Functional Overlay) */}
+            <div className="absolute inset-0 opacity-0 cursor-pointer [&>div]:w-full [&>div]:h-full">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  if (credentialResponse.credential) {
+                    try {
+                      await loginWithGoogle(credentialResponse.credential);
+                    } catch (err) {
+                      console.error("Google SSO Signup Error:", err);
+                    }
+                  }
+                }}
+                onError={() => console.error("Google Login failed or was closed by user.")}
+                useOneTap
+                theme="outline"
+                size="large"
+                width="400"
+                text="signup_with"
+                shape="rectangular"
+              />
+            </div>
           </div>
 
           <div className="relative mb-8">
@@ -83,6 +119,8 @@ export default function SignupPage() {
                   type="text" 
                   placeholder="Jane"
                   required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
                 />
               </div>
@@ -92,6 +130,8 @@ export default function SignupPage() {
                   type="text" 
                   placeholder="Doe"
                   required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
                 />
               </div>

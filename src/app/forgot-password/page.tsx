@@ -6,19 +6,31 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, Loader2, CheckCircle2 } from 'lucide-react';
 import { Logo } from '@/src/components/Logo';
 import { cn } from '@/src/lib/utils';
+import { forgotPassword } from '@/src/lib/auth-service';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSent, setIsSent] = React.useState(false);
+  const [resetToken, setResetToken] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSent(true);
+    setError(null);
+
+    try {
+      const response = await forgotPassword({ email });
+      setIsSent(true);
+      if (response.resetToken) {
+        setResetToken(response.resetToken);
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -50,6 +62,12 @@ export default function ForgotPasswordPage() {
 
           {!isSent ? (
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="rounded-xl bg-rose-50 border border-rose-100 p-4 text-sm text-rose-700">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-[#374151]">Email</label>
                 <div className="relative">
@@ -91,13 +109,16 @@ export default function ForgotPasswordPage() {
               </p>
               <div className="flex flex-col gap-3 max-w-[200px] mx-auto">
                 <Link 
-                  href="/reset-password"
+                  href={resetToken ? `/reset-password?token=${encodeURIComponent(resetToken)}` : '/reset-password'}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
                 >
                   Test Link
                 </Link>
                 <button 
-                  onClick={() => setIsSent(false)}
+                  onClick={() => {
+                    setIsSent(false);
+                    setError(null);
+                  }}
                   className="text-emerald-700 font-bold hover:underline text-sm"
                 >
                   Didn't receive it? Try again

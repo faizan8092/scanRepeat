@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { GoogleLogin } from "@react-oauth/google";
 import { Eye, EyeOff, Loader2, ArrowLeft, LogIn, AlertCircle } from 'lucide-react';
 import { Logo } from '@/src/components/Logo';
 import { useAuth } from '@/src/lib/auth-context';
@@ -14,7 +16,14 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState('');
   const [passwordError, setPasswordError] = React.useState('');
   const [loginError, setLoginError] = React.useState(false);
-  const { login, isLoading } = useAuth();
+  const { user, login, loginWithGoogle, isLoading } = useAuth();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (user && !isLoading) {
+      router.push('/dashboard');
+    }
+  }, [user, isLoading, router]);
 
   const validatePassword = (pass: string) => {
     const minLength = pass.length >= 8;
@@ -37,18 +46,10 @@ export default function LoginPage() {
     const isValid = validatePassword(password);
     if (!isValid) return;
 
-    // Hardcoded testing credentials
-    const testEmail = 'test@admin.com';
-    const testPass = 'Password123!';
-
-    if (email === testEmail && password === testPass) {
-      try {
-        await login(email);
-      } catch (err) {
-        setLoginError(true);
-      }
-    } else {
-      // Show the error message for any other combination
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.error("Login Error Details:", err);
       setLoginError(true);
     }
   };
@@ -76,11 +77,41 @@ export default function LoginPage() {
             <p className="text-[#6b7280]">Login to continue your brand journey</p>
           </div>
 
-          <div className="mb-8">
-            <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl hover:bg-[#f9fafb] transition-colors font-medium">
-              <img src="/assets/google-sso.svg" alt="Google" className="w-5 h-5" />
-              <span>Continue with Google</span>
-            </button>
+          <div className="mb-8 relative h-[52px] group">
+            {/* 1. Our perfectly themed custom button (Visual Only) */}
+            <div 
+              className="absolute inset-0 w-full h-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl bg-white hover:bg-[#f9fafb] hover:border-[#d1d5db] transition-all duration-300 font-medium pointer-events-none"
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="text-[#374151]">Continue with Google</span>
+            </div>
+
+            {/* 2. Hidden-but-clickable official Google button (Functional Only) */}
+            <div className="absolute inset-0 opacity-0 cursor-pointer [&>div]:w-full [&>div]:h-full">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  setLoginError(false);
+                  if (credentialResponse.credential) {
+                    try {
+                      await loginWithGoogle(credentialResponse.credential);
+                    } catch (err) {
+                      console.error(err);
+                      setLoginError(true);
+                    }
+                  }
+                }}
+                onError={() => {
+                  console.error("Google Login failed or was closed by user.");
+                  setLoginError(true);
+                }}
+                useOneTap
+                theme="outline"
+                size="large"
+                width="400" // We'll use a large width and let the wrapper clip it if needed
+                text="continue_with"
+                shape="rectangular"
+              />
+            </div>
           </div>
 
           <div className="relative mb-8">

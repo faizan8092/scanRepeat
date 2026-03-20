@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/src/components/Sidebar';
 import { ThemeToggle } from '@/src/components/ThemeToggle';
 import { Bell, Search, User, Settings, LogOut, ChevronDown, Sparkles, Shield, CreditCard } from 'lucide-react';
@@ -15,11 +15,27 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, isLoading, logout } = useAuth();
   const isBuilder = pathname?.startsWith('/dashboard/builder');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isLoading, router]);
+
+  // Prevent rendering protected content if not authenticated
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-secondary/30">
+        <div className="w-8 h-8 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
+      </div>
+    );
+  }
+
   if (isBuilder) {
     return <>{children}</>;
   }

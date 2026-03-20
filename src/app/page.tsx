@@ -25,7 +25,7 @@ import {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", bounce: 0, duration: 0.8 } },
+  show: { opacity: 1, y: 0, transition: { type: "spring", bounce: 0, duration: 0.8 } as any },
 };
 
 const stagger = {
@@ -138,7 +138,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.08, type: "spring", bounce: 0, duration: 0.7 }}
+      transition={{ delay: index * 0.08, type: "spring", bounce: 0, duration: 0.7 } as any}
       className="group p-8 bg-white rounded-3xl ring-1 ring-[#e5e7eb] shadow-sm open:shadow-md open:ring-[#2970ff]/30 transition-all duration-300 cursor-pointer"
     >
       <summary className="flex items-center justify-between text-[18px] font-bold tracking-tight list-none">
@@ -175,7 +175,7 @@ export default function LandingPage() {
                 rotate: [0, 5, 0],
                 x: [0, 20, 0]
               }}
-              transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
+              transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" } as any}
               className="absolute -top-[10%] -left-[5%] w-[800px] h-[800px] bg-[#2970ff]/10 blur-[130px] rounded-full" 
             />
             <motion.div 
@@ -184,7 +184,7 @@ export default function LandingPage() {
                 rotate: [0, -5, 0],
                 x: [0, -30, 0]
               }}
-              transition={{ repeat: Infinity, duration: 20, ease: "easeInOut", delay: 2 }}
+              transition={{ repeat: Infinity, duration: 20, ease: "easeInOut", delay: 2 } as any}
               className="absolute top-[20%] -right-[10%] w-[600px] h-[600px] bg-[#7c3aed]/10 blur-[130px] rounded-full" 
             />
             <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-white to-transparent" />
@@ -269,7 +269,7 @@ export default function LandingPage() {
               <motion.div
                 initial={{ opacity: 0, y: 80, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: "spring", bounce: 0.1, duration: 1.5, delay: 0.6 }}
+                transition={{ type: "spring", bounce: 0.1, duration: 1.5, delay: 0.6 } as any}
                 className="w-full relative px-4 lg:px-0"
               >
                 {/* 3D Glass Dashboard Container */}
@@ -299,7 +299,7 @@ export default function LandingPage() {
                   {/* High-Impact Floating Interaction Badges */}
                   <motion.div
                     animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" } as any}
                     className="absolute -left-4 md:-left-20 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] ring-1 ring-black/5 p-6 border border-white max-w-[220px] hidden md:block"
                   >
                     <div className="flex items-center gap-4 mb-4">
@@ -317,7 +317,7 @@ export default function LandingPage() {
 
                   <motion.div
                     animate={{ y: [0, 10, 0] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 } as any}
                     className="absolute -right-4 md:-right-16 bottom-[15%] bg-[#171717] rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] p-7 text-white hidden md:block"
                   >
                     <div className="flex items-center gap-4 mb-4">
@@ -339,7 +339,7 @@ export default function LandingPage() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring", bounce: 0.3 }}
+                    transition={{ delay: 0.8, type: "spring", bounce: 0.3 } as any}
                     className="absolute right-4 md:-right-8 top-12 bg-white rounded-2xl shadow-xl ring-1 ring-black/5 px-5 py-4 hidden md:flex items-center gap-3"
                   >
                     <div className="w-10 h-10 rounded-xl bg-[#2970ff] flex items-center justify-center text-white shrink-0">
@@ -367,7 +367,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, type: "spring", bounce: 0, duration: 0.7 }}
+                  transition={{ delay: i * 0.1, type: "spring", bounce: 0, duration: 0.7 } as any}
                   className="flex flex-col items-center justify-center py-6 px-4 text-center"
                 >
                   <span className="text-[40px] md:text-[48px] font-bold tracking-tight bg-gradient-to-r from-[#0a0a0a] to-[#374151] bg-clip-text text-transparent">{stat.value}</span>
@@ -386,7 +386,7 @@ export default function LandingPage() {
           <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
             <motion.ul
               animate={{ x: ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
+              transition={{ repeat: Infinity, ease: "linear", duration: 30 } as any}
               className="flex items-center justify-center [&_li]:mx-10"
             >
               {[...Array(2)].map((_, i) => (
@@ -428,7 +428,7 @@ export default function LandingPage() {
                       initial={{ opacity: 0, x: isEven ? -40 : 40 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, margin: "-80px" }}
-                      transition={{ type: "spring", bounce: 0, duration: 0.8 }}
+                      transition={{ type: "spring", bounce: 0, duration: 0.8 } as any}
                       className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16`}
                     >
                       <div className={`flex-1 ${isEven ? 'md:text-right' : 'md:text-left'} text-center`}>
@@ -473,18 +473,18 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ type: "spring", bounce: 0, duration: 0.8 }}
+                transition={{ type: "spring", bounce: 0, duration: 0.8 } as any}
                 className="md:col-span-2 row-span-1 bg-[#0a0a0a] text-white rounded-[2rem] p-10 md:p-14 relative overflow-hidden group shadow-xl"
               >
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#2970ff]/30 via-transparent to-[#7c3aed]/20 pointer-events-none" />
                 <motion.div
                   animate={{ rotate: [0, 360] }}
-                  transition={{ repeat: Infinity, duration: 60, ease: "linear" }}
+                  transition={{ repeat: Infinity, duration: 60, ease: "linear" } as any}
                   className="absolute -right-32 -bottom-32 w-[500px] h-[500px] rounded-full border border-white/5"
                 />
                 <motion.div
                   animate={{ rotate: [0, -360] }}
-                  transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+                  transition={{ repeat: Infinity, duration: 40, ease: "linear" } as any}
                   className="absolute -right-20 -bottom-20 w-[350px] h-[350px] rounded-full border border-white/5"
                 />
                 <div className="relative z-10 h-full flex flex-col justify-between max-w-lg">
@@ -510,7 +510,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ type: "spring", bounce: 0, duration: 0.8, delay: 0.1 }}
+                transition={{ type: "spring", bounce: 0, duration: 0.8, delay: 0.1 } as any}
                 className="md:col-span-1 row-span-1 bg-white rounded-[2rem] p-10 ring-1 ring-[#e5e7eb] shadow-sm relative overflow-hidden group hover:shadow-lg hover:ring-[#2970ff]/20 transition-all duration-500"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-[3rem] -z-0" />
@@ -536,7 +536,7 @@ export default function LandingPage() {
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
-                    transition={{ type: "spring", bounce: 0, duration: 0.8, delay: i * 0.1 }}
+                    transition={{ type: "spring", bounce: 0, duration: 0.8, delay: i * 0.1 } as any}
                     className="bg-white rounded-[2rem] p-10 ring-1 ring-[#e5e7eb] shadow-sm relative overflow-hidden group hover:shadow-lg hover:ring-[#2970ff]/20 transition-all duration-500"
                   >
                     <div className={`absolute top-0 right-0 w-32 h-32 ${f.bg} rounded-bl-[3rem] -z-0`} />
@@ -574,7 +574,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
-                  transition={{ delay: i * 0.12, type: "spring", bounce: 0, duration: 0.8 }}
+                  transition={{ delay: i * 0.12, type: "spring", bounce: 0, duration: 0.8 } as any}
                   className="p-8 bg-[#fafafa] rounded-[2rem] ring-1 ring-[#e5e7eb] flex flex-col gap-6 hover:shadow-lg hover:ring-[#2970ff]/20 transition-all duration-500 group"
                 >
                   <div className="flex gap-1">
@@ -635,12 +635,12 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#0e1932] to-[#0040c1] -z-10" />
           <motion.div
             animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" } as any}
             className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#2970ff]/30 blur-[100px] -z-10"
           />
           <motion.div
             animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 3 }}
+            transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 3 } as any}
             className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#7c3aed]/30 blur-[100px] -z-10"
           />
 
