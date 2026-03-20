@@ -8,7 +8,7 @@ import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
 
 export default function SettingsPage() {
-  const { user, updateUser } = useAuth();
+  const { user, fetchProfile, updateProfile } = useAuth();
   const { addToast } = useToast();
   const [isVerifying, setIsVerifying] = React.useState(false);
   const [otp, setOtp] = React.useState(['', '', '', '', '', '']);
@@ -18,19 +18,35 @@ export default function SettingsPage() {
   const [status, setStatus] = React.useState<{ type: 'error' | 'success' | null, message: string }>({ type: null, message: '' });
   
   // Profile Form States
-  const [name, setName] = React.useState(user?.name || 'AF');
-  const [email, setEmail] = React.useState(user?.email || 'faizan@tezminds.com');
-  const [company, setCompany] = React.useState(user?.company || 'Tezminds');
-  const [role, setRole] = React.useState(user?.role || 'Administrator');
-  const [bio, setBio] = React.useState(user?.bio || 'Helping brands connect with their customers through smart, interactive physical packaging funnels.');
-  const [profileImage, setProfileImage] = React.useState<string | null>(user?.image || null);
+  const [firstName, setFirstName] = React.useState(user?.firstName || '');
+  const [lastName, setLastName] = React.useState(user?.lastName || '');
+  const [email, setEmail] = React.useState(user?.email || '');
+  const [company, setCompany] = React.useState(user?.company || '');
+  const [role, setRole] = React.useState(user?.role || '');
+  const [bio, setBio] = React.useState(user?.bio || '');
+  const [avatar, setAvatar] = React.useState<string | null>(user?.avatar || null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [showEmailModal, setShowEmailModal] = React.useState(false);
   const [newEmail, setNewEmail] = React.useState('');
-  const [errors, setErrors] = React.useState<{ name?: string, email?: string }>({});
+  const [errors, setErrors] = React.useState<{ firstName?: string, email?: string }>({});
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const otpRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+
+  // Initial fetch to ensure we have the latest user data
+  React.useEffect(() => {
+    fetchProfile().then(data => {
+      setFirstName(data.firstName || '');
+      setLastName(data.lastName || '');
+      setEmail(data.email || '');
+      setCompany(data.company || '');
+      setRole(data.role || '');
+      setBio(data.bio || '');
+      setAvatar(data.avatar || null);
+    }).catch(() => {
+      // fallback to current user
+    });
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,19 +66,23 @@ export default function SettingsPage() {
       }
 
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const base64 = reader.result as string;
-        setProfileImage(base64);
-        updateUser({ image: base64 });
-        addToast('success', 'Profile image updated instantly!');
+        setAvatar(base64);
+        try {
+          await updateProfile({ avatar: base64 });
+          addToast('success', 'Profile image updated instantly!');
+        } catch (err) {
+          addToast('error', 'Upload failed', 'There was an error saving your image.');
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSaveProfile = async () => {
-    const newErrors: { name?: string, email?: string } = {};
-    if (!name.split(' ')[0]?.trim()) newErrors.name = 'First name is required';
+    const newErrors: { firstName?: string, email?: string } = {};
+    if (!firstName.trim()) newErrors.firstName = 'First name is required';
     if (!email.trim()) newErrors.email = 'Email is required';
 
     if (Object.keys(newErrors).length > 0) {
@@ -73,18 +93,23 @@ export default function SettingsPage() {
 
     setErrors({});
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1000));
-    updateUser({
-      name,
-      email,
-      company,
-      role,
-      bio,
-      image: profileImage
-    });
-    setIsSaving(false);
-    addToast('success', 'Profile updated successfully!', 'Your changes have been saved to your account.');
+    
+    try {
+      await updateProfile({
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`.trim(),
+        company,
+        role,
+        bio,
+        avatar
+      });
+      addToast('success', 'Profile updated successfully!', 'Your changes have been saved to your account.');
+    } catch (err) {
+      addToast('error', 'Update failed', 'There was an error saving your changes.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSendOtp = async () => {
@@ -164,10 +189,10 @@ export default function SettingsPage() {
                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                   <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-primary to-accent p-1 shadow-2xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500">
                     <div className="w-full h-full rounded-[2.3rem] bg-card flex items-center justify-center overflow-hidden">
-                      {profileImage ? (
-                        <img src={profileImage} alt="Avatar" className="w-full h-full object-cover" />
+                      {avatar ? (
+                        <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-5xl font-black text-primary">{name?.substring(0, 2).toUpperCase() || 'AF'}</span>
+                        <span className="text-5xl font-black text-primary">{firstName?.substring(0, 1).toUpperCase() || 'U'}</span>
                       )}
                     </div>
                   </div>
@@ -195,14 +220,14 @@ export default function SettingsPage() {
                   label="First Name" 
                   required
                   icon={User} 
-                  value={name.split(' ')[0] || ''} 
+                  value={firstName} 
                   onChange={(val) => {
-                    setName(val + ' ' + (name.split(' ')[1] || ''));
-                    if (errors.name) setErrors({...errors, name: undefined});
+                    setFirstName(val);
+                    if (errors.firstName) setErrors({...errors, firstName: undefined});
                   }} 
-                  error={errors.name}
+                  error={errors.firstName}
                 />
-                <ProfileInput label="Last Name" icon={UserCircle2} value={name.split(' ')[1] || ''} onChange={(val) => setName((name.split(' ')[0] || '') + ' ' + val)} />
+                <ProfileInput label="Last Name" icon={UserCircle2} value={lastName} onChange={setLastName} />
                 
                 <div className="md:col-span-2 space-y-4">
                   <div className="flex items-center justify-between">

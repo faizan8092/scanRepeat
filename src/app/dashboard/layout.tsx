@@ -89,10 +89,10 @@ export default function DashboardLayout({
               >
                 <div className="relative">
                   <div className="h-9 w-9 bg-gradient-to-tr from-primary to-accent rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-primary/20 overflow-hidden">
-                    {user?.image ? (
-                      <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      user?.name?.substring(0, 2).toUpperCase() || 'AF'
+                      user?.firstName?.substring(0, 1).toUpperCase() || user?.name?.substring(0, 2).toUpperCase() || 'U'
                     )}
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-card shadow-sm" />
