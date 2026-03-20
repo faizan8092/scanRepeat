@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Key, Eye, EyeOff, Smartphone, LogOut, ChevronRight, Save, Trash2, AlertCircle, X, Loader2 } from 'lucide-react';
+import { Key, Eye, EyeOff, Smartphone, Laptop, LogOut, ChevronRight, Save, Trash2, AlertCircle, X, Loader2, Info } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
@@ -259,14 +259,19 @@ export default function SecurityPage() {
         {/* Sidebar Sections */}
         <div className="lg:col-span-4 space-y-8">
            <div className="bg-card rounded-[2.5rem] border border-border p-8 shadow-sm">
-             <h3 className="text-xl font-black text-foreground mb-6">Active Sessions</h3>
-             <div className="space-y-6">
+             <h3 className="text-xl font-bold text-foreground mb-2">Active Sessions</h3>
+             {!isLoadingSessions && sessions.length > 0 && (
+               <p className="text-sm font-medium text-muted-foreground mb-6">
+                 You have <strong className="text-foreground">{sessions.length} active sessions</strong>, we only show you the top 3 most recent sessions here.
+               </p>
+             )}
+             <div className="space-y-3">
                 {isLoadingSessions ? (
                   <div className="flex justify-center p-4">
                     <Loader2 size={24} className="text-primary animate-spin" />
                   </div>
                 ) : sessions.length > 0 ? (
-                  sessions.map(session => (
+                  sessions.slice(0, 3).map((session, index) => (
                     <SessionItem 
                       key={session.id}
                       device={session.device || 'Unknown Device'} 
@@ -274,6 +279,8 @@ export default function SecurityPage() {
                       status={new Date(session.createdAt).toLocaleDateString()} 
                       icon={session.device?.toLowerCase().includes('iphone') || session.device?.toLowerCase().includes('android') ? 'phone' : 'laptop'}
                       onRevoke={() => handleRevokeSession(session.id)}
+                      sessionData={session}
+                      isCurrent={index === 0}
                     />
                   ))
                 ) : (
@@ -426,24 +433,71 @@ function SecurityInput({
   );
 }
 
-function SessionItem({ device, location, status, icon, onRevoke }: { device: string, location: string, status: string, icon: 'laptop' | 'phone', onRevoke?: () => void }) {
+function SessionItem({ device, location, status, icon, onRevoke, sessionData, isCurrent }: { device: string, location: string, status: string, icon: 'laptop' | 'phone', onRevoke?: () => void, sessionData?: any, isCurrent?: boolean }) {
+  const IconComponent = icon === 'laptop' ? Laptop : Smartphone;
+  
+  const formatDateTime = (dateStr: string) => {
+    return new Date(dateStr).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace('AM', 'AM').replace('PM', 'PM');
+  };
+
+  const formatDevice = (ua: string) => {
+    if (!ua || ua.length < 5) return 'Unknown Device';
+    if (!ua.includes('/')) return ua;
+    
+    let browser = 'Browser';
+    if (ua.includes('Chrome')) browser = 'Chrome';
+    else if (ua.includes('Firefox')) browser = 'Firefox';
+    else if (ua.includes('Safari')) browser = 'Safari';
+    else if (ua.includes('Edge')) browser = 'Edge';
+
+    let os = 'Unknown OS';
+    if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Mac OS') || ua.includes('Macintosh')) os = 'macOS';
+    else if (ua.includes('Linux')) os = 'Linux';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+    return `${browser} on ${os}`;
+  };
+
+  const deviceName = formatDevice(sessionData?.device || device);
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 group p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300">
-      <div className="flex items-center gap-4">
-        <div className="p-3 rounded-2xl bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-background transition-all duration-300">
-          <Smartphone size={18} />
+    <div className={cn(
+      "flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-[2rem] border transition-all duration-300 relative overflow-hidden group/session",
+      isCurrent ? "bg-primary/[0.03] border-primary/20" : "bg-card border-border hover:bg-secondary/50"
+    )}>
+      {isCurrent && (
+         <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+      )}
+      <div className="flex items-start gap-4">
+        <div className={cn(
+          "mt-0.5 p-2.5 rounded-2xl flex items-center justify-center transition-colors shadow-sm",
+          isCurrent ? "bg-primary text-background" : "bg-secondary text-foreground group-hover/session:bg-border border border-border"
+        )}>
+          <IconComponent size={20} strokeWidth={2} />
         </div>
-        <div>
-          <p className="text-sm font-black text-foreground">{device}</p>
-          <p className="text-[10px] text-muted-foreground font-bold">{location} • <span className={cn(status === 'Current' ? "text-success" : "text-muted-foreground")}>{status}</span></p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <p className="text-[15px] font-black tracking-tight text-foreground">{deviceName}</p>
+            {isCurrent && (
+              <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-black tracking-widest uppercase">
+                Current Session
+              </span>
+            )}
+          </div>
+          <div className="text-[12px] text-muted-foreground font-medium space-y-0.5">
+            <p className="text-foreground/80 font-bold">Logged in: <span className="text-foreground">{sessionData?.createdAt ? formatDateTime(sessionData.createdAt) : status}</span></p>
+            <p className="flex items-center gap-2"><span>IP: <span className="font-bold">{sessionData?.ip || location}</span></span> <span className="opacity-50">•</span> <span>Expires: {sessionData?.expiresAt ? formatDateTime(sessionData.expiresAt) : 'Never'}</span></p>
+          </div>
         </div>
       </div>
-      {onRevoke && (
+      
+      {onRevoke && !isCurrent && (
         <button 
           onClick={onRevoke}
-          className="text-xs font-black text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block"
+          className="self-end sm:self-center px-5 py-2.5 rounded-xl hover:bg-destructive text-muted-foreground hover:text-background text-xs font-bold transition-all whitespace-nowrap border border-border hover:border-destructive shadow-sm"
         >
-          Sign Out
+          Log out
         </button>
       )}
     </div>
