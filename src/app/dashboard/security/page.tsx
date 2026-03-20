@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
-import { Key, Eye, EyeOff, Smartphone, LogOut, ChevronRight, Save, Trash2, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Key, Eye, EyeOff, Smartphone, LogOut, ChevronRight, Save, Trash2, AlertCircle, X, Loader2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
@@ -22,6 +22,10 @@ export default function SecurityPage() {
     new: '',
     confirm: ''
   });
+
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = React.useState('');
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const validatePassword = (pass: string) => {
     const minLength = pass.length >= 8;
@@ -62,8 +66,20 @@ export default function SecurityPage() {
     }
   };
 
-  const handleDeleteAccount = () => {
-    addToast('delete', 'Account deletion requested', 'A confirmation link has been sent to your email.');
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    // Simulate API call for deletion
+    await new Promise(r => setTimeout(r, 1500));
+    setIsDeleting(false);
+    setShowDeleteModal(false);
+    setDeleteConfirmText('');
+    addToast('delete', 'Account deactivated', 'Your account has been permanently deleted.');
+    logout();
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+    setDeleteConfirmText('');
   };
 
   return (
@@ -206,12 +222,85 @@ export default function SecurityPage() {
                 <h3 className="text-lg font-black italic">Danger Zone</h3>
              </div>
              <p className="text-muted-foreground text-[11px] font-bold leading-relaxed mb-8 uppercase tracking-wider">Deleting your account is permanent and cannot be undone.</p>
-             <button className="w-full py-4 rounded-2xl bg-destructive text-background font-bold text-sm shadow-xl shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2">
+             <button 
+               onClick={openDeleteModal}
+               className="w-full py-4 rounded-2xl bg-destructive text-background font-bold text-sm shadow-xl shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2"
+             >
                 <Trash2 size={16} /> Delete Account
               </button>
             </div>
         </div>
       </div>
+
+      {/* Delete Account Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isDeleting && setShowDeleteModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-2xl overflow-hidden p-8 md:p-10"
+            >
+              <button 
+                onClick={() => setShowDeleteModal(false)}
+                className="absolute top-6 right-6 p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-colors"
+                disabled={isDeleting}
+              >
+                <X size={20} />
+              </button>
+
+              <div className="mb-8 pr-8">
+                <h2 className="text-2xl font-black text-foreground tracking-tight mb-6 mt-2">Delete account</h2>
+                
+                <div className="space-y-6 text-sm font-medium text-muted-foreground">
+                  <p>
+                    You are about to delete your account. All the data associated with this account will be permanently deleted.
+                  </p>
+                  <p>
+                    Please type <strong className="text-foreground font-black">DELETE</strong> below to proceed with your action.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <input 
+                  type="text"
+                  placeholder="Type DELETE to confirm"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-destructive/50 focus:ring-4 focus:ring-destructive/10 py-4 px-5 rounded-2xl text-sm font-bold transition-all outline-none"
+                />
+
+                <div className="flex items-center justify-end gap-3 pt-6 border-t border-border">
+                  <button 
+                    onClick={() => setShowDeleteModal(false)}
+                    disabled={isDeleting}
+                    className="px-6 py-3 rounded-2xl border border-border text-sm font-bold hover:bg-secondary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleDeleteAccount}
+                    disabled={deleteConfirmText !== 'DELETE' || isDeleting}
+                    className="px-6 py-3 rounded-2xl bg-destructive text-background text-sm font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-destructive/90 transition-all flex items-center gap-2"
+                  >
+                    {isDeleting ? <Loader2 size={16} className="animate-spin" /> : null}
+                    Delete account
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
