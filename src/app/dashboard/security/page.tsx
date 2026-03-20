@@ -6,6 +6,7 @@ import { Key, Eye, EyeOff, Smartphone, LogOut, ChevronRight, Save, Trash2, Alert
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
+import { updatePassword, getSessions, revokeAllSessions, revokeSession, Session } from '@/src/lib/auth-service';
 
 export default function SecurityPage() {
   const { logout } = useAuth();
@@ -23,6 +24,25 @@ export default function SecurityPage() {
     confirm: ''
   });
 
+  const [isUpdatingPassword, setIsUpdatingPassword] = React.useState(false);
+  const [sessions, setSessions] = React.useState<Session[]>([]);
+  const [isLoadingSessions, setIsLoadingSessions] = React.useState(true);
+
+  React.useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      const data = await getSessions();
+      setSessions(data);
+    } catch (err) {
+      console.error('Failed to fetch sessions:', err);
+    } finally {
+      setIsLoadingSessions(false);
+    }
+  };
+
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = React.useState('');
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -39,7 +59,7 @@ export default function SecurityPage() {
     return '';
   };
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword = async () => {
     const currentPassError = !passwords.current ? 'Current password is required.' : '';
     const newPassError = validatePassword(passwords.new);
     let sameAsOldError = '';
@@ -58,11 +78,43 @@ export default function SecurityPage() {
     });
 
     if (!currentPassError && !finalNewPassError && !confirmPassError) {
-      addToast('success', 'Password updated', 'Your account security has been strengthened.');
-      setPasswords({ current: '', new: '', confirm: '' });
-      setErrors({ current: '', new: '', confirm: '' });
+      setIsUpdatingPassword(true);
+      try {
+        await updatePassword({
+          currentPassword: passwords.current,
+          newPassword: passwords.new,
+          confirmPassword: passwords.confirm
+        });
+        addToast('success', 'Password updated', 'Your account security has been strengthened.');
+        setPasswords({ current: '', new: '', confirm: '' });
+      } catch (err: any) {
+        addToast('error', 'Update Failed', err.message || 'Failed to update password.');
+      } finally {
+        setIsUpdatingPassword(false);
+      }
     } else {
       addToast('error', 'Update Failed', 'Please fix the errors in the form.');
+    }
+  };
+
+  const handleRevokeSession = async (id: string) => {
+    try {
+      await revokeSession(id);
+      addToast('success', 'Session signed out', 'The device has been disconnected.');
+      setSessions(prev => prev.filter(s => s.id !== id));
+    } catch (err: any) {
+      addToast('error', 'Error', err.message || 'Could not sign out session.');
+    }
+  };
+
+  const handleRevokeAllSessions = async () => {
+    try {
+      await revokeAllSessions();
+      addToast('success', 'All sessions signed out', 'All devices have been disconnected.');
+      // Keep only current session or refetch
+      fetchSessions();
+    } catch (err: any) {
+      addToast('error', 'Error', 'Could not sign out sessions.');
     }
   };
 
@@ -163,9 +215,10 @@ export default function SecurityPage() {
               <div className="pt-4">
                 <button 
                   onClick={handleUpdatePassword}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl"
+                  disabled={isUpdatingPassword}
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl disabled:opacity-50"
                 >
-                  <Save size={18} />
+                  {isUpdatingPassword ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                   Update Password
                 </button>
               </div>
@@ -208,12 +261,33 @@ export default function SecurityPage() {
            <div className="bg-card rounded-[2.5rem] border border-border p-8 shadow-sm">
              <h3 className="text-xl font-black text-foreground mb-6">Active Sessions</h3>
              <div className="space-y-6">
-                <SessionItem device="MacBook Pro" location="San Francisco, US" status="Current" icon="laptop" />
-                <SessionItem device="iPhone 15" location="San Francisco, US" status="Active 2h ago" icon="phone" />
+                {isLoadingSessions ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 size={24} className="text-primary animate-spin" />
+                  </div>
+                ) : sessions.length > 0 ? (
+                  sessions.map(session => (
+                    <SessionItem 
+                      key={session.id}
+                      device={session.device || 'Unknown Device'} 
+                      location={session.ip || 'Unknown Location'} 
+                      status={new Date(session.createdAt).toLocaleDateString()} 
+                      icon={session.device?.toLowerCase().includes('iphone') || session.device?.toLowerCase().includes('android') ? 'phone' : 'laptop'}
+                      onRevoke={() => handleRevokeSession(session.id)}
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm font-bold text-muted-foreground text-center">No active sessions found.</p>
+                )}
              </div>
-             <button className="w-full mt-10 py-4 rounded-2xl border border-border text-sm font-bold text-muted-foreground hover:text-destructive hover:border-destructive/10 hover:bg-destructive/5 transition-all flex items-center justify-center gap-2">
-               <LogOut size={16} /> Sign out of all sessions
-             </button>
+             {sessions.length > 0 && (
+               <button 
+                 onClick={handleRevokeAllSessions}
+                 className="w-full mt-10 py-4 rounded-2xl border border-border text-sm font-bold text-muted-foreground hover:text-destructive hover:border-destructive/10 hover:bg-destructive/5 transition-all flex items-center justify-center gap-2"
+               >
+                 <LogOut size={16} /> Sign out of all sessions
+               </button>
+             )}
            </div>
 
            <div className="p-8 rounded-[2.5rem] bg-destructive/5 border border-destructive/10">
@@ -352,16 +426,26 @@ function SecurityInput({
   );
 }
 
-function SessionItem({ device, location, status, icon }: { device: string, location: string, status: string, icon: 'laptop' | 'phone' }) {
+function SessionItem({ device, location, status, icon, onRevoke }: { device: string, location: string, status: string, icon: 'laptop' | 'phone', onRevoke?: () => void }) {
   return (
-    <div className="flex items-center gap-4 group p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300">
-      <div className="p-3 rounded-2xl bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-background transition-all duration-300">
-        <Smartphone size={18} />
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 group p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300">
+      <div className="flex items-center gap-4">
+        <div className="p-3 rounded-2xl bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-background transition-all duration-300">
+          <Smartphone size={18} />
+        </div>
+        <div>
+          <p className="text-sm font-black text-foreground">{device}</p>
+          <p className="text-[10px] text-muted-foreground font-bold">{location} • <span className={cn(status === 'Current' ? "text-success" : "text-muted-foreground")}>{status}</span></p>
+        </div>
       </div>
-      <div>
-        <p className="text-sm font-black text-foreground">{device}</p>
-        <p className="text-[10px] text-muted-foreground font-bold">{location} • <span className={cn(status === 'Current' ? "text-success" : "text-muted-foreground")}>{status}</span></p>
-      </div>
+      {onRevoke && (
+        <button 
+          onClick={onRevoke}
+          className="text-xs font-black text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block"
+        >
+          Sign Out
+        </button>
+      )}
     </div>
   );
 }

@@ -129,4 +129,47 @@ export async function updateMe(data: Partial<AuthUser>): Promise<AuthUser> {
   return response.data || response;
 }
 
+export type UpdatePasswordRequest = {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+};
+
+export type Session = {
+  id: string;
+  device: string;
+  ip: string;
+  createdAt: string;
+  expiresAt: string;
+};
+
+export async function updatePassword(data: UpdatePasswordRequest): Promise<{ message: string }> {
+  const response = await apiFetch<any>(getApiUrl('/users/me/password'), {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  return response.data || response;
+}
+
+export async function getSessions(): Promise<Session[]> {
+  const response = await apiFetch<any>(getApiUrl('/users/me/sessions'), {
+    method: 'GET',
+  });
+  return response.data || response;
+}
+
+export async function revokeAllSessions(): Promise<{ message: string }> {
+  const response = await apiFetch<any>(getApiUrl('/users/me/sessions'), {
+    method: 'DELETE',
+  });
+  return response.data || response;
+}
+
+export async function revokeSession(id: string): Promise<{ message: string }> {
+  const response = await apiFetch<any>(getApiUrl(`/users/me/sessions/${encodeURIComponent(id)}`), {
+    method: 'DELETE',
+  });
+  return response.data || response;
+}
+
 export type ApiErrorResult = ApiError;
