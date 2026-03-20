@@ -64,11 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  const handleLoginSuccess = (data: { accessToken: string; user: AuthUser }) => {
-    setUser(data.user);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setAuthToken(data.accessToken);
-    localStorage.setItem('accessToken', data.accessToken);
+  const handleLoginSuccess = (data: { accessToken: string; user?: AuthUser }) => {
+    if (data.user) {
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    if (data.accessToken) {
+      setAuthToken(data.accessToken);
+      localStorage.setItem('accessToken', data.accessToken);
+    }
   };
 
   const login = async (email: string, password: string) => {
