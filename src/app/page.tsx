@@ -164,192 +164,124 @@ export default function LandingPage() {
       <Navbar />
 
       <main className="flex-1 relative">
-        <section ref={heroRef} className="relative min-h-screen flex items-center pt-32 pb-24 overflow-hidden">
+        <section ref={heroRef} className="relative min-h-[90vh] flex items-center pt-32 pb-24 overflow-hidden">
           {/* Immersive Background Design */}
-          <div className="absolute inset-0 bg-[#fafafa] -z-20" />
-          <div className="absolute inset-0 -z-10">
-            {/* Mesh Gradient / Shapes */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f8fafc] to-white -z-20" />
+          <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center">
+            {/* Central Glow behind phone */}
             <motion.div 
               animate={{ 
                 scale: [1, 1.1, 1],
-                rotate: [0, 5, 0],
-                x: [0, 20, 0]
+                rotate: [0, 15, 0]
               }}
-              transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" } as any}
-              className="absolute -top-[10%] -left-[5%] w-[800px] h-[800px] bg-[#2970ff]/10 blur-[130px] rounded-full" 
+              transition={{ repeat: Infinity, duration: 20, ease: "easeInOut" } as any}
+              className="absolute w-[600px] lg:w-[800px] h-[600px] lg:h-[800px] bg-gradient-to-tr from-cyan-300 via-blue-500 to-purple-500 rounded-full blur-[100px] opacity-25" 
             />
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.15, 1],
-                rotate: [0, -5, 0],
-                x: [0, -30, 0]
-              }}
-              transition={{ repeat: Infinity, duration: 20, ease: "easeInOut", delay: 2 } as any}
-              className="absolute top-[20%] -right-[10%] w-[600px] h-[600px] bg-[#7c3aed]/10 blur-[130px] rounded-full" 
-            />
-            <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-white to-transparent" />
-            
-            {/* Grid Pattern overlay */}
+            {/* Grid Pattern overlay for texture */}
             <div className="absolute inset-0 opacity-[0.03] [background-image:linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] [background-size:60px_60px]" />
           </div>
 
           <div className="container mx-auto px-4 relative z-10 hero-mesh">
-            <div className="max-w-7xl mx-auto flex flex-col items-center">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8 max-w-[1400px] mx-auto">
               
+              {/* LEFT COLUMN: Text Content */}
               <motion.div
-                style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+                style={{ y: heroY, opacity: heroOpacity }}
                 initial="hidden"
                 animate="show"
                 variants={stagger}
-                className="text-center flex flex-col items-center mb-16"
+                className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left lg:max-w-[450px]"
               >
-                {/* Modern Badge */}
-                <motion.div 
-                  variants={fadeUp} 
-                  className="group relative flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[#e5e7eb] text-[#374151] font-semibold text-[13px] mb-10 shadow-[0_2px_40px_-5px_rgba(41,112,255,0.1)] hover:border-[#2970ff]/30 transition-all cursor-pointer"
-                >
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2970ff] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-full w-full bg-[#2970ff]"></span>
+                {/* Avatars */}
+                <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8 bg-white/60 backdrop-blur-md pr-5 pl-2 py-2 rounded-full border border-gray-200/50 shadow-sm">
+                  <div className="flex -space-x-2">
+                    <img src="https://i.pravatar.cc/100?img=1" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                    <img src="https://i.pravatar.cc/100?img=2" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                    <img src="https://i.pravatar.cc/100?img=3" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                  </div>
+                  <span className="text-[13px] font-semibold text-gray-700">
+                    1500+ Trusted Brands
                   </span>
-                  Introducing ScanRepeat AI: Personalized Post-Scan Journeys
-                  <ArrowRight className="w-4 h-4 ml-0.5 text-[#9ca3af] transition-transform group-hover:translate-x-1" />
                 </motion.div>
 
                 {/* Impact Headline */}
                 <motion.h1 
                   variants={fadeUp} 
-                  className="text-[58px] md:text-[88px] lg:text-[110px] font-black tracking-[-0.05em] mb-10 leading-[0.98] max-w-6xl text-[#0a0a0a]"
+                  className="text-[48px] md:text-[64px] lg:text-[72px] font-black tracking-tight mb-6 leading-[1.05] text-[#0a0a0a]"
                 >
-                  Bridge the gap between <br className="hidden lg:block" />
-                  <span className="inline-flex relative">
-                    <span className="absolute -inset-2 bg-[#2970ff]/10 rounded-3xl -rotate-1 skew-x-1"></span>
-                    <span className="relative text-[#2970ff]">Physical Boxes</span>
-                  </span>
-                  & Digital Growth.
+                  Turn physical packaging into repeat <span className="text-[#2970ff]">sales</span>.
                 </motion.h1>
 
                 {/* Descriptive Subtext */}
                 <motion.p 
                   variants={fadeUp} 
-                  className="text-xl md:text-2xl text-[#4b5563] mb-14 max-w-3xl leading-[1.6] font-medium"
+                  className="text-lg text-gray-600 mb-10 leading-[1.6] font-medium max-w-xl"
                 >
-                  Stop letting customers buy once and vanish. Use intelligent QR codes to capture data, show guided tutorials, and drive auto-replenishment directly from the product box.
+                  Work smarter, create faster, and achieve more with ScanRepeat's advanced intelligent QR codes designed to bridge the physical-digital gap.
                 </motion.p>
-
-                {/* Primary Actions */}
-                <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-5 w-full max-w-lg mb-14">
-                  <Link 
-                    href="/signup" 
-                    className="group relative w-full sm:w-auto flex-1 inline-flex items-center justify-center rounded-full bg-[#0a0a0a] hover:bg-[#2970ff] px-10 py-5 text-[17px] font-bold text-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_40px_-10px_rgba(41,112,255,0.4)] transition-all duration-500 hover:-translate-y-1 active:scale-95 overflow-hidden"
-                  >
-                    {/* Button Shine Effect */}
-                    <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
-                    <span className="relative flex items-center gap-2">
-                      Scale your brand for free
-                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Link>
-                  <Link 
-                    href="#how-it-works" 
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-white hover:bg-[#f9fafb] px-10 py-5 text-[17px] font-bold text-[#171717] ring-1 ring-[#e5e7eb] shadow-sm hover:shadow-md transition-all duration-300 active:scale-95"
-                  >
-                    View Live Demo
-                  </Link>
-                </motion.div>
-
-                <motion.div variants={fadeUp} className="flex items-center gap-8 text-sm font-semibold text-[#8a8f98]">
-                  <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> 2,400+ Brands</span>
-                  <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Start in 60s</span>
-                  <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> No Card Required</span>
+                
+                <motion.div variants={fadeUp}>
+                   <Link 
+                     href="/signup" 
+                     className="inline-flex lg:hidden items-center justify-center rounded-full bg-[#0a0a0a] hover:bg-[#2970ff] px-8 py-4 text-base font-bold text-white shadow-xl transition-all duration-300"
+                   >
+                     Get Started Free
+                   </Link>
                 </motion.div>
               </motion.div>
 
-              {/* Advanced Mockup Visual */}
+              {/* CENTER COLUMN: Mobile Mockup */}
               <motion.div
-                initial={{ opacity: 0, y: 80, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: "spring", bounce: 0.1, duration: 1.5, delay: 0.6 } as any}
-                className="w-full relative px-4 lg:px-0"
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", bounce: 0.1, duration: 1.5, delay: 0.2 } as any}
+                className="flex-1 relative flex justify-center w-full max-w-[340px] lg:max-w-none lg:w-auto z-20"
               >
-                {/* 3D Glass Dashboard Container */}
-                <div className="relative group max-w-[1100px] mx-auto">
-                  {/* Decorative glow behind mockup */}
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#2970ff] to-[#7c3aed] rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 -z-10" />
-                  
-                  <div className="relative rounded-[2.2rem] bg-white p-2.5 md:p-4 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.15)] ring-1 ring-black/5 overflow-hidden">
-                    {/* Mac window controls mock */}
-                    <div className="flex items-center gap-1.5 px-6 py-4 border-b border-[#f3f4f6]">
-                      <div className="w-3 h-3 rounded-full bg-[#f87171]" />
-                      <div className="w-3 h-3 rounded-full bg-[#fbbf24]" />
-                      <div className="w-3 h-3 rounded-full bg-[#34d399]" />
+                {/* Mockup Container */}
+                <div className="relative w-full max-w-[320px] aspect-[1/2.15] bg-[#111] rounded-[3.5rem] p-3 sm:p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] ring-2 ring-black/10 mx-auto">
+                    {/* Screen inner */}
+                    <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative shadow-inner">
+                       {/* dynamic Island mock */}
+                       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[35%] h-6 bg-black rounded-full z-20"></div>
+                       {/* Top edge gradient representing phone screen edge */}
+                       <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/10 to-transparent z-10 pointer-events-none"></div>
+                       
+                       <img src="/Assets/hero-image.png" alt="ScanRepeat Interface" className="w-full h-full object-cover object-left-top opacity-95 scale-105" />
                     </div>
-                    
-                    <div className="relative overflow-hidden rounded-[1.2rem]">
-                      <img
-                        src="/Assets/hero-image.png"
-                        alt="ScanRepeat Intelligent Dashboard"
-                        className="w-full h-auto transition-transform duration-700 group-hover:scale-[1.015]"
-                      />
-                      {/* Interactive overlay vignette */}
-                      <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5 rounded-[1.2rem]" />
-                    </div>
+                </div>
+              </motion.div>
+
+              {/* RIGHT COLUMN: QR Code section */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ type: "spring", bounce: 0, duration: 1, delay: 0.4 } as any}
+                className="flex-[0.8] flex flex-col items-center lg:items-start w-full max-w-sm lg:max-w-[300px] z-10"
+              >
+                <div className="text-center lg:text-left mb-6 w-full">
+                  <h2 className="text-[28px] md:text-[36px] font-bold text-[#0a0a0a] leading-[1.1] mb-2 tracking-tight">
+                    Scan QR code to<br />try it out
+                  </h2>
+                </div>
+
+                <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl ring-1 ring-black/5 w-full flex flex-col items-center gap-8 border border-white">
+                  {/* QR Box with dot pattern imitation */}
+                  <div className="w-full aspect-square bg-[#f8faff] rounded-[1.5rem] flex items-center justify-center p-6 border border-[#e5e7eb] relative overflow-hidden group">
+                     {/* QR Code Graphic element */}
+                     <QrCode size={160} strokeWidth={1} className="text-[#2970ff] opacity-90 transition-transform duration-500 group-hover:scale-105" />
+                     {/* Overlay scanning line effect */}
+                     <motion.div 
+                       className="absolute top-0 left-0 w-full h-[2px] bg-[#2970ff]/60 shadow-[0_0_8px_2px_rgba(41,112,255,0.4)]"
+                       animate={{ y: [0, 200, 0] }}
+                       transition={{ repeat: Infinity, duration: 3, ease: "linear" } as any}
+                     />
                   </div>
 
-                  {/* High-Impact Floating Interaction Badges */}
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" } as any}
-                    className="absolute -left-4 md:-left-20 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] ring-1 ring-black/5 p-6 border border-white max-w-[220px] hidden md:block"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-                        <TrendingUp className="w-6 h-6" />
-                      </div>
-                      <span className="text-sm font-bold text-[#0a0a0a]">Conversion Rate</span>
-                    </div>
-                    <p className="text-3xl font-black text-[#0a0a0a] mb-1">38.4%</p>
-                    <p className="text-sm font-bold text-emerald-600 flex items-center gap-1">
-                      <TrendingUp className="w-4 h-4" />
-                      +12.5% this month
-                    </p>
-                  </motion.div>
-
-                  <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 } as any}
-                    className="absolute -right-4 md:-right-16 bottom-[15%] bg-[#171717] rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] p-7 text-white hidden md:block"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#2970ff] flex items-center justify-center text-white shadow-lg shadow-[#2970ff]/40">
-                        <Scan className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-black uppercase tracking-widest text-white/50">Total Scan Live</p>
-                        <p className="text-2xl font-black">2.4M+</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-1.5 items-end">
-                      {[30, 45, 60, 40, 70, 90, 100].map((h, i) => (
-                        <div key={i} className="flex-1 w-2 bg-[#2970ff] rounded-t-sm" style={{ height: `${h * 0.4}px` }} />
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring", bounce: 0.3 } as any}
-                    className="absolute right-4 md:-right-8 top-12 bg-white rounded-2xl shadow-xl ring-1 ring-black/5 px-5 py-4 hidden md:flex items-center gap-3"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-[#2970ff] flex items-center justify-center text-white shrink-0">
-                      <TrendingUp className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-[#6b7280] font-medium">Repeat rate</p>
-                      <p className="text-xl font-bold text-[#2970ff]">+38%</p>
-                    </div>
-                  </motion.div>
+                  <div className="flex gap-4 w-full">
+                     <Link href="/signup" className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-black text-white hover:bg-[#2970ff] text-sm font-bold shadow-lg transition-all">
+                        Create Yours <ArrowRight size={18} />
+                     </Link>
+                  </div>
                 </div>
               </motion.div>
 
