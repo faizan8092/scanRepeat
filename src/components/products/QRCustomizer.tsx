@@ -10,6 +10,7 @@ const BASE_URL = 'scanrepeat.com/p/';
 interface QRCustomizerProps {
   productName: string;
   shortCode: string;
+  qrDataUrl?: string;
   initialSettings?: QRSettings;
   onSave: (settings: QRSettings) => void;
   onBack?: () => void;
@@ -49,7 +50,7 @@ function ColorPickerPopover({ value, onChange, label }: { value: string; onChang
   );
 }
 
-export function QRCustomizer({ productName, shortCode, initialSettings, onSave, onBack, saveLabel = 'Save & Add to List →' }: QRCustomizerProps) {
+export function QRCustomizer({ productName, shortCode, qrDataUrl, initialSettings, onSave, onBack, saveLabel = 'Save & Add to List →' }: QRCustomizerProps) {
   const [settings, setSettings] = useState<QRSettings>(initialSettings ?? defaultQR);
   const url = `https://${BASE_URL}${shortCode}`;
   const set = (patch: Partial<QRSettings>) => setSettings(s => ({ ...s, ...patch }));
@@ -170,10 +171,14 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
           </div>
         </div>
 
-        {/* Live Preview */}
+      {/* Live Preview */}
         <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 bg-slate-50">
           <div className="bg-white rounded-3xl p-6 shadow-lg border flex flex-col items-center gap-3">
-            <QRCodeDisplay url={url} settings={settings} size={220} />
+            {qrDataUrl && JSON.stringify(settings) === JSON.stringify(initialSettings ?? defaultQR) ? (
+              <img src={qrDataUrl} alt="QR Preview" width={220} height={220} className="rounded-xl" />
+            ) : (
+              <QRCodeDisplay url={url} settings={settings} size={220} />
+            )}
             {settings.showLabel && (
               <p className="text-sm font-medium" style={{ color: settings.labelColor }}>{settings.labelText}</p>
             )}

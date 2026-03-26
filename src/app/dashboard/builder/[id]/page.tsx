@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import {
   DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, useSensor, useSensors, closestCenter,
@@ -12,7 +12,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useRouter } from 'next/navigation';
 
 import { BlockType, PageBlock, getDefaultProps, defaultTemplates, BrandTheme, defaultTheme } from '@/src/types/builder';
-import { getProduct, upsertProduct, generateShortCode } from '@/src/types/product';
+import { fetchProductById, updateProductPageApi } from '@/src/lib/product-service';
 import { BlockRenderer } from '@/src/components/builder/BlockRenderer';
 import { ColorSwatch } from '@/src/components/builder/BuilderControls';
 
@@ -138,7 +138,8 @@ function SortableBlock({
 }
 
 // ─── Main Builder Page ────────────────────────────────────────────────────────
-export default function BuilderPage({ params }: { params: { id: string } }) {
+export default function BuilderPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter ? useRouter() : null;
   const [blocks, setBlocks] = useState<PageBlock[]>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -147,60 +148,62 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
   const [showPreview, setShowPreview] = useState(false);
   const [productName, setProductName] = useState('Product Builder');
   const [productStatus, setProductStatus] = useState<'draft' | 'published'>('draft');
+  const [shortCode, setShortCode] = useState<string>('');
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(true);
 
-  // Load product from store on mount
-  useState(() => {
-    const p = getProduct(params.id);
-    if (p) {
-      setProductName(p.name);
-      setProductStatus(p.status === 'published' ? 'published' : 'draft');
-      if (p.pageBlocks?.length) setBlocks(p.pageBlocks);
-      if (p.themeColors) setTheme(p.themeColors);
+  // Load product from API on mount
+  useEffect(() => {
+    async function loadProduct() {
+      try {
+        setIsLoadingProduct(true);
+        const p = await fetchProductById(id);
+        setProductName(p.name);
+        setProductStatus(p.status === 'published' ? 'published' : 'draft');
+        setShortCode(p.shortCode || '');
+        if (p.pageBlocks?.length) setBlocks(p.pageBlocks as PageBlock[]);
+        // Merge with defaultTheme to prevent undefined values
+        if (p.themeColors) setTheme({ ...defaultTheme, ...p.themeColors });
+      } catch (err) {
+        console.error('Failed to load product:', err);
+        // Redirect if product not found
+        router?.push('/dashboard/products');
+      } finally {
+        setIsLoadingProduct(false);
+      }
     }
-  });
+    loadProduct();
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const saveDraft = useCallback(() => {
-    setSaving(true);
-    const p = getProduct(params.id);
-    const product = p ?? {
-      id: params.id,
-      name: productName,
-      type: 'page_builder' as const,
-      status: 'draft' as const,
-      shortCode: generateShortCode(8),
-      thumbnailUrl: undefined,
-      pageBlocks: blocks,
-      themeColors: theme,
-      qr: { foreground: '#000000', background: '#FFFFFF', logoUrl: '', logoSize: 20, dotStyle: 'square' as const, errorLevel: 'H' as const, margin: 4, showLabel: false, labelText: '', labelColor: '#374151' },
-      scans: 0, countries: 0, mobilePercent: 0, reorders: 0,
-      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-    };
-    upsertProduct({ ...product, pageBlocks: blocks, themeColors: theme, updatedAt: new Date().toISOString() });
-    setTimeout(() => { setSaving(false); setSavedAt('Saved'); setTimeout(() => setSavedAt(null), 2000); }, 400);
-  }, [params.id, blocks, theme, productName]);
+  const saveDraft = useCallback(async () => {
+    try {
+      setSaving(true);
+      await updateProductPageApi(id, { pageBlocks: blocks, themeColors: theme });
+      setSavedAt('Saved');
+      setTimeout(() => setSavedAt(null), 2000);
+    } catch (err: any) {
+      setSavedAt('Error saving');
+      setTimeout(() => setSavedAt(null), 3000);
+    } finally {
+      setSaving(false);
+    }
+  }, [id, blocks, theme]);
 
-  const publish = useCallback(() => {
-    setSaving(true);
-    const p = getProduct(params.id);
-    const product = p ?? {
-      id: params.id,
-      name: productName,
-      type: 'page_builder' as const,
-      status: 'draft' as const,
-      shortCode: generateShortCode(8),
-      thumbnailUrl: undefined,
-      pageBlocks: blocks,
-      themeColors: theme,
-      qr: { foreground: '#000000', background: '#FFFFFF', logoUrl: '', logoSize: 20, dotStyle: 'square' as const, errorLevel: 'H' as const, margin: 4, showLabel: false, labelText: '', labelColor: '#374151' },
-      scans: 0, countries: 0, mobilePercent: 0, reorders: 0,
-      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-    };
-    upsertProduct({ ...product, pageBlocks: blocks, themeColors: theme, status: 'published', publishedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
-    setProductStatus('published');
-    setTimeout(() => { setSaving(false); setSavedAt('Published!'); setTimeout(() => setSavedAt(null), 2500); }, 400);
-  }, [params.id, blocks, theme, productName]);
+  const publish = useCallback(async () => {
+    try {
+      setSaving(true);
+      await updateProductPageApi(id, { pageBlocks: blocks, themeColors: theme, status: 'published' });
+      setProductStatus('published');
+      setSavedAt('Published!');
+      setTimeout(() => setSavedAt(null), 2500);
+    } catch (err: any) {
+      setSavedAt('Error publishing');
+      setTimeout(() => setSavedAt(null), 3000);
+    } finally {
+      setSaving(false);
+    }
+  }, [id, blocks, theme]);
 
 
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -304,6 +307,15 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
 
   const allBlockTypes = Object.keys(iconMap) as BlockType[];
 
+  if (isLoadingProduct) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-background gap-4">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-medium text-muted-foreground">Loading builder...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       
@@ -320,10 +332,14 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <a href={`/p/${params.id}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground border rounded-lg hover:bg-secondary transition-colors">
+          <a href={shortCode ? `/p/${shortCode}` : '#'} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground border rounded-lg hover:bg-secondary transition-colors">
             <Eye size={14} /> Preview
           </a>
-          {savedAt && <span className="text-xs text-green-600 font-medium">{savedAt}</span>}
+          {savedAt && (
+            <span className={`text-xs font-medium ${
+              savedAt.startsWith('Error') ? 'text-destructive' : 'text-green-600'
+            }`}>{savedAt}</span>
+          )}
           <button onClick={saveDraft} disabled={saving} className="px-4 py-1.5 text-sm font-medium border rounded-lg hover:bg-secondary transition-colors disabled:opacity-50">
             {saving ? '…' : 'Save Draft'}
           </button>

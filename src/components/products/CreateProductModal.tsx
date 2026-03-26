@@ -9,6 +9,8 @@ import {
 } from '@/src/types/product';
 import { defaultTheme } from '@/src/types/builder';
 import { QRCustomizer } from './QRCustomizer';
+import { createProductApi, uploadFileApi } from '@/src/lib/product-service';
+import { useToast } from '@/src/lib/toast-context';
 
 type Step = 'type_select' | 'page_details' | 'file_details' | 'url_details' | 'qr_customizer';
 
@@ -114,11 +116,13 @@ function FileDropzone({ file, onFile }: { file: File | null; onFile: (f: File) =
 }
 
 // ─── Product thumbnail dropzone ───────────────────────────────────────────────
-function ThumbnailUpload({ url, onUrl }: { url: string; onUrl: (v: string) => void }) {
+function ThumbnailUpload({ url, onFile, onUrl }: { url: string; onFile: (f: File) => void; onUrl: (v: string) => void }) {
   const onDrop = useCallback((files: File[]) => {
-    // Create local object URL for preview
-    if (files[0]) onUrl(URL.createObjectURL(files[0]));
-  }, [onUrl]);
+    if (files[0]) {
+      onUrl(URL.createObjectURL(files[0]));
+      onFile(files[0]);
+    }
+  }, [onUrl, onFile]);
   const { getRootProps, getInputProps } = useDropzone({ onDrop, maxFiles: 1, accept: { 'image/*': [] } });
 
   return (
@@ -186,62 +190,86 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [destUrl, setDestUrl] = useState('');
   const [qrSettings, setQrSettings] = useState<QRSettings>(defaultQR);
-
   const slugAutoSet = React.useRef(false);
+
+  const [isCreating, setIsCreating] = useState(false);
+  const { addToast } = useToast();
+
   const handleNameChange = (v: string) => {
     setName(v);
     if (!slugAutoSet.current) setSlug(slugFromName(v));
   };
   const handleSlugChange = (v: string) => { setSlug(v); slugAutoSet.current = true; };
 
-  const buildProduct = (extra?: Partial<Product>): Product => ({
-    id: `prd_${Date.now()}`,
-    name,
-    type: selectedType,
-    status: 'draft',
-    shortCode: slug || generateShortCode(8),
-    thumbnailUrl,
-    pageBlocks: [],
-    themeColors: defaultTheme,
-    fileUrl: file ? URL.createObjectURL(file) : undefined,
-    fileType: file ? (file.type.includes('pdf') ? 'pdf' : file.type.includes('image') ? 'image' : 'video') : undefined,
-    fileName: file?.name,
-    destinationUrl: destUrl,
-    qr: qrSettings,
-    scans: 0,
-    countries: 0,
-    mobilePercent: 0,
-    reorders: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...extra,
-  });
-
   const handleTypeSelect = (type: ProductType) => {
     setSelectedType(type);
     setStep(type === 'page_builder' ? 'page_details' : type === 'file' ? 'file_details' : 'url_details');
   };
 
-  const goToBuilder = () => {
-    const p = buildProduct({ status: 'draft' });
-    upsertProduct(p);
-    onCreated?.(p);
-    onClose();
-    router.push(`/dashboard/builder/${p.id}`);
+  const goToBuilder = async () => {
+    setStep('qr_customizer');
   };
 
   const goToQRCustomizer = () => {
     setStep('qr_customizer');
   };
 
-  const saveQRProduct = (settings: QRSettings) => {
-    const p = buildProduct({ status: 'published', qr: settings, publishedAt: new Date().toISOString() });
-    upsertProduct(p);
-    onCreated?.(p);
-    onClose();
+  const saveQRProduct = async (settings: QRSettings) => {
+    try {
+      setIsCreating(true);
+      
+      let finalThumbnail = thumbnailUrl;
+      if (thumbnailFile) {
+        const upload = await uploadFileApi(thumbnailFile);
+        finalThumbnail = upload.url;
+      }
+
+      let finalFileUrl = undefined;
+      let finalFileType = undefined;
+      if (selectedType === 'file' && file) {
+        const upload = await uploadFileApi(file);
+        finalFileUrl = upload.url;
+        finalFileType = file.type.includes('pdf') ? 'application/pdf' : file.type;
+      }
+
+      const p = await createProductApi({
+        name,
+        type: selectedType,
+        thumbnailUrl: finalThumbnail,
+        shortCode: slug || undefined,
+        destinationUrl: selectedType === 'external_url' ? destUrl : undefined,
+        fileUrl: finalFileUrl,
+        fileType: finalFileType,
+        // QR Settings mapping
+        qrForeground: settings.foreground,
+        qrBackground: settings.background,
+        qrLogoUrl: settings.logoUrl || undefined,
+        qrDotStyle: settings.dotStyle,
+        qrErrorLevel: settings.errorLevel,
+        qrLabelText: settings.labelText || undefined,
+        qrMargin: settings.margin,
+        status: selectedType === 'page_builder' ? 'draft' : 'published'
+      });
+
+      onCreated?.(p);
+
+      if (selectedType === 'page_builder') {
+        router.push(`/dashboard/builder/${p.id}`);
+        // Only close after a tiny delay or let the route change handle it
+        setTimeout(onClose, 100);
+      } else {
+        onClose();
+        addToast('success', 'Product created!', 'Your new QR campaign is ready.');
+      }
+    } catch (err: any) {
+      addToast('error', 'Creation failed', err.message || 'Could not create product on the server.');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const canContinuePageDetails = name.trim().length > 0;
@@ -252,7 +280,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
     page_details: 'type_select',
     file_details: 'type_select',
     url_details: 'type_select',
-    qr_customizer: selectedType === 'file' ? 'file_details' : 'url_details',
+    qr_customizer: selectedType === 'page_builder' ? 'page_details' : selectedType === 'file' ? 'file_details' : 'url_details',
   };
 
   return (
@@ -263,6 +291,16 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
         style={{ maxHeight: '92vh', animation: 'modalIn 0.18s ease-out' }}
       >
         <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
+
+        {isCreating && (
+          <div className="absolute inset-0 z-[9990] bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <Loader2 size={32} className="animate-spin" />
+            </div>
+            <p className="text-sm font-bold text-slate-800">Creating your product...</p>
+            <p className="text-xs text-slate-500 tracking-wide uppercase">Finalizing your QR code</p>
+          </div>
+        )}
 
         {/* ──────────────── TYPE SELECT ──────────────────────────────── */}
         {step === 'type_select' && (
@@ -322,7 +360,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Product Image <span className="text-slate-400 font-normal">(optional)</span></label>
-                <ThumbnailUpload url={thumbnailUrl} onUrl={setThumbnailUrl} />
+                <ThumbnailUpload url={thumbnailUrl} onFile={setThumbnailFile} onUrl={setThumbnailUrl} />
               </div>
               <ShortUrlField slug={slug} onChange={handleSlugChange} />
             </div>

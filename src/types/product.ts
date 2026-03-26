@@ -1,7 +1,7 @@
 import { PageBlock, BrandTheme, defaultTheme } from './builder';
 
 export type ProductType = 'page_builder' | 'file' | 'external_url';
-export type ProductStatus = 'draft' | 'published' | 'archived';
+export type ProductStatus = 'draft' | 'published' | 'archived' | 'paused';
 
 export interface QRSettings {
   foreground: string;
@@ -23,6 +23,7 @@ export interface Product {
   status: ProductStatus;
   shortCode: string;
   thumbnailUrl?: string;
+  isLockedDueToPlan?: boolean;
 
   // Page builder
   pageBlocks: PageBlock[];
@@ -36,18 +37,48 @@ export interface Product {
   // External URL
   destinationUrl?: string;
 
-  // QR
-  qr: QRSettings;
+  qr: QRSettings; // Virtual / Legacy
+  qrDataUrl?: string;
 
-  // Stats (mock)
+  qrForeground?: string;
+  qrBackground?: string;
+  qrLogoUrl?: string;
+  qrDotStyle?: 'square' | 'rounded' | 'dots';
+  qrErrorLevel?: 'L' | 'M' | 'H' | 'Q';
+  qrLabelText?: string;
+  qrLabelColor?: string;
+  qrLogoSize?: number;
+  qrShowLabel?: boolean;
+  qrMargin?: number;
+
+  // Stats
   scans: number;
   countries: number;
+  totalScans?: number;
+  uniqueCountries?: number;
+  totalReviews?: number;
   mobilePercent: number;
   reorders: number;
 
   createdAt: string;
   updatedAt: string;
   publishedAt?: string;
+}
+
+/** Helper to extract QR settings from product fields with defaults */
+export function getProductQR(p: Product): QRSettings {
+  return {
+    foreground: p.qrForeground || p.qr?.foreground || defaultQR.foreground,
+    background: p.qrBackground || p.qr?.background || defaultQR.background,
+    logoUrl: p.qrLogoUrl || p.qr?.logoUrl || defaultQR.logoUrl,
+    logoSize: p.qrLogoSize || p.qr?.logoSize || defaultQR.logoSize,
+    dotStyle: (p.qrDotStyle || p.qr?.dotStyle || defaultQR.dotStyle) as 'square' | 'rounded' | 'dots',
+    errorLevel: (p.qrErrorLevel || p.qr?.errorLevel || defaultQR.errorLevel) as 'L' | 'M' | 'H' | 'Q',
+    margin: p.qrMargin !== undefined ? p.qrMargin : (p.qr?.margin !== undefined ? p.qr.margin : defaultQR.margin),
+    showLabel: p.qrShowLabel !== undefined ? p.qrShowLabel : (p.qr?.showLabel !== undefined ? p.qr.showLabel : defaultQR.showLabel),
+    labelText: p.qrLabelText || p.qr?.labelText || defaultQR.labelText,
+    labelColor: p.qrLabelColor || p.qr?.labelColor || defaultQR.labelColor,
+  };
 }
 
 // ─── Default QR Settings ──────────────────────────────────────────────────────

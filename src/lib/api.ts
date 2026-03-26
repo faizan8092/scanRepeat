@@ -10,11 +10,22 @@ export function setAuthToken(token?: string) {
   authToken = token;
 }
 
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token: string) {
+  refreshSubscribers.map(cb => cb(token));
+  refreshSubscribers = [];
+}
+
 export async function apiFetch<T = any>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Build a Headers object from various possible inputs to satisfy typings
   const headers = new Headers();
 
   // apply provided headers
@@ -29,8 +40,10 @@ export async function apiFetch<T = any>(
     }
   }
 
-  // ensure JSON content-type
-  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  // ensure JSON content-type if NOT sending form data
+  if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
 
   if (authToken && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${authToken}`);
@@ -41,6 +54,52 @@ export async function apiFetch<T = any>(
     headers,
     credentials: 'include',
   });
+
+  // Handle 401 Unauthorized for token refresh
+  if (res.status === 401 && !url.includes('/auth/login') && !url.includes('/auth/refresh')) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      try {
+        const refreshRes = await fetch(getApiUrl('/auth/refresh'), {
+          method: 'POST',
+          credentials: 'include',
+        });
+        
+        if (refreshRes.ok) {
+          const { data } = await refreshRes.json();
+          const newToken = data.accessToken;
+          setAuthToken(newToken);
+          localStorage.setItem('accessToken', newToken);
+          isRefreshing = false;
+          onRefreshed(newToken);
+        } else {
+          isRefreshing = false;
+          window.dispatchEvent(new CustomEvent('scanrepeat_unauthorized'));
+          throw new Error('Session expired');
+        }
+      } catch (err) {
+        isRefreshing = false;
+        window.dispatchEvent(new CustomEvent('scanrepeat_unauthorized'));
+        throw err;
+      }
+    }
+
+    // Wait for the refresh to complete
+    return new Promise((resolve, reject) => {
+      subscribeTokenRefresh(async (newToken: string) => {
+        try {
+          headers.set('Authorization', `Bearer ${newToken}`);
+          const retryRes = await fetch(url, { ...options, headers, credentials: 'include' });
+          const text = await retryRes.text();
+          const data = text ? JSON.parse(text) : null;
+          if (!retryRes.ok) throw { status: retryRes.status, message: data?.message };
+          resolve(data as T);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+  }
 
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;

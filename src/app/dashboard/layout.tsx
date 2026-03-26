@@ -8,6 +8,8 @@ import { Bell, Search, User, Settings, LogOut, ChevronDown, Sparkles, Shield, Cr
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/src/lib/auth-context';
 import { cn } from '@/src/lib/utils';
+import { useUpgradePrompt } from '@/src/hooks/useUpgradePrompt';
+import { UpgradeModal } from '@/src/components/ui/UpgradeModal';
 
 export default function DashboardLayout({
   children,
@@ -20,6 +22,7 @@ export default function DashboardLayout({
   const isBuilder = pathname?.startsWith('/dashboard/builder');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { showModal, triggerReason, closeModal } = useUpgradePrompt();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -168,6 +171,8 @@ export default function DashboardLayout({
           </motion.div>
         </main>
       </div>
+
+      <UpgradeModal isOpen={showModal} reason={triggerReason} onClose={closeModal} />
     </div>
   );
 }

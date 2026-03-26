@@ -1,78 +1,129 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search } from 'lucide-react';
-import { Product, loadProducts, saveProducts } from '@/src/types/product';
+import { Plus, Search, ChevronLeft, ChevronRight, Loader2, QrCode } from 'lucide-react';
+import { Product, MOCK_PRODUCTS } from '@/src/types/product';
 import { useToast } from '@/src/lib/toast-context';
 import { ProductCard } from '@/src/components/products/ProductCard';
 import { CreateProductModal } from '@/src/components/products/CreateProductModal';
 import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
+import { fetchProducts, deleteProductApi, updateProductApi } from '@/src/lib/product-service';
+import { fetchMyPlan } from '@/src/lib/billing-service';
 
-type StatusFilter = 'all' | 'published' | 'draft' | 'archived';
+type StatusFilter = 'all' | 'published' | 'paused' | 'draft' | 'archived';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useToast();
+  
+  // Pagination & Filters state
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<StatusFilter>('all');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  
   const [showCreate, setShowCreate] = useState(false);
   const [isZeroData, setIsZeroData] = useState(false);
+  const [isExhausted, setIsExhausted] = useState(false);
 
-  // Load on mount
+  // Unified fetch function
+  const loadData = useCallback(async () => {
+    if (isZeroData) {
+      setProducts(MOCK_PRODUCTS);
+      setTotal(MOCK_PRODUCTS.length);
+      setTotalPages(1);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const [data, planData] = await Promise.all([
+        fetchProducts({
+          page,
+          limit,
+          search,
+          status: filter
+        }),
+        fetchMyPlan().catch(() => null)
+      ]);
+      
+      setProducts(data.products);
+      setTotal(data.total);
+      setTotalPages(data.totalPages);
+      if (planData) setIsExhausted(planData.usage.products.exhausted);
+      if (page > data.totalPages && data.totalPages > 0) {
+        setPage(1);
+      }
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
+      addToast('error', 'Fetch failed', 'Could not load products from the server.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, limit, search, filter, isZeroData, addToast]);
+
+  // Load data when dependencies change
   useEffect(() => {
-    setProducts(loadProducts());
-  }, []);
+    const timer = setTimeout(() => {
+      loadData();
+    }, isZeroData ? 0 : 300); // No debounce for mock mode
+    return () => clearTimeout(timer);
+  }, [loadData, isZeroData]);
 
-  const handleUpdate = useCallback((updated: Product) => {
-    setProducts(prev => {
-      const exists = prev.find(p => p.id === updated.id);
-      const next = exists ? prev.map(p => p.id === updated.id ? updated : p) : [updated, ...prev];
-      saveProducts(next);
-      return next;
-    });
-    addToast('success', `"${updated.name}" updated`, 'Product details have been synchronized.');
-  }, [addToast]);
+  const handleUpdate = useCallback(async (updated: Product) => {
+    if (isZeroData) {
+      setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+      addToast('success', `"${updated.name}" updated (Mock)`, 'Mock data change simulated.');
+      return;
+    }
+    try {
+      await updateProductApi(updated.id, updated);
+      await loadData();
+      addToast('success', `"${updated.name}" updated`, 'Product details have been synchronized.');
+    } catch (err) {
+      addToast('error', 'Update failed', 'Could not sync changes to the server.');
+    }
+  }, [loadData, addToast, isZeroData]);
 
-  const handleDelete = useCallback((id: string) => {
-    setProducts(prev => {
-      const next = prev.filter(p => p.id !== id);
-      saveProducts(next);
-      return next;
-    });
-    addToast('delete', 'Product deleted', 'The record has been permanently removed.');
-  }, [addToast]);
+  const handleDelete = useCallback(async (id: string) => {
+    if (isZeroData) {
+      setProducts(prev => prev.filter(p => p.id !== id));
+      addToast('delete', 'Product deleted (Mock)', 'Mock data removal simulated.');
+      return;
+    }
+    try {
+      await deleteProductApi(id);
+      await loadData();
+      addToast('delete', 'Product deleted', 'The record has been permanently removed.');
+    } catch (err) {
+      addToast('error', 'Delete failed', 'Could not remove product from the server.');
+    }
+  }, [loadData, addToast, isZeroData]);
 
-  const handleCreated = useCallback((product: Product) => {
-    setProducts(prev => {
-      const next = [product, ...prev.filter(p => p.id !== product.id)];
-      saveProducts(next);
-      return next;
-    });
+  const handleCreated = useCallback(async (product: Product) => {
+    setShowCreate(false);
+    if (isZeroData) {
+      setProducts(prev => [product, ...prev]);
+      addToast('success', `"${product.name}" created (Mock)`, 'Simulated product creation.');
+      return;
+    }
+    await loadData();
     addToast('success', `"${product.name}" created successfully!`, 'New product is now live on your dashboard.');
-  }, [addToast]);
+  }, [loadData, addToast, isZeroData]);
 
-  // Filtered + searched
-  const filtered = products.filter(p => {
-    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === 'all' || p.status === filter;
-    return matchSearch && matchFilter;
-  });
-
-  const counts = {
-    all: products.filter(p => p.status !== 'archived').length,
-    published: products.filter(p => p.status === 'published').length,
-    draft: products.filter(p => p.status === 'draft').length,
-    archived: products.filter(p => p.status === 'archived').length,
-  };
-
-  const tabs: { key: StatusFilter; label: string; count: number }[] = [
-    { key: 'all', label: 'All', count: counts.all },
-    { key: 'published', label: 'Published', count: counts.published },
-    { key: 'draft', label: 'Draft', count: counts.draft },
-    { key: 'archived', label: 'Archived', count: counts.archived },
+  const tabs: { key: StatusFilter; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'published', label: 'Published' },
+    { key: 'paused', label: 'Paused' },
+    { key: 'draft', label: 'Draft' },
+    { key: 'archived', label: 'Archived' },
   ];
 
-  const showZeroState = isZeroData || products.length === 0;
+  const showZeroState = products.length === 0 && !isLoading && !search && filter === 'all' && !isZeroData;
 
   return (
     <>
@@ -82,26 +133,37 @@ export default function ProductsPage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Products</h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              {counts.all} {counts.all === 1 ? 'product' : 'products'}
-              {counts.published > 0 && ` · ${counts.published} published`}
-              {counts.draft > 0 && ` · ${counts.draft} draft`}
+              {total} {total === 1 ? 'product' : 'products'} {isZeroData ? '(Mock Mode)' : 'total'}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsZeroData(!isZeroData)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-warning/10 border border-warning/20 text-sm font-bold text-warning hover:bg-warning/20 transition-all shadow-sm"
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm ${
+                isZeroData 
+                  ? 'bg-warning/20 border-warning text-warning' 
+                  : 'bg-warning/10 border-warning/20 text-warning hover:bg-warning/20'
+              }`}
             >
-              {isZeroData ? 'Show Mock Data' : 'Zero State'}
+              <QrCode size={18} />
+              {isZeroData ? 'Show Real Data' : 'Show Mock Data'}
             </button>
             <button
-              onClick={() => setShowCreate(true)}
+              onClick={() => {
+                if (isExhausted && !isZeroData) {
+                  // Fire global event for real limit reached
+                  window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'));
+                  return;
+                }
+                setShowCreate(true);
+              }}
               className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Plus size={18} /> Create Product
             </button>
           </div>
         </div>
+
 
         {/* ── Filter + Search bar ─────────────────────────────────────── */}
         <div className="flex items-center gap-4 flex-wrap">
@@ -110,7 +172,7 @@ export default function ProductsPage() {
             {tabs.map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setFilter(tab.key)}
+                onClick={() => { setFilter(tab.key); setPage(1); }}
                 className={`px-3.5 py-1.5 text-sm font-medium rounded-lg transition-all ${
                   filter === tab.key
                     ? 'bg-white shadow-sm text-slate-900'
@@ -118,13 +180,6 @@ export default function ProductsPage() {
                 }`}
               >
                 {tab.label}
-                {tab.count > 0 && (
-                  <span className={`ml-1.5 text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
-                    filter === tab.key ? 'bg-primary/10 text-primary' : 'bg-slate-200 text-slate-400'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
               </button>
             ))}
           </div>
@@ -135,7 +190,7 @@ export default function ProductsPage() {
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={e => { setSearch(e.target.value); setPage(1); }}
                 placeholder="Search products..."
                 className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl bg-white focus:border-primary outline-none transition-colors"
               />
@@ -144,13 +199,18 @@ export default function ProductsPage() {
         </div>
 
         {/* ── Product List ────────────────────────────────────────────── */}
-        {showZeroState ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+             <Loader2 size={32} className="text-primary animate-spin mb-4" />
+             <p className="text-sm font-medium text-slate-500 tracking-wide uppercase text-[10px]">Loading products...</p>
+          </div>
+        ) : showZeroState ? (
           <div className="mt-8">
             <ZeroDataView />
           </div>
-        ) : filtered.length > 0 ? (
-          <div className="space-y-4">
-            {filtered.map(product => (
+        ) : products.length > 0 ? (
+          <div className="space-y-4 pb-12">
+            {products.map(product => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -158,6 +218,45 @@ export default function ProductsPage() {
                 onDelete={handleDelete}
               />
             ))}
+
+            {/* Pagination Controls */}
+            <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-100">
+               <div className="flex items-center gap-4">
+                  <span className="text-sm text-slate-500 font-medium">Show</span>
+                  <select 
+                    value={limit}
+                    onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+                    className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm outline-none focus:border-primary"
+                  >
+                    {[10, 20, 50, 100].map(val => (
+                       <option key={val} value={val}>{val}</option>
+                    ))}
+                  </select>
+                  <span className="text-sm text-slate-500 font-medium">per page</span>
+               </div>
+
+               <div className="flex items-center gap-1.5">
+                  <button 
+                    disabled={page === 1}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  
+                  <div className="flex items-center px-4">
+                    <span className="text-sm font-bold text-slate-900">Page {page} of {totalPages || 1}</span>
+                  </div>
+
+                  <button 
+                    disabled={page >= totalPages}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+               </div>
+            </div>
           </div>
         ) : (
           /* Empty state — filter/search has no results */
@@ -165,8 +264,8 @@ export default function ProductsPage() {
             <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
               <Search size={24} className="text-slate-400" />
             </div>
-            <h2 className="text-sm font-bold text-slate-700 mb-1">No products match "{search}"</h2>
-            <button onClick={() => { setSearch(''); setFilter('all'); }} className="text-sm text-primary hover:underline mt-2">Clear filters</button>
+            <h2 className="text-sm font-bold text-slate-700 mb-1">No products match your search</h2>
+            <button onClick={() => { setSearch(''); setFilter('all'); setPage(1); }} className="text-sm text-primary hover:underline mt-2">Clear filters</button>
           </div>
         )}
       </div>
@@ -181,3 +280,4 @@ export default function ProductsPage() {
     </>
   );
 }
+

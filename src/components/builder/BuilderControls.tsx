@@ -41,11 +41,11 @@ export function ColorSwatch({ value, onChange, label }: { value: string; onChang
           style={{ top: pos.top, left: pos.left, minWidth: 208 }}
         >
           {label && <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">{label}</p>}
-          <HexColorPicker color={value} onChange={onChange} style={{ width: '100%', height: 140 }} />
+          <HexColorPicker color={value || '#000000'} onChange={onChange} style={{ width: '100%', height: 140 }} />
           <div className="flex items-center gap-2 mt-2 border rounded-lg px-2 py-1 bg-secondary/30">
             <span className="text-xs font-mono text-muted-foreground">#</span>
             <input
-              value={value.replace('#', '')}
+              value={(value || '').replace('#', '')}
               onChange={(e) => onChange('#' + e.target.value)}
               maxLength={6}
               className="flex-1 text-xs font-mono uppercase bg-transparent outline-none"

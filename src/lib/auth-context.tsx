@@ -52,6 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
+    // Listen for unauthorized events from apiFetch
+    const handleUnauthorized = () => {
+      setUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('accessToken');
+      setAuthToken(undefined);
+      addToast('error', 'Session Expired', 'Please login again to continue.');
+      router.push('/login');
+    };
+
+    window.addEventListener('scanrepeat_unauthorized', handleUnauthorized);
+
     // Attempt to refresh session on load
     (async () => {
       try {
@@ -62,6 +74,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     })();
+
+    return () => {
+      window.removeEventListener('scanrepeat_unauthorized', handleUnauthorized);
+    };
   }, []);
 
   const handleLoginSuccess = (data: { accessToken: string; user?: AuthUser }) => {

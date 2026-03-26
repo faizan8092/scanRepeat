@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Copy, Check, Download, Palette } from 'lucide-react';
-import { Product, QRSettings, defaultQR } from '@/src/types/product';
+import { Product, QRSettings, defaultQR, getProductQR } from '@/src/types/product';
 import { QRCodeDisplay, downloadQRPng, downloadQRSvg } from './QRCodeDisplay';
 import { HexColorPicker } from 'react-colorful';
 
@@ -18,14 +18,15 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
   const [copied, setCopied] = useState(false);
   const [size, setSize] = useState<SizeOption>(400);
   const url = `https://${BASE_URL}${product.shortCode}`;
+  const qrSettings = getProductQR(product);
 
   const copy = () => {
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  const downloadPng = () => downloadQRPng(url, product.qr, size, product.name.replace(/\s+/g, '-').toLowerCase());
-  const downloadSvg = () => downloadQRSvg(url, product.qr, product.name.replace(/\s+/g, '-').toLowerCase());
+  const downloadPng = () => downloadQRPng(url, qrSettings, size, product.name.replace(/\s+/g, '-').toLowerCase());
+  const downloadSvg = () => downloadQRSvg(url, qrSettings, product.name.replace(/\s+/g, '-').toLowerCase());
 
   return (
     <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4">
@@ -50,7 +51,17 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
         {/* QR Preview */}
         <div className="flex flex-col items-center px-6 py-6 gap-4">
           <div className="bg-slate-50 rounded-2xl p-5 border">
-            <QRCodeDisplay url={url} settings={product.qr} size={200} />
+            {product.qrDataUrl ? (
+              <img 
+                src={product.qrDataUrl} 
+                alt="QR Code" 
+                width={200} 
+                height={200} 
+                className="rounded-xl"
+              />
+            ) : (
+              <QRCodeDisplay url={url} settings={qrSettings} size={200} />
+            )}
           </div>
 
           {/* Short URL + Copy */}

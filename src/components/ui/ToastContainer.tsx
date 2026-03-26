@@ -45,7 +45,7 @@ export function ToastContainer() {
   const { toasts, removeToast } = useToast();
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none w-full max-w-sm">
+    <div className="fixed bottom-8 right-8 z-[100000] flex flex-col-reverse gap-4 pointer-events-none w-full max-w-sm">
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => {
           const config = toastConfig[toast.type];

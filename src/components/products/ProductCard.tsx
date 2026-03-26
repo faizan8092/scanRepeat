@@ -3,12 +3,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Eye, Edit, QrCode, BarChart2, MoreVertical, Copy, Archive, Trash2, Globe, FileText,
-  ExternalLink, X, BarChart3, Smartphone, Repeat,
+  ExternalLink, X, BarChart3, Smartphone, Repeat, Palette,
 } from 'lucide-react';
-import { Product, upsertProduct, deleteProduct, archiveProduct } from '@/src/types/product';
+import { Product, upsertProduct, deleteProduct, archiveProduct, getProductQR } from '@/src/types/product';
+import { customizeQRApi, pauseProductApi, unpauseProductApi } from '@/src/lib/product-service';
+import { useToast } from '@/src/lib/toast-context';
 import { QRCodeModal } from './QRCodeModal';
 import { QRCustomizer } from './QRCustomizer';
 import { QRCodeDisplay } from './QRCodeDisplay';
+import EditProductModal from './EditProductModal';
 
 interface ProductCardProps {
   product: Product;
@@ -38,6 +41,11 @@ function StatusBadge({ status }: { status: Product['status'] }) {
       <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />Archived
     </span>
   );
+  if (status === 'paused') return (
+    <span className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />Paused
+    </span>
+  );
   return null;
 }
 
@@ -65,11 +73,12 @@ function Thumbnail({ product }: { product: Product }) {
   );
 }
 
-function MoreMenu({ product, onRename, onDuplicate, onArchive, onDelete }: {
+function MoreMenu({ product, onEdit, onDuplicate, onArchive, onPause, onDelete }: {
   product: Product;
-  onRename: () => void;
+  onEdit: () => void;
   onDuplicate: () => void;
   onArchive: () => void;
+  onPause: () => void;
   onDelete: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -88,15 +97,22 @@ function MoreMenu({ product, onRename, onDuplicate, onArchive, onDelete }: {
       {open && (
         <div className="absolute right-0 bottom-full mb-1 w-44 bg-white rounded-xl shadow-xl border z-50 py-1 overflow-hidden">
           {[
-            { label: 'Rename', icon: <Edit size={13} />, action: onRename },
+            { label: 'Edit Details', icon: <Edit size={13} />, action: onEdit },
             { label: 'Duplicate', icon: <Copy size={13} />, action: onDuplicate },
+            { 
+              label: product.status === 'paused' ? 'Resume (Unpause)' : 'Pause Redirects', 
+              icon: <Repeat size={13} />, 
+              action: onPause,
+              disabled: product.isLockedDueToPlan
+            },
             { label: product.status === 'archived' ? 'Unarchive' : 'Archive', icon: <Archive size={13} />, action: onArchive },
             { label: 'Delete', icon: <Trash2 size={13} />, action: onDelete, danger: true },
           ].map(item => (
             <button
               key={item.label}
+              disabled={(item as any).disabled}
               onClick={() => { item.action(); setOpen(false); }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-slate-50 transition-colors ${item.danger ? 'text-red-500 hover:bg-red-50' : 'text-slate-700'}`}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-slate-50 transition-colors ${item.danger ? 'text-red-500 hover:bg-red-50' : 'text-slate-700'} ${(item as any).disabled ? 'opacity-30 grayscale cursor-not-allowed' : ''}`}
             >
               {item.icon} {item.label}
             </button>
@@ -108,15 +124,20 @@ function MoreMenu({ product, onRename, onDuplicate, onArchive, onDelete }: {
 }
 
 export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
+  const { addToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [showQREditor, setShowQREditor] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [renameDraft, setRenameDraft] = useState(product.name);
   const [delConfirm, setDelConfirm] = useState(false);
 
   const shortUrl = `scanrepeat.com/p/${product.shortCode}`;
   const meta = TYPE_META[product.type];
+  const qrSettings = getProductQR(product);
+  const scansCount = product.totalScans ?? product.scans ?? 0;
+  const countriesCount = product.uniqueCountries ?? product.countries ?? 0;
 
   const copyUrl = () => {
     navigator.clipboard.writeText(`https://${shortUrl}`);
@@ -158,17 +179,49 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
     onUpdate({ ...product, status: product.status === 'archived' ? 'draft' : 'archived' });
   };
 
+  const handleTogglePause = async () => {
+    try {
+      if (product.status === 'paused') {
+        const result = await unpauseProductApi(product.id);
+        onUpdate(result);
+        addToast('success', 'Product Reactivated', 'QR scans will now redirect normally.');
+      } else {
+        const result = await pauseProductApi(product.id);
+        onUpdate(result);
+        addToast('warning', 'Product Paused', 'QR scans are now temporarily disabled.');
+      }
+    } catch (err: any) {
+      addToast('error', 'Update Failed', err.message);
+    }
+  };
+
   const handleDelete = () => {
     if (!delConfirm) { setDelConfirm(true); return; }
     deleteProduct(product.id);
     onDelete(product.id);
   };
 
-  const saveQR = (settings: any) => {
-    const updated = { ...product, qr: settings, updatedAt: new Date().toISOString() };
-    upsertProduct(updated);
-    onUpdate(updated);
-    setShowQREditor(false);
+  const saveQR = async (settings: any) => {
+    try {
+      const mappedData = {
+        qrForeground: settings.foreground,
+        qrBackground: settings.background,
+        qrLogoUrl: settings.logoUrl || null,
+        qrDotStyle: settings.dotStyle,
+        qrErrorLevel: settings.errorLevel,
+        qrLabelText: settings.labelText || null,
+        qrMargin: settings.margin,
+      };
+
+      const result = await customizeQRApi(product.id, mappedData);
+      
+      // Update with the rich data from the backend (including qrDataUrl)
+      onUpdate(result.product);
+      addToast('success', 'QR Settings Saved', 'Your stylized QR code is now live.');
+      setShowQREditor(false);
+    } catch (err: any) {
+      addToast('error', 'Save failed', err.message || 'Could not update QR settings on the server.');
+    }
   };
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -176,8 +229,8 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
   return (
     <>
       <div
-        className={`bg-white rounded-2xl border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md overflow-hidden ${
-          product.status === 'archived' ? 'opacity-60' : ''
+        className={`bg-white rounded-2xl border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md overflow-hidden relative ${
+          (product.status === 'archived' || product.isLockedDueToPlan) ? 'opacity-60' : ''
         }`}
         style={{ animation: 'cardIn 0.3s ease-out' }}
       >
@@ -226,26 +279,28 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
                 </div>
 
                 {/* Stats */}
-                {product.scans > 0 || product.type === 'page_builder' ? (
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total Scans</span>
-                      <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                        <BarChart3 size={14} className="text-primary" /> {product.scans.toLocaleString()}
-                      </span>
-                    </div>
-                    {product.countries > 0 && (
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Reach</span>
-                        <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                          <Globe size={14} className="text-primary" /> {product.countries} {product.countries === 1 ? 'Country' : 'Countries'}
-                        </span>
-                      </div>
-                    )}
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total Scans</span>
+                    <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                      <BarChart3 size={14} className="text-primary" /> {scansCount.toLocaleString()}
+                    </span>
                   </div>
-                ) : (
-                  <span className="text-xs text-slate-400 italic">No scans recorded yet</span>
-                )}
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Reach</span>
+                    <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                      <Globe size={14} className="text-primary" /> {countriesCount} {countriesCount === 1 ? 'Country' : 'Countries'}
+                    </span>
+                  </div>
+                  {product.type === 'page_builder' && (
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Reviews</span>
+                    <span className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                      <Repeat size={14} className="text-primary" /> {product.totalReviews ?? 0}
+                    </span>
+                  </div>
+                  )}
+                </div>
               </div>
 
               {/* Right Side Info Area with QR and Status */}
@@ -255,34 +310,65 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
                   className="relative group/qr-preview"
                 >
                   <div className="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-100 group-hover/qr-preview:border-primary/30 group-hover/qr-preview:shadow-xl group-hover/qr-preview:shadow-primary/5 transition-all duration-300">
-                    <QRCodeDisplay 
+                    {product.qrDataUrl ? (
+                      <img 
+                        src={product.qrDataUrl} 
+                        alt="QR Code" 
+                        width={110} 
+                        height={110} 
+                        className="rounded-lg"
+                      />
+                    ) : (
+                      <QRCodeDisplay 
                       url={`https://${shortUrl}`} 
-                      settings={product.qr} 
+                      settings={qrSettings} 
                       size={110} 
                     />
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/qr-preview:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-                    <div className="bg-primary text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg transform scale-90 opacity-0 group-hover/qr-preview:scale-100 group-hover/qr-preview:opacity-100 transition-all">
+                    <div className="bg-primary text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg transform scale-90 opacity-0 group-hover/qr-preview:opacity-100 transition-all">
                       VIEW FULL
                     </div>
                   </div>
                 </button>
                 <div className="pt-2">
-                  <StatusBadge status={product.status} />
+                  <StatusBadge status={product.isLockedDueToPlan ? 'paused' : product.status} />
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Locked Overlay */}
+          {product.isLockedDueToPlan && (
+            <div className="absolute inset-x-0 top-0 bg-white/40 backdrop-blur-[1px] h-full flex items-center justify-center p-6 z-[1] select-none">
+              <div className="bg-white/90 border border-amber-200 rounded-2xl p-4 shadow-xl flex items-center gap-4 max-w-sm">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                  <Archive size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-slate-800 uppercase tracking-wide mb-0.5">Plan limit reached</h4>
+                  <p className="text-[10px] text-slate-500 font-bold leading-tight">This campaign is paused. Upgrade your plan to reactivate it immediately.</p>
+                </div>
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'))}
+                  className="ml-auto px-3 py-1.5 bg-foreground text-background text-[10px] font-black rounded-lg hover:bg-primary transition-colors whitespace-nowrap"
+                >
+                  UPGRADE
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Action bar divider */}
         <div className="flex items-center gap-2 px-5 py-3 border-t bg-slate-50/70 relative">
           <Link
-            href={`/p/${product.shortCode}`}
-            target="_blank"
-            className="h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors text-xs font-medium"
+            href={product.isLockedDueToPlan ? '#' : `/p/${product.shortCode}`}
+            target={product.isLockedDueToPlan ? undefined : "_blank"}
+            className={`h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors text-xs font-medium ${product.isLockedDueToPlan ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
           >
-            <Eye size={13} /> Preview
+            <Eye size={13} /> {product.isLockedDueToPlan ? 'Locked' : 'Preview'}
           </Link>
 
           {product.type === 'page_builder' ? (
@@ -293,12 +379,20 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
               <Edit size={13} /> Edit Page
             </Link>
           ) : (
-            <button
-              onClick={() => setShowQREditor(true)}
-              className="h-8 px-3 flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary hover:text-white transition-all text-xs font-medium"
-            >
-              <Edit size={13} /> Edit QR
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="h-8 px-3 flex items-center gap-1.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors text-xs font-medium"
+              >
+                <Edit size={13} /> Edit Details
+              </button>
+              <button
+                onClick={() => setShowQREditor(true)}
+                className="h-8 px-3 flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary hover:text-white transition-all text-xs font-medium"
+              >
+                <Palette size={13} /> Edit QR
+              </button>
+            </div>
           )}
 
           <button
@@ -311,8 +405,9 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
           <div className="ml-auto flex items-center gap-2">
             <MoreMenu
               product={product}
-              onRename={() => { setRenaming(true); setRenameDraft(product.name); }}
+              onEdit={() => setShowEditModal(true)}
               onDuplicate={handleDuplicate}
+              onPause={handleTogglePause}
               onArchive={handleArchive}
               onDelete={handleDelete}
             />
@@ -348,12 +443,21 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
             <QRCustomizer
               productName={product.name}
               shortCode={product.shortCode}
-              initialSettings={product.qr}
+              qrDataUrl={product.qrDataUrl}
+              initialSettings={qrSettings}
               onSave={saveQR}
               saveLabel="Save QR Settings"
             />
           </div>
         </div>
+      )}
+
+      {showEditModal && (
+        <EditProductModal 
+          product={product} 
+          onClose={() => setShowEditModal(false)} 
+          onUpdated={(p) => onUpdate(p)}
+        />
       )}
     </>
   );

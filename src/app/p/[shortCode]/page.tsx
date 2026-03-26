@@ -1,64 +1,55 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { loadProducts, upsertProduct, Product } from '@/src/types/product';
+import { Product } from '@/src/types/product';
 import { BlockRenderer } from '@/src/components/builder/BlockRenderer';
+import { fetchPublicProductApi } from '@/src/lib/product-service';
 
-export default function ShortCodeRedirectPage({ params }: { params: { shortCode: string } }) {
-  const [product, setProduct] = useState<Product | null>(null);
+export default function ShortCodeRedirectPage({ params }: { params: Promise<{ shortCode: string }> }) {
+  const { shortCode } = React.use(params);
+  const [productData, setProductData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Needs unwrapping if using Next 13+ app directory dynamic routes but Next.js usually passes it as is or a Promise.
-    // Assuming params.shortCode is available immediately.
-    const products = loadProducts();
-    const p = products.find(prod => prod.shortCode === params.shortCode);
+    async function init() {
+      try {
+        const data = await fetchPublicProductApi(shortCode);
+        setProductData(data);
 
-    if (!p) {
-      setError('Product not found or no longer available.');
-      setLoading(false);
-      return;
+        // Auto-redirect if functional
+        if (data.type === 'external_url' && data.redirectUrl) {
+          window.location.replace(data.redirectUrl);
+          return;
+        }
+        if (data.type === 'file' && data.redirectUrl) {
+          window.location.replace(data.redirectUrl);
+          return;
+        }
+
+        setLoading(false);
+      } catch (err: any) {
+        if (err.status === 404) {
+          setError('This experience can\'t be found. Please check the URL or try scanning again.');
+        } else if (err.status === 403) {
+          if (err.message?.includes('LIMIT_EXCEEDED')) {
+            setError('This campaign is temporarily unavailable.');
+          } else {
+            setError('The owner has paused this experience.');
+          }
+        } else {
+          setError('A connection error occurred. Please try again later.');
+        }
+        setLoading(false);
+      }
     }
-
-    if (p.status === 'draft') {
-      setError('This product page is not published yet.');
-      setLoading(false);
-      return;
-    }
-
-    if (p.status === 'archived') {
-      setError('Product no longer available.');
-      setLoading(false);
-      return;
-    }
-
-    // Increment scan logic (prevent double count in dev string mode by using sessionStorage)
-    if (!window.sessionStorage.getItem(`scanned_${p.id}`)) {
-      p.scans = (p.scans || 0) + 1;
-      upsertProduct(p);
-      window.sessionStorage.setItem(`scanned_${p.id}`, 'true');
-    }
-
-    setProduct(p);
-
-    // Redirects
-    if (p.type === 'external_url' && p.destinationUrl) {
-      window.location.replace(p.destinationUrl);
-    } else if (p.type === 'file' && p.fileUrl) {
-      window.location.replace(p.fileUrl);
-    } else if (p.type === 'file' && !p.fileUrl) {
-       setError('File unavailable.');
-       setLoading(false);
-    } else {
-      setLoading(false);
-    }
-  }, [params.shortCode]);
+    init();
+  }, [shortCode]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-500">Loading experience...</p>
+        <p className="text-sm font-medium text-slate-500">Connecting you...</p>
       </div>
     );
   }
@@ -73,19 +64,19 @@ export default function ShortCodeRedirectPage({ params }: { params: { shortCode:
     );
   }
 
-  if (product?.type === 'page_builder') {
+  if (productData?.type === 'page_builder') {
     return (
       <div 
         className="min-h-screen w-full flex justify-center" 
-        style={{ backgroundColor: product.themeColors?.background || '#FFFFFF' }}
+        style={{ backgroundColor: productData.themeColors?.background || '#FFFFFF' }}
       >
         <div 
           className="w-full max-w-md min-h-screen shadow-lg relative"
-          style={{ backgroundColor: product.themeColors?.background || '#FFFFFF' }}
+          style={{ backgroundColor: productData.themeColors?.background || '#FFFFFF' }}
         >
           <div className="p-4 space-y-4">
-            {(product.pageBlocks || []).map(block => (
-              <BlockRenderer key={block.id} block={block} theme={product.themeColors} />
+            {(productData.pageBlocks || []).map((block: any) => (
+              <BlockRenderer key={block.id} block={block} theme={productData.themeColors} />
             ))}
           </div>
         </div>
