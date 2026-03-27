@@ -22,25 +22,15 @@ function LabeledInput({ label, value, onChange, placeholder, type = 'text', mono
 }
 
 function LabeledTextarea({ label, value, onChange, placeholder, rows = 2 }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; rows?: number }) {
-  const ref = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    if (ref.current) {
-      ref.current.style.height = 'auto';
-      ref.current.style.height = `${Math.max(ref.current.scrollHeight, 100)}px`;
-    }
-  }, [value]);
-
   return (
     <div className="space-y-1">
       <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
       <textarea
-        ref={ref}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-all scrollbar-hide min-h-[100px]"
+        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
       />
     </div>
   );

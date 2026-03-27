@@ -130,7 +130,7 @@ function SortableBlock({
       )}
 
       {/* Block Content */}
-      <div className="p-4 overflow-hidden">
+      <div className="p-4">
         <BlockRenderer block={block} />
       </div>
     </div>
@@ -378,7 +378,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           {/* ── Center: Canvas ── */}
           <main className="flex-1 flex flex-col overflow-hidden">
 
-            <div className="h-11 bg-white border-b flex items-center px-5 gap-5 shrink-0 shadow-sm z-10 overflow-x-auto no-scrollbar">
+            <div className="min-h-[44px] bg-white border-b flex flex-wrap items-center px-5 py-2 gap-y-2 gap-x-5 shadow-sm z-10">
               <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">Brand Theme:</span>
               {(Object.entries({
                 Primary: 'primary', Secondary: 'secondary', Text: 'text', Background: 'background', Accent: 'accent',
@@ -388,7 +388,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
                   <ColorSwatch value={theme[key]} onChange={(c) => setTheme(t => ({ ...t, [key]: c }))} label={label} />
                 </div>
               ))}
-              <div className="h-4 w-px bg-slate-200 mx-1 shrink-0" />
+              <div className="hidden sm:block h-4 w-px bg-slate-200 mx-1 shrink-0" />
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap flex items-center gap-1">
                   <Type size={12} className="text-slate-400" /> Typography:
@@ -484,7 +484,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
 
             <div className="flex-1 overflow-y-auto w-full flex justify-center pb-6 scrollbar-hide px-4">
               {/* Phone Frame */}
-              <div className="w-[260px] bg-white border-[7px] border-slate-900 rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative shrink-0" style={{ height: 560, maxHeight: '80vh' }}>
+              <div className="w-[260px] bg-white border-[7px] border-slate-900 rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative shrink-0" style={{ height: 650 }}>
                 {/* Dynamic Island */}
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 h-6 bg-slate-900 rounded-full z-50 flex items-center justify-between px-2 w-24">
                   <div className="w-2 h-2 rounded-full bg-slate-700" />
