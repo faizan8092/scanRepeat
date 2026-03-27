@@ -1,9 +1,28 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ColorSwatch, SegmentedControl, FieldRow, Slider, Toggle } from './BuilderControls';
 import { IconPicker } from './IconPicker';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Image as ImageIcon, X } from 'lucide-react';
 import { MediaUploader } from './MediaUploader';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  horizontalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
 // ─── Labelled Input helper ────────────────────────────────────────────────────
 function LabeledInput({ label, value, onChange, placeholder, type = 'text', mono = false }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; mono?: boolean }) {
@@ -83,6 +102,7 @@ export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: a
       <div className="flex gap-2">
         <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
         <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-2 ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
+        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-2 ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
         <ColorSwatch value={props.color || '#111827'} onChange={c => onChange({ ...props, color: c })} label="Text Color" />
       </div>
 
@@ -117,6 +137,7 @@ export function TextEditor({ props, onChange }: { props: any; onChange: (p: any)
       <div className="flex gap-2 items-center">
         <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
         <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-2 ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
+        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-2 ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
         <ColorSwatch value={props.color || '#374151'} onChange={c => onChange({ ...props, color: c })} label="Text Color" />
       </div>
       <FieldRow label="Font Size">
@@ -132,32 +153,77 @@ export function TextEditor({ props, onChange }: { props: any; onChange: (p: any)
   );
 }
 
-// ─── Image Block Editor ───────────────────────────────────────────────────────
 export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
+  const [replacingIdx, setReplacingIdx] = useState<number | null>(null);
+  const images = (props.images || []).map((img: string, i: number) => ({ id: `img-${i}-${img}`, src: img }));
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = images.findIndex((img: any) => img.id === active.id);
+      const newIndex = images.findIndex((img: any) => img.id === over.id);
+      const reordered = arrayMove(images, oldIndex, newIndex).map((img: any) => img.src);
+      onChange({ ...props, images: reordered });
+    }
+  };
+
+  const removeImage = (i: number) => {
+    onChange({ ...props, images: props.images.filter((_: any, j: number) => j !== i) });
+  };
+
+  const replaceImage = (i: number, url: string) => {
+    const next = [...props.images];
+    next[i] = url;
+    onChange({ ...props, images: next });
+    setReplacingIdx(null);
+  };
+
   return (
     <div className="space-y-3">
-      <SectionLabel>Images ({(props.images || []).length})</SectionLabel>
+      <SectionLabel>Images ({images.length})</SectionLabel>
 
-      {/* Existing images */}
-      {(props.images || []).length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {(props.images || []).map((img: string, i: number) => (
-            <div key={i} className="relative group w-16 h-16 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img} alt="" className="w-full h-full object-cover" />
-              <button
-                onClick={() => onChange({ ...props, images: props.images.filter((_: any, j: number) => j !== i) })}
-                className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center opacity-0 group-hover:opacity-100 text-[10px]"
-              >×</button>
+      {/* Existing images scroll area */}
+      {images.length > 0 && (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToFirstScrollableAncestor]}
+        >
+          <SortableContext items={images.map((img: any) => img.id)} strategy={horizontalListSortingStrategy}>
+            <div className="flex flex-wrap gap-2">
+              {images.map((img: any, i: number) => (
+                <SortableImageItem
+                  key={img.id}
+                  img={img}
+                  onRemove={() => removeImage(i)}
+                  onReplace={() => setReplacingIdx(i)}
+                />
+              ))}
             </div>
-          ))}
+          </SortableContext>
+        </DndContext>
+      )}
+
+      {replacingIdx !== null && (
+        <div className="p-3 bg-slate-50 border-2 border-primary/20 rounded-xl space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-primary uppercase">Replace Image {replacingIdx + 1}</span>
+            <button onClick={() => setReplacingIdx(null)}><X size={14} /></button>
+          </div>
+          <MediaUploader type="image" onUploaded={(url) => replaceImage(replacingIdx, url)} />
         </div>
       )}
 
       {/* Upload new image */}
       <MediaUploader
         type="image"
-        label="Add Image"
+        label="Add New Image"
         onUploaded={(url) => onChange({ ...props, images: [...(props.images || []), url] })}
       />
 
@@ -183,16 +249,84 @@ export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any
   );
 }
 
+function SortableImageItem({ img, onRemove, onReplace }: { img: { id: string, src: string }, onRemove: () => void, onReplace: () => void }) {
+  const { attributes, listeners, setNodeRef, style, isDragging } = useSortableHelper(img.id);
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative group w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm transition-all ${isDragging ? 'border-primary ring-2 ring-primary/20 scale-105 z-40' : 'border-slate-200'}`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={img.src} alt="" className="w-full h-full object-cover" />
+      
+      {/* Drag handle overlay */}
+      <div {...attributes} {...listeners} className="absolute inset-0 cursor-grab active:cursor-grabbing hover:bg-black/10 transition-colors" />
+
+      {/* Buttons */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 bg-slate-900/60 pointer-events-none transition-opacity">
+        <div className="flex gap-1 pointer-events-auto">
+          <button onClick={onReplace} className="bg-white text-slate-800 p-1 rounded-md hover:bg-slate-100" title="Replace"><ImageIcon size={12} /></button>
+          <button onClick={onRemove} className="bg-red-500 text-white p-1 rounded-md hover:bg-red-600" title="Delete"><Trash2 size={12} /></button>
+        </div>
+        <div className="mt-1 text-white text-[8px] font-bold pointer-events-none uppercase">Drag to Move</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Draggable Items for Gallery/Carousel ──────────────────────────────────
+function useSortableHelper(id: string) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 0,
+    position: 'relative' as const,
+  };
+
+  return { attributes, listeners, setNodeRef, style, isDragging };
+}
+
 // ─── Carousel Editor ─────────────────────────────────────────────────────────
-function normSlide(s: any): { src: string; alt: string; caption: string } {
-  if (typeof s === 'string') return { src: s, alt: '', caption: '' };
-  return { src: s?.src || s?.url || '', alt: s?.alt || '', caption: s?.caption || '' };
+function normSlide(s: any, idx: number): { id: string; src: string; alt: string; caption: string } {
+  const sid = (typeof s === 'object' && s.id) ? s.id : `slide-${idx}-${s.url || s.src}`;
+  if (typeof s === 'string') return { id: sid, src: s, alt: '', caption: '' };
+  return { 
+    id: sid,
+    src: s?.src || s?.url || '', 
+    alt: s?.alt || '', 
+    caption: s?.caption || '' 
+  };
 }
 
 export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
-  const slides = (props.images || []).map(normSlide);
+  const [replacingIdx, setReplacingIdx] = useState<number | null>(null);
+  const slides = (props.images || []).map((s: any, i: number) => normSlide(s, i));
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   const setSlides = (next: any[]) => onChange({ ...props, images: next });
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = slides.findIndex((s: any) => s.id === active.id);
+      const newIndex = slides.findIndex((s: any) => s.id === over.id);
+      setSlides(arrayMove(slides, oldIndex, newIndex));
+    }
+  };
 
   const removeSlide = (i: number) => setSlides(slides.filter((_: any, j: number) => j !== i));
   const updateSlide = (i: number, field: string, val: string) => {
@@ -201,44 +335,46 @@ export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: 
     setSlides(next);
   };
 
+  const replaceImage = (i: number, url: string) => {
+    updateSlide(i, 'src', url);
+    setReplacingIdx(null);
+  };
+
   return (
     <div className="space-y-3">
       <SectionLabel>Slides ({slides.length})</SectionLabel>
 
-      {slides.map((slide: any, i: number) => (
-        <div key={i} className="bg-slate-50 rounded-xl border-2 border-slate-100 p-2 space-y-2">
-          <div className="flex items-center gap-2">
-            {slide.src ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={slide.src} alt="" className="w-14 h-10 object-cover rounded-lg border shrink-0" onError={(e: any) => { e.target.style.display = 'none'; }} />
-            ) : (
-              <div className="w-14 h-10 bg-slate-200 rounded-lg shrink-0 flex items-center justify-center text-slate-400 text-xs">No img</div>
-            )}
-            <div className="flex-1 min-w-0">
-              <input
-                value={slide.src}
-                onChange={e => updateSlide(i, 'src', e.target.value)}
-                placeholder="Image URL..."
-                className="w-full text-[11px] p-1.5 border rounded-lg bg-white outline-none focus:border-primary truncate"
+      <DndContext 
+        sensors={sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToFirstScrollableAncestor]}
+      >
+        <SortableContext items={slides.map((s: any) => s.id)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+            {slides.map((slide: any, i: number) => (
+              <SortableSlideItem 
+                key={slide.id} 
+                slide={slide} 
+                onUpdate={(field, val) => updateSlide(i, field, val)}
+                onRemove={() => removeSlide(i)}
+                onReplace={() => setReplacingIdx(i)}
+                isReplacing={replacingIdx === i}
+                onImageReplaced={(url) => replaceImage(i, url)}
               />
-            </div>
-            <button onClick={() => removeSlide(i)} className="text-red-400 hover:text-red-600 shrink-0"><Trash2 size={13} /></button>
+            ))}
           </div>
-          <input
-            value={slide.caption}
-            onChange={e => updateSlide(i, 'caption', e.target.value)}
-            placeholder="Caption (optional)"
-            className="w-full text-[11px] p-1.5 border rounded-lg bg-white outline-none focus:border-primary"
-          />
-        </div>
-      ))}
+        </SortableContext>
+      </DndContext>
 
-      {/* Upload / URL for new slide */}
-      <MediaUploader
-        type="image"
-        label="Add Slide"
-        onUploaded={(url) => setSlides([...slides, { src: url, alt: '', caption: '' }])}
-      />
+      {/* Upload/URL for new slide */}
+      <div className="pt-2 border-t border-slate-100">
+        <MediaUploader
+          type="image"
+          label="Add New Slide"
+          onUploaded={(url) => setSlides([...slides, { id: crypto.randomUUID(), src: url, alt: '', caption: '' }])}
+        />
+      </div>
 
       <SectionLabel>Appearance</SectionLabel>
       <FieldRow label="Transition">
@@ -265,6 +401,74 @@ export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: 
       <Toggle checked={props.showArrows !== false} onChange={v => onChange({ ...props, showArrows: v })} label="Show Arrows" />
       <Toggle checked={!!props.showCaptions} onChange={v => onChange({ ...props, showCaptions: v })} label="Show Captions" />
       <Toggle checked={props.loop !== false} onChange={v => onChange({ ...props, loop: v })} label="Loop" />
+    </div>
+  );
+}
+
+function SortableSlideItem({ slide, onUpdate, onRemove, onReplace, isReplacing, onImageReplaced }: {
+  slide: any,
+  onUpdate: (f: string, v: string) => void,
+  onRemove: () => void,
+  onReplace: () => void,
+  isReplacing: boolean,
+  onImageReplaced: (url: string) => void
+}) {
+  const { attributes, listeners, setNodeRef, style, isDragging } = useSortableHelper(slide.id);
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`bg-slate-50 rounded-xl border-2 ${isDragging ? 'border-primary shadow-lg ring-2 ring-primary/20 opacity-90 z-40' : 'border-slate-100'} p-2 space-y-2 transition-all`}
+    >
+      <div className="flex items-center gap-2">
+        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-400 p-1 hover:text-slate-600 transition-colors">
+          <GripVertical size={16} />
+        </div>
+        
+        <div className="relative group/img w-14 h-11 shrink-0 bg-slate-200 rounded-lg overflow-hidden border">
+          {slide.src ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={slide.src} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px]">No img</div>
+          )}
+          <button 
+            onClick={onReplace}
+            className="absolute inset-0 bg-slate-900/60 text-white opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center text-[8px] font-bold"
+          >
+            <ImageIcon size={12} className="mb-0.5" />
+            REPLACE
+          </button>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <input
+            value={slide.src}
+            onChange={e => onUpdate('src', e.target.value)}
+            placeholder="Image URL..."
+            className="w-full text-[11px] p-1.5 border rounded-lg bg-white outline-none focus:border-primary truncate"
+          />
+        </div>
+        <button onClick={onRemove} className="text-red-400 hover:text-red-600 shrink-0 p-1 hover:bg-white rounded-lg transition-colors"><Trash2 size={13} /></button>
+      </div>
+
+      <input
+        value={slide.caption}
+        onChange={e => onUpdate('caption', e.target.value)}
+        placeholder="Caption (optional)"
+        className="w-full text-[11px] p-1.5 border rounded-lg bg-white outline-none focus:border-primary"
+      />
+
+      {isReplacing && (
+        <div className="pt-2 border-t border-slate-200 mt-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Replace Image</span>
+            <button onClick={onReplace} className="text-slate-400 hover:text-slate-600"><X size={14} /></button>
+          </div>
+          <MediaUploader type="image" onUploaded={onImageReplaced} />
+        </div>
+      )}
     </div>
   );
 }
