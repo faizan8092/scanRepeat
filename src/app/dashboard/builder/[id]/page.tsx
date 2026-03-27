@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { BlockType, PageBlock, getDefaultProps, defaultTemplates, BrandTheme, defaultTheme, FONT_OPTIONS } from '@/src/types/builder';
 import { fetchProductById, updateProductPageApi } from '@/src/lib/product-service';
 import { BlockRenderer } from '@/src/components/builder/BlockRenderer';
+import { FormOverlay } from '@/src/components/builder/FormOverlay';
 import { ColorSwatch } from '@/src/components/builder/BuilderControls';
 
 import {
@@ -22,11 +23,12 @@ import {
   TimerEditor, DividerEditor, AccordionEditor, DiscountEditor,
   SocialShareEditor, SpacerEditor,
 } from '@/src/components/builder/BlockEditors';
+import { FormEditor } from '@/src/components/builder/FormEditor';
 
 import {
   ArrowLeft, Eye, Save, GripVertical, Trash2, ChevronUp, ChevronDown, Copy, Plus, X,
   Type, AlignJustify, Image, Play, Star, MessageSquare, BookOpen, Tag,
-  Timer, Minus, HelpCircle, Gift, Share2, ArrowDownUp, Zap, Rows,
+  Timer, Minus, HelpCircle, Gift, Share2, ArrowDownUp, Zap, Rows, FileText,
 } from 'lucide-react';
 
 // ─── Icon Map ─────────────────────────────────────────────────────────────────
@@ -47,13 +49,14 @@ const iconMap: Record<BlockType, React.ReactNode> = {
   discount: <Gift size={16} />,
   social_share: <Share2 size={16} />,
   spacer: <ArrowDownUp size={16} />,
+  form: <FileText size={16} />,
 };
 
 const BLOCK_LABELS: Record<BlockType, string> = {
   heading: 'Heading', text: 'Text', image: 'Image', carousel: 'Carousel', video: 'Video',
   button: 'Button', rating: 'Rating', reviews: 'Reviews', usage_guide: 'Usage Guide',
   badges: 'Badges', timer: 'Timer', divider: 'Divider', accordion: 'FAQ', discount: 'Discount',
-  social_share: 'Share', spacer: 'Spacer',
+  social_share: 'Share', spacer: 'Spacer', form: 'Form',
 };
 
 // ─── Block Editor Selector ────────────────────────────────────────────────────
@@ -63,6 +66,7 @@ function BlockEditorPanel({ block, onChange }: { block: PageBlock; onChange: (p:
     button: ButtonEditor, rating: RatingEditor, reviews: ReviewsEditor, usage_guide: UsageGuideEditor,
     badges: BadgesEditor, timer: TimerEditor, divider: DividerEditor, accordion: AccordionEditor,
     discount: DiscountEditor, social_share: SocialShareEditor, spacer: SpacerEditor,
+    form: FormEditor,
   };
   const Editor = editors[block.type];
   if (!Editor) return <div className="text-muted-foreground text-xs p-4">No editor for this block type.</div>;
@@ -146,6 +150,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
   const [theme, setTheme] = useState<BrandTheme>(defaultTheme);
   const [activeDragType, setActiveDragType] = useState<BlockType | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showFormPreview, setShowFormPreview] = useState(false);
   const [productName, setProductName] = useState('Product Builder');
   const [productStatus, setProductStatus] = useState<'draft' | 'published'>('draft');
   const [shortCode, setShortCode] = useState<string>('');
@@ -477,9 +482,27 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
 
           {/* ── Right Panel: Live Mobile Preview ── */}
           <aside className="w-[270px] bg-slate-50 border-l flex flex-col shrink-0 overflow-hidden items-center pt-5">
-            <div className="mb-4 text-center">
+            <div className="mb-3 text-center px-3 w-full">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">📱 Customer View</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Live preview</p>
+              {/* Form preview toggle — shown when overlay form blocks exist */}
+              {blocks.some(b => b.type === 'form' && b.props?.formType === 'overlay') && (
+                <div className="mt-2 flex items-center justify-between bg-white border border-slate-200 rounded-lg px-3 py-1.5 shadow-sm">
+                  <span className="text-[10px] font-bold text-slate-600">📋 Preview Form</span>
+                  <button
+                    onClick={() => setShowFormPreview(v => !v)}
+                    className={`relative w-9 h-5 rounded-full transition-colors duration-200 shrink-0 ${
+                      showFormPreview ? 'bg-primary' : 'bg-slate-200'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${
+                        showFormPreview ? 'translate-x-4' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex-1 overflow-y-auto w-full flex justify-center pb-6 scrollbar-hide px-4">
@@ -503,12 +526,21 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 p-3">
-                      {blocks.map(block => (
-                        <BlockRenderer key={block.id} block={block} theme={theme} />
-                      ))}
+                      {blocks
+                        .filter(b => !(b.type === 'form' && b.props?.formType === 'overlay'))
+                        .map(block => (
+                          <BlockRenderer key={block.id} block={block} theme={theme} />
+                        ))}
                     </div>
                   )}
                 </div>
+
+                {/* Overlay forms: always mounted so triggers operate in preview (delay, scroll, click) */}
+                {blocks
+                  .filter(b => b.type === 'form' && b.props?.formType === 'overlay')
+                  .map(b => (
+                    <FormOverlay key={b.id} formProps={b.props} theme={theme} previewMode={showFormPreview} />
+                  ))}
 
                 {/* Home bar */}
                 <div className="h-5 bg-white flex items-center justify-center shrink-0">

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Product } from '@/src/types/product';
 import { BlockRenderer } from '@/src/components/builder/BlockRenderer';
+import { FormOverlay } from '@/src/components/builder/FormOverlay';
 import { fetchPublicProductApi } from '@/src/lib/product-service';
 
 export default function ShortCodeRedirectPage({ params }: { params: Promise<{ shortCode: string }> }) {
@@ -16,20 +17,26 @@ export default function ShortCodeRedirectPage({ params }: { params: Promise<{ sh
         const data = await fetchPublicProductApi(shortCode);
         setProductData(data);
 
-        // Auto-redirect if functional
-        if (data.type === 'external_url' && data.redirectUrl) {
-          window.location.replace(data.redirectUrl);
-          return;
+        // Auto-redirect if functional (support both primary and alias fields)
+        if (data.type === 'external_url') {
+          const url = data.destinationUrl || data.redirectUrl;
+          if (url) {
+            window.location.replace(url);
+            return;
+          }
         }
-        if (data.type === 'file' && data.redirectUrl) {
-          window.location.replace(data.redirectUrl);
-          return;
+        if (data.type === 'file') {
+          const url = data.fileUrl || data.redirectUrl;
+          if (url) {
+            window.location.replace(url);
+            return;
+          }
         }
 
         setLoading(false);
       } catch (err: any) {
         if (err.status === 404) {
-          setError('This experience can\'t be found. Please check the URL or try scanning again.');
+          setError("This experience can't be found. Please check the URL or try scanning again.");
         } else if (err.status === 403) {
           if (err.message?.includes('LIMIT_EXCEEDED')) {
             setError('This campaign is temporarily unavailable.');
@@ -65,27 +72,61 @@ export default function ShortCodeRedirectPage({ params }: { params: Promise<{ sh
   }
 
   if (productData?.type === 'page_builder') {
+    const allBlocks: any[] = productData.pageBlocks || [];
+    // Separate overlay forms from regular blocks
+    const overlayForms = allBlocks.filter((b: any) => b.type === 'form' && b.props?.formType === 'overlay');
+    const renderBlocks = allBlocks.filter((b: any) => !(b.type === 'form' && b.props?.formType === 'overlay'));
+    const theme = productData.themeColors;
+
     return (
-      <div 
-        className="min-h-screen w-full flex justify-center" 
-        style={{ backgroundColor: productData.themeColors?.background || '#FFFFFF' }}
+      <div
+        className="min-h-screen w-full flex justify-center relative"
+        style={{ backgroundColor: theme?.background || '#FFFFFF' }}
       >
-        <div 
+        <div
           className="w-full max-w-md min-h-screen shadow-lg relative"
-          style={{ 
-            backgroundColor: productData.themeColors?.background || '#FFFFFF',
-            fontFamily: productData.themeColors?.fontFamily || 'inherit'
+          style={{
+            backgroundColor: theme?.background || '#FFFFFF',
+            fontFamily: theme?.fontFamily || 'inherit',
           }}
         >
+          {/* Page content blocks */}
           <div className="p-4 space-y-4">
-            {(productData.pageBlocks || []).map((block: any) => (
-              <BlockRenderer key={block.id} block={block} theme={productData.themeColors} />
+            {renderBlocks.map((block: any) => (
+              <BlockRenderer key={block.id} block={block} theme={theme} />
             ))}
           </div>
+
+          {/* Overlay Forms (render each one as a portal-like overlay inside the max-w-md container) */}
+          {overlayForms.map((block: any) => (
+            <FormOverlay
+              key={block.id}
+              formProps={block.props}
+              theme={theme}
+              position="fixed"
+            />
+          ))}
         </div>
       </div>
     );
   }
 
-  return null;
+  // Fallback for failed redirects or unknown product types
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+      <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-2xl mb-4">🚀</div>
+      <h1 className="text-xl font-bold text-slate-800 mb-2">{productData?.name || 'Untitled Experience'}</h1>
+      <p className="text-sm text-slate-500 mb-6 font-medium">
+        {productData?.type === 'external_url' ? 'Click below to visit the destination' : 'Click below to view the file'}
+      </p>
+      <a 
+        href={productData?.destinationUrl || productData?.fileUrl || '#'} 
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-8 py-3.5 bg-[#1a1a2e] text-white rounded-2xl font-bold shadow-xl shadow-[#1a1a2e]/20 hover:scale-105 active:scale-95 transition-all"
+      >
+        Open {productData?.type === 'external_url' ? 'Link' : 'File'}
+      </a>
+    </div>
+  );
 }

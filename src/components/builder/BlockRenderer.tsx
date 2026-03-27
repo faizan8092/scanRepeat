@@ -1,10 +1,11 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import { Check } from 'lucide-react';
 import { PageBlock } from '@/src/types/builder';
 
 interface BlockRendererProps {
   block: PageBlock;
-  theme?: { primary: string; secondary: string; text: string; background: string; accent: string };
+  theme?: { primary: string; secondary: string; text: string; background: string; accent: string; fontFamily?: string };
 }
 
 // ─── Live Countdown ───────────────────────────────────────────────────────────
@@ -103,7 +104,6 @@ function AnimatedCarousel({ images, autoPlay, interval, showDots, showArrows, bo
   const src = typeof slide === 'string' ? slide : slide?.src || '';
   const caption = typeof slide === 'object' ? slide?.caption : '';
 
-  // Animation styles per transition type
   const getSlideStyle = (): React.CSSProperties => {
     const base: React.CSSProperties = { width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', top: 0, left: 0 };
     if (transition === 'fade') return { ...base, animation: 'fadeIn 0.4s ease' };
@@ -123,20 +123,17 @@ function AnimatedCarousel({ images, autoPlay, interval, showDots, showArrows, bo
       <div style={{ aspectRatio, overflow: 'hidden', position: 'relative' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img key={idx} src={src} alt="" style={getSlideStyle()} />
-        {/* Arrows */}
         {showArrows && images.length > 1 && (
           <>
             <button onClick={prev} style={{ position: 'absolute', left: '6px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>‹</button>
             <button onClick={next} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>›</button>
           </>
         )}
-        {/* Caption overlay */}
         {showCaptions && caption && (
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.6))', color: '#fff', fontSize: '11px', padding: '8px 10px', textAlign: 'center' }}>{caption}</div>
         )}
       </div>
 
-      {/* Dots */}
       {showDots && images.length > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', padding: '6px 0' }}>
           {images.map((_: any, i: number) => (
@@ -148,7 +145,7 @@ function AnimatedCarousel({ images, autoPlay, interval, showDots, showArrows, bo
   );
 }
 
-// ─── Social icons (minimal SVG) ───────────────────────────────────────────────
+// ─── Social icons ─────────────────────────────────────────────────────────────
 const SocialIcon = ({ id, size }: { id: string; size: string }) => {
   const s = { width: size, height: size };
   switch (id) {
@@ -168,7 +165,6 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
 
   switch (type) {
     case 'heading': {
-      // Use React.createElement so the tag is truly dynamic
       const tagName = (props.level && ['h1','h2','h3','h4','h5','h6'].includes(props.level)) ? props.level : 'h2';
       return React.createElement(tagName, {
         style: {
@@ -178,7 +174,6 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
           fontWeight: props.fontWeight || 'bold',
           fontStyle: props.fontStyle,
           textDecoration: props.underline ? 'underline' : 'none',
-          letterSpacing: props.letterSpacing,
           lineHeight: props.lineHeight || '1.2',
           margin: 0,
         }
@@ -255,14 +250,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
                 allowFullScreen
               />
             ) : isUpload ? (
-              <video
-                src={props.url}
-                controls={props.controls !== false}
-                autoPlay={!!props.autoPlay}
-                loop={!!props.loop}
-                muted={!!props.autoPlay}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+              <video src={props.url} controls={props.controls !== false} autoPlay={!!props.autoPlay} loop={!!props.loop} muted={!!props.autoPlay} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
               <div style={{ width: '100%', height: '100%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
                 <div style={{ textAlign: 'center' }}>
@@ -304,22 +292,18 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
     }
 
     case 'reviews': {
-      const displayReviews = props.displayReviews || props.reviews || [];
       return (
         <div>
           {props.title && <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '10px', color: textColor }}>{props.title}</p>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {displayReviews.map((r: any) => (
+            {(props.displayReviews || []).map((r: any) => (
               <div key={r.id} style={{ background: props.cardBackground || '#F9FAFB', borderRadius: `${props.cardBorderRadius || 12}px`, padding: '12px', border: '1px solid #E5E7EB' }}>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
                   <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#fff', fontSize: '12px', flexShrink: 0 }}>
                     {r.name?.charAt(0)}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '12px' }}>
-                      {r.name}
-                      {props.showVerifiedBadge && r.verified && <span style={{ color: '#16A34A', fontSize: '9px', marginLeft: '4px' }}>✓ Verified</span>}
-                    </div>
+                    <div style={{ fontWeight: 'bold', fontSize: '12px' }}>{r.name}{props.showVerifiedBadge && r.verified && <span style={{ color: '#16A34A', fontSize: '9px', marginLeft: '4px' }}>✓ Verified</span>}</div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF' }}>{r.date}</div>
                   </div>
                 </div>
@@ -334,19 +318,18 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
 
     case 'usage_guide': {
       const isSteps = props.layout === 'steps';
-      const isGrid = props.layout === 'grid';
       return (
         <div style={{ background: props.backgroundColor || '#F9FAFB', borderRadius: `${props.borderRadius || 12}px`, padding: '12px' }}>
           {props.title && <p style={{ fontWeight: 'bold', marginBottom: '10px', color: props.titleColor || textColor, fontSize: '14px' }}>{props.title}</p>}
-          <div style={{ display: 'grid', gridTemplateColumns: isGrid ? '1fr 1fr' : '1fr', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: props.layout === 'grid' ? '1fr 1fr' : '1fr', gap: '8px' }}>
             {(props.items || []).map((item: any, i: number) => (
               <div key={item.id || i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: isSteps ? '50%' : '8px', background: item.iconColor ? `${item.iconColor}20` : '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0, fontWeight: 'bold', color: item.iconColor || primaryColor }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: isSteps ? '50%' : '8px', background: `${item.iconColor || primaryColor}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0, fontWeight: 'bold', color: item.iconColor || primaryColor }}>
                   {isSteps ? (i + 1) : item.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: '10px', color: item.labelColor || '#6B7280' }}>{item.label}</div>
-                  <div style={{ fontSize: '12px', fontWeight: '500', color: item.valueColor || textColor }}>{item.value}</div>
+                  <div style={{ fontSize: '10px', color: '#6B7280' }}>{item.label}</div>
+                  <div style={{ fontSize: '12px', fontWeight: '500', color: textColor }}>{item.value}</div>
                 </div>
               </div>
             ))}
@@ -381,73 +364,43 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
     case 'timer': {
       return (
         <div style={{ background: props.backgroundColor || '#FEF2F2', borderRadius: `${props.borderRadius || 12}px`, padding: '10px 12px', textAlign: 'center' }}>
-          {props.title && (
-            <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '8px', color: props.titleColor || '#DC2626', letterSpacing: '0.06em' }}>
-              {props.title}
-            </p>
-          )}
-          <CountdownDisplay
-            endDateTime={props.endDateTime || props.endTime || new Date(Date.now() + 86400000).toISOString()}
-            textColor={props.textColor || '#DC2626'}
-            style={props.style}
-            showSeconds={props.showSeconds}
-            showLabels={props.showLabels}
-            labelsText={props.labelsText}
-            expiredMessage={props.expiredMessage}
-          />
+          {props.title && <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '8px', color: props.titleColor || '#DC2626', letterSpacing: '0.06em' }}>{props.title}</p>}
+          <CountdownDisplay endDateTime={props.endDateTime || new Date(Date.now() + 86400000).toISOString()} textColor={props.textColor || '#DC2626'} style={props.style} showSeconds={props.showSeconds} showLabels={props.showLabels} labelsText={props.labelsText} expiredMessage={props.expiredMessage} />
         </div>
       );
     }
 
     case 'divider': {
       const s = props.style || 'solid';
-      const isGradient = s === 'gradient';
-      const thickness = `${props.thickness || 1}px`;
-      const color = props.color || '#E5E7EB';
-      const width = `${props.width || 100}%`;
-
       return (
         <div style={{ marginTop: `${props.marginTop || 16}px`, marginBottom: `${props.marginBottom || 16}px`, display: 'flex', justifyContent: props.align || 'center' }}>
-          {isGradient ? (
-            <div style={{ width, height: thickness, background: `linear-gradient(to right, ${props.gradientFrom || '#E5E7EB'}, ${props.gradientTo || '#ffffff'})` }} />
+          {s === 'gradient' ? (
+            <div style={{ width: `${props.width || 100}%`, height: `${props.thickness || 1}px`, background: `linear-gradient(to right, ${props.gradientFrom || '#E5E7EB'}, ${props.gradientTo || '#ffffff'})` }} />
           ) : (
-            <div style={{ width, height: thickness, background: 'transparent', borderTopWidth: thickness, borderTopStyle: s as any, borderTopColor: color }} />
+            <div style={{ width: `${props.width || 100}%`, height: `${props.thickness || 1}px`, borderTop: `${props.thickness || 1}px ${s} ${props.color || '#E5E7EB'}` }} />
           )}
         </div>
       );
     }
 
     case 'accordion': {
-      const [openItems, setOpenItems] = useState<string[]>(
-        (props.items || []).filter((it: any) => it.defaultOpen).map((it: any) => it.id)
-      );
-      const toggle = (id: string) => {
-        if (props.allowMultiple) {
-          setOpenItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-        } else {
-          setOpenItems(prev => prev.includes(id) ? [] : [id]);
-        }
-      };
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [openItems, setOpenItems] = useState<string[]>([]);
+      const toggle = (id: string) => setOpenItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : props.allowMultiple ? [...prev, id] : [id]);
       return (
         <div>
-          {props.showTitle !== false && props.title && (
-            <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '10px', color: props.titleColor || textColor }}>{props.title}</p>
-          )}
+          {props.showTitle !== false && props.title && <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '10px', color: textColor }}>{props.title}</p>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
             {(props.items || []).map((item: any) => {
               const isOpen = openItems.includes(item.id);
-              const icon = props.iconStyle === 'plus' ? (isOpen ? '−' : '+') : props.iconStyle === 'arrow' ? '→' : (isOpen ? '∧' : '›');
+              const icon = props.iconStyle === 'plus' ? (isOpen ? '−' : '+') : (isOpen ? '∧' : '›');
               return (
                 <div key={item.id} style={{ border: `1px solid ${props.borderColor || '#E5E7EB'}`, borderRadius: `${props.borderRadius || 8}px`, overflow: 'hidden' }}>
-                  <button onClick={() => toggle(item.id)} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', background: props.headerBackground || '#F9FAFB', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: '600', fontSize: '12px', color: props.headerTextColor || textColor }}>
+                  <button onClick={() => toggle(item.id)} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', background: props.headerBackground || '#F9FAFB', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: '600', fontSize: '12px', color: textColor }}>
                     {item.question}
-                    <span style={{ color: props.iconColor || '#6B7280', fontSize: '14px', marginLeft: '8px', flexShrink: 0 }}>{icon}</span>
+                    <span style={{ color: '#6B7280', fontSize: '14px' }}>{icon}</span>
                   </button>
-                  {isOpen && (
-                    <div style={{ padding: '10px 12px', background: props.bodyBackground || '#FFFFFF', fontSize: '12px', color: props.bodyTextColor || '#374151', lineHeight: '1.5' }}>
-                      {item.answer}
-                    </div>
-                  )}
+                  {isOpen && <div style={{ padding: '10px 12px', background: '#FFFFFF', fontSize: '12px', color: '#374151', lineHeight: '1.5' }}>{item.answer}</div>}
                 </div>
               );
             })}
@@ -457,95 +410,224 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
     }
 
     case 'discount': {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [copied, setCopied] = useState(false);
       const copy = () => { navigator.clipboard.writeText(props.code || ''); setCopied(true); setTimeout(() => setCopied(false), 2000); };
       return (
         <div style={{ background: props.backgroundColor || '#F0FDF4', border: `2px dashed ${props.borderColor || '#BBF7D0'}`, borderRadius: `${props.borderRadius || 16}px`, padding: '16px', textAlign: 'center' }}>
           <p style={{ fontWeight: 'bold', fontSize: '15px', marginBottom: '6px', color: props.headlineColor || '#166534' }}>{props.headline}</p>
           {props.showSubtext !== false && props.subtext && <p style={{ fontSize: '12px', color: props.subtextColor || '#4B7A56', marginBottom: '10px' }}>{props.subtext}</p>}
-          {props.showCode !== false && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '12px' }}>
-              <div style={{ background: props.codeBackground || '#FFFFFF', padding: '6px 14px', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', letterSpacing: '2px', border: '1px solid #E5E7EB', color: props.codeTextColor || '#166534', fontFamily: 'monospace' }}>
-                {props.code}
-              </div>
-              {props.showCopyButton && (
-                <button onClick={copy} style={{ padding: '6px 10px', background: '#F3F4F6', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '11px', color: copied ? primaryColor : '#374151' }}>
-                  {copied ? '✓' : 'Copy'}
-                </button>
-              )}
-            </div>
-          )}
-          <a href={props.ctaUrl || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: props.ctaColor || primaryColor, color: props.ctaTextColor || '#FFFFFF', padding: '9px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '13px' }}>
-            {props.ctaLabel || 'Shop Now'}
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '12px' }}>
+            <div style={{ background: '#FFF', padding: '6px 14px', borderRadius: '6px', fontWeight: 'bold', fontSize: '14px', letterSpacing: '2px', border: '1px solid #E5E7EB', color: '#166534', fontFamily: 'monospace' }}>{props.code}</div>
+            <button onClick={copy} style={{ padding: '6px 10px', background: '#F3F4F6', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '11px' }}>{copied ? '✓' : 'Copy'}</button>
+          </div>
+          <a href={props.ctaUrl || '#'} style={{ display: 'inline-block', background: props.ctaColor || primaryColor, color: '#FFFFFF', padding: '9px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '13px' }}>{props.ctaLabel || 'Shop Now'}</a>
         </div>
       );
     }
 
     case 'social_share': {
       const activePlatforms = (props.platforms || []).filter((p: any) => p.enabled);
-      const iconSizeN = parseInt(props.iconSize || '36');
+      const iconSize = parseInt(props.iconSize || '36');
       return (
         <div style={{ textAlign: 'center' }}>
-          {props.showTitle !== false && props.title && (
-            <p style={{ fontWeight: '500', color: props.titleColor || '#6B7280', marginBottom: '10px', fontSize: '12px' }}>{props.title}</p>
-          )}
-          <div style={{ display: 'flex', flexDirection: props.layout === 'vertical' ? 'column' : 'row', justifyContent: 'center', gap: `${props.gap || 10}px`, flexWrap: 'wrap', alignItems: 'center' }}>
-            {activePlatforms.map((p: any) => {
-              const iconColor = p.iconColor || '#fff';
-              const bg = props.iconStyle === 'filled' ? (p.iconColor || '#6B7280') : 'transparent';
-              const border = props.iconStyle === 'outline' ? `2px solid ${p.iconColor || '#6B7280'}` : 'none';
-              return (
-                <div key={p.id} title={p.label} style={{
-                  width: `${iconSizeN}px`, height: `${iconSizeN}px`,
-                  borderRadius: '50%',
-                  background: bg,
-                  border,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
-                  color: props.iconStyle === 'filled' ? '#fff' : (p.iconColor || '#6B7280'),
-                }}>
-                  <SocialIcon id={p.id} size={`${Math.round(iconSizeN * 0.48)}px`} />
-                </div>
-              );
-            })}
+          {props.showTitle !== false && props.title && <p style={{ fontWeight: '500', color: '#6B7280', marginBottom: '10px', fontSize: '12px' }}>{props.title}</p>}
+          <div style={{ display: 'flex', flexDirection: props.layout === 'vertical' ? 'column' : 'row', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {activePlatforms.map((p: any) => (
+              <div key={p.id} style={{ width: iconSize, height: iconSize, borderRadius: '50%', background: p.iconColor || primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+                <SocialIcon id={p.id} size={`${Math.round(iconSize * 0.5)}px`} />
+              </div>
+            ))}
           </div>
         </div>
       );
     }
 
     case 'spacer': {
-      return <div style={{ height: `${props.height || 24}px`, width: '100%' }} />;
+      return <div style={{ height: `${props.height || 24}px` }} />;
     }
 
     case 'button': {
-      const b = props;
-      const isOutline = b.style === 'outline';
-      const isGhost = b.style === 'ghost';
+      const isOutline = props.style === 'outline';
+      const isFormAction = props.clickAction === 'form';
+      
+      const handleClick = (e: React.MouseEvent) => {
+        if (isFormAction) {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent('open-form'));
+        }
+      };
+
       return (
-        <div style={{ textAlign: b.width === 'full' ? 'center' : (b.align || 'center') }}>
+        <div style={{ textAlign: props.align || 'center' }}>
           <a
-            href={b.url || '#'}
-            target={b.openInNewTab ? '_blank' : '_self'}
-            rel="noopener noreferrer"
+            href={isFormAction ? '#' : (props.url || '#')}
+            target={isFormAction ? '_self' : (props.openInNewTab ? '_blank' : '_self')}
+            onClick={handleClick}
             style={{
-              display: b.width === 'full' ? 'block' : 'inline-block',
-              background: isOutline || isGhost ? 'transparent' : (b.fillColor || primaryColor),
-              color: isOutline ? (b.fillColor || primaryColor) : (b.textColor || '#fff'),
-              border: isOutline ? `${b.borderWidth || 2}px solid ${b.borderColor || b.fillColor || primaryColor}` : 'none',
-              borderRadius: `${b.borderRadius || 8}px`,
-              padding: `${b.paddingY || 10}px 20px`,
+              display: props.width === 'full' ? 'block' : 'inline-block',
+              background: isOutline || props.style === 'ghost' ? 'transparent' : (props.fillColor || primaryColor),
+              color: isOutline ? (props.fillColor || primaryColor) : (props.textColor || '#fff'),
+              border: isOutline ? `2px solid ${props.borderColor || props.fillColor || primaryColor}` : 'none',
+              borderRadius: `${props.borderRadius || 8}px`,
+              padding: '10px 20px',
               textDecoration: 'none',
               fontWeight: 'bold',
-              fontSize: b.fontSize || '14px',
-              cursor: 'pointer',
-              textAlign: 'center' as const,
+              fontSize: '14px',
+              textAlign: 'center',
+              cursor: 'pointer'
             }}
           >
-            {b.icon && b.iconPosition !== 'right' && <span style={{ marginRight: '6px' }}>{b.icon}</span>}
-            {b.label || 'Click Here'}
-            {b.icon && b.iconPosition === 'right' && <span style={{ marginLeft: '6px' }}>{b.icon}</span>}
+            {props.icon && props.iconPosition !== 'right' && <span style={{ marginRight: '6px' }}>{props.icon}</span>}
+            {props.label || 'Click Here'}
+            {props.icon && props.iconPosition === 'right' && <span style={{ marginLeft: '6px' }}>{props.icon}</span>}
           </a>
+        </div>
+      );
+    }
+
+    case 'form': {
+      const isOverlay = props.formType === 'overlay';
+
+      // Overlay forms: always show a clean blueprint placeholder in the block list.
+      // The actual overlay is rendered by <FormOverlay> at the page / preview level.
+      if (isOverlay) {
+        return (
+          <div style={{
+            border: '2px dashed #CBD5E1',
+            borderRadius: '16px',
+            padding: '16px',
+            textAlign: 'center',
+            background: 'rgba(248,250,252,0.8)',
+          }}>
+            <div style={{ fontSize: '24px', marginBottom: '6px' }}>📋</div>
+            <p style={{ fontWeight: '700', fontSize: '12px', color: '#475569', margin: 0 }}>
+              {props.formName || 'Form Overlay'}
+            </p>
+            <p style={{ fontSize: '11px', color: '#94A3B8', marginTop: '3px', margin: '3px 0 0' }}>
+              Appears {props.trigger === 'delay' ? `after ${props.delaySeconds ?? 1}s` : `on ${props.trigger || 'delay'}`} · visible in Preview →
+            </p>
+          </div>
+        );
+      }
+
+      // Inline form: render properly
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [submitted, setSubmitted] = React.useState(false);
+
+      if (submitted) {
+        return (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 text-white">
+              <Check size={22} />
+            </div>
+            <h3 className="text-sm font-bold text-green-800 mb-1">Response Received!</h3>
+            <p className="text-xs text-green-700">{props.completionMessage || 'Thank you for your response.'}</p>
+          </div>
+        );
+      }
+
+      return (
+        <div className="w-full bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm" style={{ fontFamily: theme?.fontFamily }}>
+          <div className="p-5 space-y-4">
+            {/* Circular logo / icon */}
+            {props.showHeaderImage && (
+              <div className="flex justify-center pt-1">
+                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-100 shadow">
+                  {props.headerImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={props.headerImage} alt="Logo" className="w-full h-full object-cover" />
+                  ) : (
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                      <circle cx="32" cy="32" r="32" fill="#1a1a2e"/>
+                      <path d="M32 14l4.5 13.5H51l-11.5 8.5 4.5 13.5L32 41l-12 8.5 4.5-13.5L13 27.5h14.5L32 14z" fill="#FFD700"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+            )}
+            {props.showTitleAndDesc !== false && (
+              <div className="text-center space-y-1">
+                <h2 className="text-base font-bold text-slate-800 leading-snug">{props.title || 'Contact Us'}</h2>
+                <p className="text-xs text-slate-500">{props.description || 'Fill out the form below'}</p>
+              </div>
+            )}
+            <div className="space-y-3">
+              {(props.fields || []).map((field: any) => {
+                if (field.type === 'hidden') return null;
+                const opts: string[] = field.options?.length ? field.options : ['Option 1', 'Option 2'];
+                const base = "w-full text-sm px-3.5 py-2.5 border-2 border-slate-200 rounded-xl bg-slate-50 outline-none";
+                return (
+                  <div key={field.id} className="space-y-1">
+                    <p className="text-xs font-semibold text-slate-600">
+                      {field.label}{field.required && <span className="text-red-500 ml-0.5">*</span>}
+                    </p>
+                    {field.type === 'textarea' ? (
+                      <textarea placeholder={field.label} className={`${base} resize-none`} rows={3} />
+                    ) : field.type === 'date' ? (
+                      <input type="date" className={base} />
+                    ) : field.type === 'time' ? (
+                      <input type="time" className={base} />
+                    ) : field.type === 'dropdown' ? (
+                      <select className={base}>
+                        <option value="">{field.label}...</option>
+                        {opts.map((o: string, i: number) => <option key={i}>{o}</option>)}
+                      </select>
+                    ) : field.type === 'multi_choice' ? (
+                      <div className="space-y-1.5">
+                        {opts.map((o: string, i: number) => (
+                          <label key={i} className="flex items-center gap-2.5 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                            <input type="radio" name={field.id} className="w-3.5 h-3.5 shrink-0" style={{ accentColor: primaryColor }} />
+                            <span className="text-xs text-slate-700">{o}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : field.type === 'checkbox' ? (
+                      <div className="space-y-1.5">
+                        {opts.map((o: string, i: number) => (
+                          <label key={i} className="flex items-center gap-2.5 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                            <input type="checkbox" className="w-3.5 h-3.5 rounded shrink-0" style={{ accentColor: primaryColor }} />
+                            <span className="text-xs text-slate-700">{o}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : field.type === 'multi_select' ? (
+                      <select multiple className={`${base} h-20 text-xs`}>
+                        {opts.map((o: string, i: number) => <option key={i}>{o}</option>)}
+                      </select>
+                    ) : field.type === 'file_upload' ? (
+                      <label className="flex flex-col items-center justify-center gap-1.5 w-full border-2 border-dashed border-slate-300 rounded-xl p-3 cursor-pointer bg-slate-50">
+                        <span className="text-lg">📎</span>
+                        <span className="text-[11px] text-slate-500 font-medium">Click to upload · Max 5 MB</span>
+                        <input type="file" className="hidden" />
+                      </label>
+                    ) : (
+                      <input
+                        type={field.type === 'phone' ? 'tel' : field.type === 'email' ? 'email' : 'text'}
+                        placeholder={`${field.label}${field.required ? ' *' : ''}`}
+                        className={base}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {props.showPrivacy && (
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input type="checkbox" className="mt-0.5 w-4 h-4 rounded accent-slate-900 shrink-0" />
+                <span className="text-xs text-slate-500">
+                  I agree to <a href={props.termsUrl || '#'} className="text-blue-600 underline">{props.termsLabel || 'Terms and Privacy Policy'}</a>
+                </span>
+              </label>
+            )}
+            <button
+              onClick={() => setSubmitted(true)}
+              className="w-full py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]"
+              style={{ background: props.buttonColor || primaryColor, color: props.buttonTextColor || '#FFFFFF' }}
+            >
+              {props.buttonLabel || 'Submit'}
+            </button>
+          </div>
         </div>
       );
     }

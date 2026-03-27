@@ -167,3 +167,66 @@ export function InlineInput({
     />
   );
 }
+
+// ─── Labeled Input helper ────────────────────────────────────────────────────
+export function LabeledInput({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder, 
+  type = 'text', 
+  mono = false 
+}: { 
+  label: string; 
+  value: string; 
+  onChange: (v: string) => void; 
+  placeholder?: string; 
+  type?: string; 
+  mono?: boolean 
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
+      <input
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors ${mono ? 'font-mono uppercase' : ''}`}
+      />
+    </div>
+  );
+}
+
+// ─── Labeled Textarea helper ─────────────────────────────────────────────────
+export function LabeledTextarea({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder, 
+  rows = 2 
+}: { 
+  label: string; 
+  value: string; 
+  onChange: (v: string) => void; 
+  placeholder?: string; 
+  rows?: number 
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
+      <textarea
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
+      />
+    </div>
+  );
+}
+
+// ─── Section Divider ──────────────────────────────────────────────────────────
+export function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 border-t pt-3 mt-3">{children}</p>;
+}

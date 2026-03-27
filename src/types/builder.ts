@@ -14,7 +14,8 @@ export type BlockType =
   | 'discount'
   | 'social_share'
   | 'spacer'
-  | 'button';
+  | 'button'
+  | 'form';
 
 export interface PageBlock {
   id: string;
@@ -282,6 +283,35 @@ export const getDefaultProps = (type: BlockType): any => {
         icon: '',
         iconPosition: 'left',
         openInNewTab: true,
+      };
+    case 'form':
+      return {
+        formName: 'Contact Collection',
+        formType: 'overlay', // overlay | inline
+        trigger: 'delay', // scroll | delay | click
+        delaySeconds: 1,
+        allowDismiss: true,
+        size: 'full', // full | popup
+        dontShowAgain: true,
+        showHeaderImage: true,
+        headerImage: '',
+        showTitleAndDesc: true,
+        title: 'Hi, great to connect with you!',
+        description: 'Please provide the information below to proceed further.',
+        fields: [
+          { id: crypto.randomUUID(), label: 'Your Name', type: 'text', required: true, errorMessage: 'This field is required' },
+          { id: crypto.randomUUID(), label: 'Your Email', type: 'email', required: true, errorMessage: 'This field is required' },
+          { id: crypto.randomUUID(), label: 'Your Phone', type: 'phone', required: false, errorMessage: 'Valid phone required' },
+        ],
+        showPrivacy: true,
+        termsLabel: 'Terms and Privacy Policy',
+        termsUrl: 'https://example.com/terms',
+        privacyUrl: 'https://example.com/privacy',
+        buttonLabel: 'Submit',
+        buttonColor: '#16A34A',
+        buttonTextColor: '#FFFFFF',
+        completionType: 'toast', // toast | popup
+        completionMessage: 'Thank you for your response.',
       };
     default:
       return {};

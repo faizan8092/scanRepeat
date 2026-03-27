@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { ColorSwatch, SegmentedControl, FieldRow, Slider, Toggle } from './BuilderControls';
+import { ColorSwatch, SegmentedControl, FieldRow, Slider, Toggle, LabeledInput, LabeledTextarea, SectionLabel } from './BuilderControls';
 import { IconPicker } from './IconPicker';
 import { Plus, Trash2, GripVertical, Image as ImageIcon, X } from 'lucide-react';
 import { MediaUploader } from './MediaUploader';
@@ -24,41 +24,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
-// ─── Labelled Input helper ────────────────────────────────────────────────────
-function LabeledInput({ label, value, onChange, placeholder, type = 'text', mono = false }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; mono?: boolean }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
-      <input
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={`w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors ${mono ? 'font-mono uppercase' : ''}`}
-      />
-    </div>
-  );
-}
-
-function LabeledTextarea({ label, value, onChange, placeholder, rows = 2 }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; rows?: number }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
-      <textarea
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={rows}
-        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
-      />
-    </div>
-  );
-}
-
-// ─── Section Divider ──────────────────────────────────────────────────────────
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 border-t pt-3 mt-3">{children}</p>;
-}
 
 // ─── Heading Block Editor ─────────────────────────────────────────────────────
 export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
@@ -552,7 +517,16 @@ export function ButtonEditor({ props, onChange }: { props: any; onChange: (p: an
   return (
     <div className="space-y-3">
       <LabeledInput label="Button Label" value={props.label || ''} onChange={v => onChange({ ...props, label: v })} placeholder="Click Here" />
-      <LabeledInput label="Link URL" value={props.url || ''} onChange={v => onChange({ ...props, url: v })} placeholder="https://..." />
+      <FieldRow label="Action">
+        <SegmentedControl 
+          value={props.clickAction || 'url'} 
+          onChange={v => onChange({ ...props, clickAction: v })} 
+          options={[{ value: 'url', label: 'Link' }, { value: 'form', label: 'Open Form' }]} 
+        />
+      </FieldRow>
+      {props.clickAction !== 'form' && (
+        <LabeledInput label="Link URL" value={props.url || ''} onChange={v => onChange({ ...props, url: v })} placeholder="https://..." />
+      )}
       <FieldRow label="Style">
         <SegmentedControl value={props.style || 'filled'} onChange={v => onChange({ ...props, style: v })} options={[{ value: 'filled', label: 'Filled' }, { value: 'outline', label: 'Outline' }, { value: 'ghost', label: 'Ghost' }]} />
       </FieldRow>
