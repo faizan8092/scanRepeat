@@ -43,6 +43,9 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // ─── Heading Block Editor ─────────────────────────────────────────────────────
 export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
   const levels = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+  const levelDefaults: Record<string, string> = {
+    h1: '32px', h2: '28px', h3: '22px', h4: '18px', h5: '16px', h6: '14px'
+  };
 
   return (
     <div className="space-y-3">
@@ -61,7 +64,7 @@ export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: a
           {levels.map(l => (
             <button
               key={l}
-              onClick={() => onChange({ ...props, level: l })}
+              onClick={() => onChange({ ...props, level: l, fontSize: levelDefaults[l] })}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${props.level === l ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
             >
               {l.toUpperCase()}
