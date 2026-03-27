@@ -72,7 +72,10 @@ export default function ShortCodeRedirectPage({ params }: { params: Promise<{ sh
       >
         <div 
           className="w-full max-w-md min-h-screen shadow-lg relative"
-          style={{ backgroundColor: productData.themeColors?.background || '#FFFFFF' }}
+          style={{ 
+            backgroundColor: productData.themeColors?.background || '#FFFFFF',
+            fontFamily: productData.themeColors?.fontFamily || 'inherit'
+          }}
         >
           <div className="p-4 space-y-4">
             {(productData.pageBlocks || []).map((block: any) => (

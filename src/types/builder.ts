@@ -23,20 +23,25 @@ export interface PageBlock {
 }
 
 export interface BrandTheme {
-  primary: string;
-  secondary: string;
-  text: string;
   background: string;
   accent: string;
+  fontFamily: string;
 }
 
 export const defaultTheme: BrandTheme = {
-  primary: '#16A34A',
-  secondary: '#F3F4F6',
-  text: '#111827',
   background: '#FFFFFF',
   accent: '#F59E0B',
+  fontFamily: 'Inter, system-ui, sans-serif',
 };
+
+export const FONT_OPTIONS = [
+  { label: 'System Sans', value: 'Inter, system-ui, sans-serif' },
+  { label: 'Modern Serif', value: 'Georgia, "Times New Roman", serif' },
+  { label: 'Elegant Display', value: '"Playfair Display", serif' },
+  { label: 'Classic Monspace', value: 'ui-monospace, SFMono-Regular, monospace' },
+  { label: 'Playful Round', value: '"Quicksand", sans-serif' },
+  { label: 'Clean Geometric', value: '"Poppins", sans-serif' },
+];
 
 export const getDefaultProps = (type: BlockType): any => {
   switch (type) {

@@ -11,7 +11,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useRouter } from 'next/navigation';
 
-import { BlockType, PageBlock, getDefaultProps, defaultTemplates, BrandTheme, defaultTheme } from '@/src/types/builder';
+import { BlockType, PageBlock, getDefaultProps, defaultTemplates, BrandTheme, defaultTheme, FONT_OPTIONS } from '@/src/types/builder';
 import { fetchProductById, updateProductPageApi } from '@/src/lib/product-service';
 import { BlockRenderer } from '@/src/components/builder/BlockRenderer';
 import { ColorSwatch } from '@/src/components/builder/BuilderControls';
@@ -378,17 +378,31 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           {/* ── Center: Canvas ── */}
           <main className="flex-1 flex flex-col overflow-hidden">
 
-            {/* Brand Theme Bar */}
-            <div className="h-11 bg-white border-b flex items-center px-5 gap-5 shrink-0 shadow-sm z-10">
+            <div className="h-11 bg-white border-b flex items-center px-5 gap-5 shrink-0 shadow-sm z-10 overflow-x-auto no-scrollbar">
               <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">Brand Theme:</span>
               {(Object.entries({
                 Primary: 'primary', Secondary: 'secondary', Text: 'text', Background: 'background', Accent: 'accent',
               }) as [string, keyof BrandTheme][]).map(([label, key]) => (
-                <div key={key} className="flex items-center gap-1.5">
+                <div key={key} className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[11px] text-muted-foreground">{label}</span>
                   <ColorSwatch value={theme[key]} onChange={(c) => setTheme(t => ({ ...t, [key]: c }))} label={label} />
                 </div>
               ))}
+              <div className="h-4 w-px bg-slate-200 mx-1 shrink-0" />
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap flex items-center gap-1">
+                  <Type size={12} className="text-slate-400" /> Typography:
+                </span>
+                <select 
+                  value={theme.fontFamily} 
+                  onChange={(e) => setTheme(t => ({ ...t, fontFamily: e.target.value }))}
+                  className="bg-slate-50 border border-slate-200 rounded px-2 py-0.5 text-[11px] font-bold text-slate-700 outline-none hover:border-primary/30 transition-colors"
+                >
+                  {FONT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="flex flex-1 overflow-hidden">
@@ -398,7 +412,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
                 className="flex-1 overflow-y-auto bg-slate-100 p-8"
                 onClick={handleCanvasClick}
               >
-                <div className="max-w-[640px] mx-auto">
+                <div className="max-w-[640px] mx-auto transition-all duration-300" style={{ fontFamily: theme.fontFamily }}>
                   {blocks.length === 0 ? (
                     <div className="min-h-[500px] border-2 border-dashed border-slate-300 rounded-2xl bg-white flex flex-col items-center justify-center text-center p-12">
                       <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-5">
@@ -481,7 +495,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
                 <div
                   ref={previewRef}
                   className="flex-1 overflow-y-auto w-full scrollbar-hide pt-8 pb-8"
-                  style={{ background: theme.background }}
+                  style={{ background: theme.background, fontFamily: theme.fontFamily }}
                 >
                   {blocks.length === 0 ? (
                     <div className="flex h-full items-center justify-center p-6 text-center">
