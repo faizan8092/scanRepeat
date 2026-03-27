@@ -23,12 +23,18 @@ export interface PageBlock {
 }
 
 export interface BrandTheme {
+  primary: string;
+  secondary: string;
+  text: string;
   background: string;
   accent: string;
   fontFamily: string;
 }
 
 export const defaultTheme: BrandTheme = {
+  primary: '#16A34A',
+  secondary: '#F1F5F9',
+  text: '#111827',
   background: '#FFFFFF',
   accent: '#F59E0B',
   fontFamily: 'Inter, system-ui, sans-serif',

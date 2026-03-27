@@ -354,7 +354,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
         <div className="flex-1 flex overflow-hidden">
 
           {/* ── Left Panel: Component Tray ── */}
-          <aside className="w-[180px] bg-white border-r flex flex-col shrink-0 overflow-y-auto">
+          <aside className="w-[160px] bg-white border-r flex flex-col shrink-0 overflow-y-auto">
             <div className="p-3 border-b">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Start With</p>
               {Object.keys(defaultTemplates).map(name => (
@@ -409,10 +409,10 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
               {/* Canvas scroll area */}
               <div
                 ref={canvasRef}
-                className="flex-1 overflow-y-auto bg-slate-100 p-8"
+                className="flex-1 overflow-y-auto bg-slate-100 p-4 sm:p-6"
                 onClick={handleCanvasClick}
               >
-                <div className="max-w-[640px] mx-auto transition-all duration-300" style={{ fontFamily: theme.fontFamily }}>
+                <div className="max-w-[540px] mx-auto transition-all duration-300" style={{ fontFamily: theme.fontFamily }}>
                   {blocks.length === 0 ? (
                     <div className="min-h-[500px] border-2 border-dashed border-slate-300 rounded-2xl bg-white flex flex-col items-center justify-center text-center p-12">
                       <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-5">
@@ -456,7 +456,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
 
               {/* Inline Editor Drawer (slides in when block selected) */}
               {selectedBlock && (
-                <div className="w-[280px] bg-white border-l flex flex-col overflow-y-auto shrink-0 shadow-xl z-10">
+                <div className="w-[340px] bg-white border-l flex flex-col overflow-y-auto shrink-0 shadow-xl z-10">
                   <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50 shrink-0">
                     <div className="flex items-center gap-2 font-bold text-sm">
                       {iconMap[selectedBlock.type]}
@@ -476,7 +476,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           </main>
 
           {/* ── Right Panel: Live Mobile Preview ── */}
-          <aside className="w-[300px] bg-slate-50 border-l flex flex-col shrink-0 overflow-hidden items-center pt-5">
+          <aside className="w-[270px] bg-slate-50 border-l flex flex-col shrink-0 overflow-hidden items-center pt-5">
             <div className="mb-4 text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">📱 Customer View</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Live preview</p>

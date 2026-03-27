@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { ColorSwatch, SegmentedControl, FieldRow, Slider, Toggle } from './BuilderControls';
 import { IconPicker } from './IconPicker';
 import { Plus, Trash2 } from 'lucide-react';
+import { MediaUploader } from './MediaUploader';
 
 // ─── Labelled Input helper ────────────────────────────────────────────────────
 function LabeledInput({ label, value, onChange, placeholder, type = 'text', mono = false }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; mono?: boolean }) {
@@ -21,15 +22,25 @@ function LabeledInput({ label, value, onChange, placeholder, type = 'text', mono
 }
 
 function LabeledTextarea({ label, value, onChange, placeholder, rows = 2 }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; rows?: number }) {
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = `${Math.max(ref.current.scrollHeight, 100)}px`;
+    }
+  }, [value]);
+
   return (
     <div className="space-y-1">
       <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</p>
       <textarea
+        ref={ref}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
+        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-all scrollbar-hide min-h-[100px]"
       />
     </div>
   );
@@ -133,25 +144,33 @@ export function TextEditor({ props, onChange }: { props: any; onChange: (p: any)
 
 // ─── Image Block Editor ───────────────────────────────────────────────────────
 export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
-  const [urlInput, setUrlInput] = useState('');
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        {(props.images || []).map((img: string, i: number) => (
-          <div key={i} className="relative group w-16 h-16 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img} alt="" className="w-full h-full object-cover" />
-            <button
-              onClick={() => onChange({ ...props, images: props.images.filter((_: any, j: number) => j !== i) })}
-              className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center opacity-0 group-hover:opacity-100 text-[10px]"
-            >×</button>
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-2">
-        <input value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="Paste image URL..." className="flex-1 text-xs p-2 border-2 border-slate-100 rounded-xl bg-white outline-none focus:border-primary" />
-        <button onClick={() => { if (urlInput) { onChange({ ...props, images: [...(props.images || []), urlInput] }); setUrlInput(''); } }} className="px-3 py-2 text-xs font-bold bg-primary text-white rounded-xl">Add</button>
-      </div>
+      <SectionLabel>Images ({(props.images || []).length})</SectionLabel>
+
+      {/* Existing images */}
+      {(props.images || []).length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {(props.images || []).map((img: string, i: number) => (
+            <div key={i} className="relative group w-16 h-16 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img} alt="" className="w-full h-full object-cover" />
+              <button
+                onClick={() => onChange({ ...props, images: props.images.filter((_: any, j: number) => j !== i) })}
+                className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center opacity-0 group-hover:opacity-100 text-[10px]"
+              >×</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload new image */}
+      <MediaUploader
+        type="image"
+        label="Add Image"
+        onUploaded={(url) => onChange({ ...props, images: [...(props.images || []), url] })}
+      />
+
       <FieldRow label="Layout">
         <SegmentedControl value={props.layout || 'single'} onChange={v => onChange({ ...props, layout: v })} options={[{ value: 'single', label: '1' }, { value: 'grid-2', label: '2' }, { value: 'grid-3', label: '3' }]} />
       </FieldRow>
@@ -161,6 +180,15 @@ export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any
       <FieldRow label="Object Fit">
         <SegmentedControl value={props.objectFit || 'cover'} onChange={v => onChange({ ...props, objectFit: v })} options={[{ value: 'cover', label: 'Cover' }, { value: 'contain', label: 'Contain' }]} />
       </FieldRow>
+      {props.images?.length > 0 && (
+        <Toggle checked={!!props.showCaption} onChange={v => onChange({ ...props, showCaption: v })} label="Show Caption" />
+      )}
+      {props.showCaption && (
+        <div className="space-y-1">
+          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Caption</p>
+          <input value={props.caption || ''} onChange={e => onChange({ ...props, caption: e.target.value })} placeholder="Image caption..." className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+        </div>
+      )}
     </div>
   );
 }
@@ -172,16 +200,10 @@ function normSlide(s: any): { src: string; alt: string; caption: string } {
 }
 
 export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
-  const [urlInput, setUrlInput] = useState('');
   const slides = (props.images || []).map(normSlide);
 
   const setSlides = (next: any[]) => onChange({ ...props, images: next });
 
-  const addSlide = () => {
-    if (!urlInput.trim()) return;
-    setSlides([...slides, { src: urlInput.trim(), alt: '', caption: '' }]);
-    setUrlInput('');
-  };
   const removeSlide = (i: number) => setSlides(slides.filter((_: any, j: number) => j !== i));
   const updateSlide = (i: number, field: string, val: string) => {
     const next = [...slides];
@@ -221,10 +243,12 @@ export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: 
         </div>
       ))}
 
-      <div className="flex gap-2">
-        <input value={urlInput} onChange={e => setUrlInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSlide()} placeholder="Paste image URL and press Add..." className="flex-1 text-xs p-2 border-2 border-slate-100 rounded-xl bg-white outline-none focus:border-primary" />
-        <button onClick={addSlide} className="px-3 py-2 text-xs font-bold bg-primary text-white rounded-xl">Add</button>
-      </div>
+      {/* Upload / URL for new slide */}
+      <MediaUploader
+        type="image"
+        label="Add Slide"
+        onUploaded={(url) => setSlides([...slides, { src: url, alt: '', caption: '' }])}
+      />
 
       <SectionLabel>Appearance</SectionLabel>
       <FieldRow label="Transition">
@@ -257,23 +281,74 @@ export function CarouselEditor({ props, onChange }: { props: any; onChange: (p: 
 
 // ─── Video Block Editor ───────────────────────────────────────────────────────
 export function VideoEditor({ props, onChange }: { props: any; onChange: (p: any) => void }) {
+  const [videoTab, setVideoTab] = useState<'youtube' | 'upload'>(props.source === 'upload' ? 'upload' : 'youtube');
   const getYtId = (url: string) => url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1];
   const ytId = getYtId(props.url || '');
+
+  const switchTab = (t: 'youtube' | 'upload') => {
+    setVideoTab(t);
+    onChange({ ...props, source: t, url: '' });
+  };
+
   return (
     <div className="space-y-3">
-      <FieldRow label="Source">
-        <SegmentedControl value={props.source || 'youtube'} onChange={v => onChange({ ...props, source: v })} options={[{ value: 'youtube', label: 'YouTube' }, { value: 'vimeo', label: 'Vimeo' }]} />
-      </FieldRow>
-      <LabeledInput label="Video URL" value={props.url || ''} onChange={v => onChange({ ...props, url: v })} placeholder="https://youtube.com/watch?v=..." />
-      {ytId && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} alt="thumbnail" className="w-full rounded-xl object-cover border" style={{ maxHeight: 140 }} />
+      {/* Source tab */}
+      <div className="flex bg-slate-100 rounded-lg p-0.5">
+        {(['youtube', 'upload'] as const).map(t => (
+          <button
+            key={t}
+            onClick={() => switchTab(t)}
+            className={`flex-1 py-1.5 text-[11px] font-bold rounded-md transition-all ${
+              videoTab === t ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {t === 'youtube' ? '▶ YouTube' : '📁 Upload'}
+          </button>
+        ))}
+      </div>
+
+      {videoTab === 'youtube' ? (
+        <>
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">YouTube URL</p>
+            <input
+              value={props.url || ''}
+              onChange={e => onChange({ ...props, url: e.target.value, source: 'youtube' })}
+              placeholder="https://youtube.com/watch?v=..."
+              className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
+            />
+          </div>
+          {ytId && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} alt="thumbnail" className="w-full rounded-xl object-cover border" style={{ maxHeight: 140 }} />
+          )}
+        </>
+      ) : (
+        <MediaUploader
+          type="video"
+          label="Upload Video"
+          onUploaded={(url) => onChange({ ...props, url, source: 'upload' })}
+        />
       )}
-      <LabeledInput label="Title" value={props.title || ''} onChange={v => onChange({ ...props, title: v })} placeholder="Video title..." />
+
+      {props.url && (
+        <div className="p-2 bg-green-50 border border-green-200 rounded-xl text-[11px] text-green-700 truncate">
+          ✓ {props.url.length > 50 ? props.url.slice(0, 50) + '…' : props.url}
+        </div>
+      )}
+
+      <div className="space-y-1">
+        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Video Title</p>
+        <input value={props.title || ''} onChange={e => onChange({ ...props, title: e.target.value })} placeholder="Video title..." className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+      </div>
       <Toggle checked={props.showTitle !== false} onChange={v => onChange({ ...props, showTitle: v })} label="Show Title" />
-      <Toggle checked={!!props.autoPlay} onChange={v => onChange({ ...props, autoPlay: v })} label="Auto Play" />
-      <Toggle checked={props.controls !== false} onChange={v => onChange({ ...props, controls: v })} label="Show Controls" />
-      <Toggle checked={!!props.loop} onChange={v => onChange({ ...props, loop: v })} label="Loop" />
+      {videoTab === 'youtube' && (
+        <>
+          <Toggle checked={!!props.autoPlay} onChange={v => onChange({ ...props, autoPlay: v })} label="Auto Play" />
+          <Toggle checked={props.controls !== false} onChange={v => onChange({ ...props, controls: v })} label="Show Controls" />
+          <Toggle checked={!!props.loop} onChange={v => onChange({ ...props, loop: v })} label="Loop" />
+        </>
+      )}
     </div>
   );
 }

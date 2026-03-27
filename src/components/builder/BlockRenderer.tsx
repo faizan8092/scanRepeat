@@ -240,6 +240,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
     case 'video': {
       const getYtId = (url: string) => url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1];
       const ytId = getYtId(props.url);
+      const isUpload = props.source === 'upload' || (!ytId && props.url);
       return (
         <div>
           {props.showTitle && props.title && <p style={{ fontWeight: 'bold', marginBottom: '6px', color: textColor, fontSize: '13px' }}>{props.title}</p>}
@@ -250,11 +251,20 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
                 style={{ width: '100%', height: '100%', border: 'none' }}
                 allowFullScreen
               />
+            ) : isUpload ? (
+              <video
+                src={props.url}
+                controls={props.controls !== false}
+                autoPlay={!!props.autoPlay}
+                loop={!!props.loop}
+                muted={!!props.autoPlay}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             ) : (
               <div style={{ width: '100%', height: '100%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '32px', marginBottom: '6px' }}>▶</div>
-                  <div style={{ fontSize: '11px' }}>Paste a YouTube URL</div>
+                  <div style={{ fontSize: '11px' }}>Paste a YouTube URL or upload a video</div>
                 </div>
               </div>
             )}
