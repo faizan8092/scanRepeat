@@ -151,7 +151,7 @@ export default function SecurityPage() {
                   <Key size={24} />
                </div>
                <div>
-                 <h2 className="text-2xl font-black text-foreground tracking-tight">Security Password</h2>
+                 <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight">Security Password</h2>
                  <p className="text-muted-foreground text-sm font-medium">Update your login credentials regularly.</p>
                </div>
             </div>
@@ -217,7 +217,7 @@ export default function SecurityPage() {
                 <button 
                   onClick={handleUpdatePassword}
                   disabled={isUpdatingPassword}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl disabled:opacity-50 min-w-[200px] justify-center"
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xl disabled:opacity-50 min-w-[200px] justify-center"
                 >
                   {isUpdatingPassword ? <Loader size={30} /> : (
                     <>
@@ -242,7 +242,7 @@ export default function SecurityPage() {
                     <Smartphone size={24} />
                  </div>
                  <div>
-                   <h2 className="text-2xl font-black text-foreground tracking-tight">Two-Factor Authentication</h2>
+                   <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight">Two-Factor Authentication</h2>
                    <p className="text-muted-foreground text-sm font-medium">Add an extra layer of protection.</p>
                  </div>
               </div>
@@ -255,7 +255,7 @@ export default function SecurityPage() {
               Two-factor authentication adds an extra layer of security to your account by requiring more than just a password to log in.
             </p>
 
-            <button className="flex items-center gap-3 px-8 py-4 rounded-2xl border-2 border-success text-sm font-black text-success hover:bg-success hover:text-background transition-all relative z-10">
+            <button className="flex items-center gap-3 px-8 py-4 rounded-2xl border-primary border-success text-sm font-black text-success hover:bg-success hover:text-background transition-all relative z-10">
               Enable 2FA Now <ChevronRight size={18} />
             </button>
           </div>
@@ -264,10 +264,10 @@ export default function SecurityPage() {
         {/* Sidebar Sections */}
         <div className="lg:col-span-4 space-y-8">
            <div className="bg-card rounded-[2.5rem] border border-border p-8 shadow-sm">
-             <h3 className="text-xl font-bold text-foreground mb-2">Active Sessions</h3>
+             <h3 className="text-xl font-bold text-primary-foreground mb-2">Active Sessions</h3>
              {!isLoadingSessions && sessions.length > 0 && (
                <p className="text-sm font-medium text-muted-foreground mb-6">
-                 You have <strong className="text-foreground">{sessions.length} active sessions</strong>, we only show you the top 3 most recent sessions here.
+                 You have <strong className="text-primary-foreground">{sessions.length} active sessions</strong>, we only show you the top 3 most recent sessions here.
                </p>
              )}
              <div className="space-y-3">
@@ -310,7 +310,7 @@ export default function SecurityPage() {
              <p className="text-muted-foreground text-[11px] font-bold leading-relaxed mb-8 uppercase tracking-wider">Deleting your account is permanent and cannot be undone.</p>
              <button 
                onClick={openDeleteModal}
-               className="w-full py-4 rounded-2xl bg-destructive text-background font-bold text-sm shadow-xl shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2"
+               className="w-full py-4 rounded-2xl bg-destructive text-primary-foreground font-bold text-sm shadow-xl shadow-destructive/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
              >
                 <Trash2 size={16} /> Delete Account
               </button>
@@ -333,7 +333,7 @@ export default function SecurityPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-2xl overflow-hidden p-8 md:p-10"
+              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-xl overflow-hidden p-8 md:p-10"
             >
               <button 
                 onClick={() => setShowDeleteModal(false)}
@@ -344,14 +344,14 @@ export default function SecurityPage() {
               </button>
 
               <div className="mb-8 pr-8">
-                <h2 className="text-2xl font-black text-foreground tracking-tight mb-6 mt-2">Delete account</h2>
+                <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight mb-6 mt-2">Delete account</h2>
                 
                 <div className="space-y-6 text-sm font-medium text-muted-foreground">
                   <p>
                     You are about to delete your account. All the data associated with this account will be permanently deleted.
                   </p>
                   <p>
-                    Please type <strong className="text-foreground font-black">DELETE</strong> below to proceed with your action.
+                    Please type <strong className="text-primary-foreground font-black">DELETE</strong> below to proceed with your action.
                   </p>
                 </div>
               </div>
@@ -410,7 +410,7 @@ function SecurityInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-black text-foreground/80 block ml-1">{label}</label>
+      <label className="text-sm font-black text-primary-foreground/90 block ml-1">{label}</label>
       <div className="relative">
         <input 
           type={isPassword ? (show ? 'text' : 'password') : type}
@@ -427,7 +427,7 @@ function SecurityInput({
         {isPassword && (
           <button 
             onClick={() => setShow(!show)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-primary-foreground transition-colors"
           >
             {show ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -476,13 +476,13 @@ function SessionItem({ device, location, status, icon, onRevoke, sessionData, is
       <div className="flex items-start gap-4">
         <div className={cn(
           "mt-0.5 p-2.5 rounded-2xl flex items-center justify-center transition-colors shadow-sm",
-          isCurrent ? "bg-primary text-background" : "bg-secondary text-foreground group-hover/session:bg-border border border-border"
+          isCurrent ? "bg-primary text-background" : "bg-secondary text-primary-foreground group-hover/session:bg-border border border-border"
         )}>
           <IconComponent size={20} strokeWidth={2} />
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <p className="text-[15px] font-black tracking-tight text-foreground">{deviceName}</p>
+            <p className="text-[15px] font-black tracking-tight text-primary-foreground">{deviceName}</p>
             {isCurrent && (
               <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-black tracking-widest uppercase">
                 Current Session
@@ -490,7 +490,7 @@ function SessionItem({ device, location, status, icon, onRevoke, sessionData, is
             )}
           </div>
           <div className="text-[12px] text-muted-foreground font-medium space-y-0.5">
-            <p className="text-foreground/80 font-bold">Logged in: <span className="text-foreground">{sessionData?.createdAt ? formatDateTime(sessionData.createdAt) : status}</span></p>
+            <p className="text-foreground font-black">Logged in: <span className="text-primary-foreground">{sessionData?.createdAt ? formatDateTime(sessionData.createdAt) : status}</span></p>
             <p className="flex items-center gap-2"><span>IP: <span className="font-bold">{sessionData?.ip || location}</span></span> <span className="opacity-50">•</span> <span>Expires: {sessionData?.expiresAt ? formatDateTime(sessionData.expiresAt) : 'Never'}</span></p>
           </div>
         </div>
@@ -499,7 +499,7 @@ function SessionItem({ device, location, status, icon, onRevoke, sessionData, is
       {onRevoke && !isCurrent && (
         <button 
           onClick={onRevoke}
-          className="self-end sm:self-center px-5 py-2.5 rounded-xl hover:bg-destructive text-muted-foreground hover:text-background text-xs font-bold transition-all whitespace-nowrap border border-border hover:border-destructive shadow-sm"
+          className="self-end sm:self-center px-5 py-2.5 rounded-xl hover:bg-destructive text-muted-foreground hover:text-background text-xs font-bold transition-all whitespace-nowrap border border-border hover:border-accentestructive shadow-sm"
         >
           Log out
         </button>

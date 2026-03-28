@@ -218,7 +218,7 @@ export default function PricingPage() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1, type: "spring", bounce: 0, duration: 0.8 }}
-                  className={`relative flex flex-col rounded-[2rem] overflow-hidden ${plan.highlight ? 'lg:-mt-6 shadow-2xl' : 'shadow-sm'}`}
+                  className={`relative flex flex-col rounded-[2rem] overflow-hidden ${plan.highlight ? 'lg:-mt-6 shadow-xl' : 'shadow-sm'}`}
                 >
                   {/* Plan header */}
                   <div className={`bg-gradient-to-br ${plan.color} p-8 text-white relative overflow-hidden`}>
@@ -233,7 +233,7 @@ export default function PricingPage() {
                       </div>
                     )}
 
-                    <h2 className="text-2xl font-bold mb-1">{plan.name}</h2>
+                    <h2 className="text-primaryxl font-bold mb-1">{plan.name}</h2>
                     <p className="text-white/70 text-sm mb-6 leading-snug">{plan.desc}</p>
 
                     <div className="flex items-baseline gap-1">
@@ -432,7 +432,7 @@ export default function PricingPage() {
                 >
                   <summary className="flex items-center justify-between text-[17px] font-bold tracking-tight list-none">
                     {faq.q}
-                    <span className="text-[#9ca3af] group-open:rotate-45 transition-transform duration-300 ml-4 text-2xl leading-none shrink-0">+</span>
+                    <span className="text-[#9ca3af] group-open:rotate-45 transition-transform duration-300 ml-4 text-primaryxl leading-none shrink-0">+</span>
                   </summary>
                   <p className="text-[#6b7280] text-[15px] leading-relaxed mt-4">{faq.a}</p>
                 </motion.details>
@@ -464,7 +464,7 @@ export default function PricingPage() {
                 No credit card. No commitment. Just set up your first QR code and start converting.
               </motion.p>
               <motion.div variants={fadeUp}>
-                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-2xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
+                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
                   Get started for free <ArrowRight className="w-5 h-5" />
                 </Link>
               </motion.div>

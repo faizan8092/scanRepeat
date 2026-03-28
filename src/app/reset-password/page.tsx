@@ -74,7 +74,7 @@ export default function ResetPasswordPage() {
           <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-lg shadow-emerald-500/20">
             <CheckCircle2 size={40} />
           </div>
-          <h1 className="text-2xl font-bold text-emerald-900 mb-2">Password Reset Successful</h1>
+          <h1 className="text-primaryxl font-bold text-emerald-900 mb-2">Password Reset Successful</h1>
           <p className="text-emerald-800/80 mb-8 leading-relaxed">
             Your password has been securely updated. You can now use your new credentials to access your account.
           </p>
@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
                   if (passwordError) setPasswordError(validatePassword(e.target.value));
                 }}
                 className={cn(
-                  "w-full px-5 py-4 rounded-xl border-2 transition-all outline-none text-base placeholder:text-[#9ca3af]",
+                  "w-full px-5 py-4 rounded-xl border-primary transition-all outline-none text-base placeholder:text-[#9ca3af]",
                   passwordError ? "border-rose-500 bg-rose-50/10 focus:ring-rose-200/50" : "border-[#e5e7eb] focus:ring-[#2970ff]/10 focus:border-[#2970ff] hover:border-[#ccd1db]"
                 )}
               />
@@ -158,7 +158,7 @@ export default function ResetPasswordPage() {
                   if (confirmError) setConfirmError(e.target.value !== password ? "Passwords don't match." : "");
                 }}
                 className={cn(
-                  "w-full px-5 py-4 rounded-xl border-2 transition-all outline-none text-base placeholder:text-[#9ca3af]",
+                  "w-full px-5 py-4 rounded-xl border-primary transition-all outline-none text-base placeholder:text-[#9ca3af]",
                   confirmError ? "border-rose-500 bg-rose-50/10 focus:ring-rose-200/50" : "border-[#e5e7eb] focus:ring-[#2970ff]/10 focus:border-[#2970ff] hover:border-[#ccd1db]"
                 )}
               />

@@ -31,13 +31,13 @@ function ColorPickerPopover({ value, onChange, label }: { value: string; onChang
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 px-3 py-2 border-2 border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white"
+        className="flex items-center gap-2 px-3 py-2 border-primary border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white"
       >
         <div className="w-5 h-5 rounded-md border shadow-sm" style={{ background: value }} />
         <span className="text-sm font-mono">{value}</span>
       </button>
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-[9999] bg-white rounded-2xl shadow-2xl border p-3 w-56">
+        <div className="absolute top-full mt-2 left-0 z-[9999] bg-white rounded-2xl shadow-xl border p-3 w-56">
           <p className="text-[10px] font-bold uppercase text-slate-400 mb-2">{label}</p>
           <HexColorPicker color={value} onChange={onChange} style={{ width: '100%', height: 140 }} />
           <div className="flex items-center gap-2 mt-2 border rounded-lg px-2 py-1 bg-slate-50">
@@ -98,7 +98,7 @@ export function QRCustomizer({ productName, shortCode, qrDataUrl, initialSetting
                 <button
                   key={l}
                   onClick={() => set({ errorLevel: l })}
-                  className={`flex-1 py-2 text-xs font-bold rounded-xl border-2 transition-all ${settings.errorLevel === l ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl border-primary transition-all ${settings.errorLevel === l ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
                 >
                   {l}
                 </button>
@@ -124,7 +124,7 @@ export function QRCustomizer({ productName, shortCode, qrDataUrl, initialSetting
               value={settings.logoUrl}
               onChange={e => set({ logoUrl: e.target.value, errorLevel: e.target.value ? 'H' : settings.errorLevel })}
               placeholder="Paste logo image URL..."
-              className="w-full text-xs p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
+              className="w-full text-xs p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
             />
             {settings.logoUrl && (
               <div className="space-y-1">
@@ -151,7 +151,7 @@ export function QRCustomizer({ productName, shortCode, qrDataUrl, initialSetting
             </label>
             {settings.showLabel && (
               <>
-                <input value={settings.labelText} onChange={e => set({ labelText: e.target.value })} placeholder="Scan to view product" className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+                <input value={settings.labelText} onChange={e => set({ labelText: e.target.value })} placeholder="Scan to view product" className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
                 <div>
                   <p className="text-xs text-slate-500 mb-1.5">Label color</p>
                   <ColorPickerPopover value={settings.labelColor} onChange={v => set({ labelColor: v })} label="Label Color" />

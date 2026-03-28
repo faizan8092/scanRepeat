@@ -61,7 +61,7 @@ export default function VerifyEmailPage() {
           )}
         </div>
 
-        <h1 className="text-3xl font-bold mb-3">
+        <h1 className="text-accentxl font-bold mb-3">
           {status === 'success' ? 'Email Verified' : status === 'loading' ? 'Verifying...' : 'Verification Failed'}
         </h1>
         <p className="text-sm text-[#6b7280] mb-8">

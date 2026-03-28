@@ -43,7 +43,7 @@ export function IconPicker({ value, onChange, size = 'md' }: IconPickerProps) {
         title="Pick icon"
         className={`
           ${size === 'sm' ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'}
-          rounded-lg border-2 border-dashed border-slate-300 bg-white hover:border-primary/50 hover:bg-primary/5
+          rounded-lg border-primary border-accentashed border-slate-300 bg-white hover:border-primary/50 hover:bg-primary/5
           flex items-center justify-center transition-all cursor-pointer shadow-sm
         `}
       >
@@ -52,7 +52,7 @@ export function IconPicker({ value, onChange, size = 'md' }: IconPickerProps) {
 
       {open && (
         <div
-          className="fixed z-[9999] bg-white rounded-2xl shadow-2xl border border-slate-200 p-3"
+          className="fixed z-[9999] bg-white rounded-2xl shadow-xl border border-slate-200 p-3"
           style={{
             width: 280,
             top: (() => {
@@ -103,7 +103,7 @@ export function IconPicker({ value, onChange, size = 'md' }: IconPickerProps) {
                 onClick={() => { onChange(icon); setOpen(false); setSearch(''); }}
                 title={icon}
                 className={`w-8 h-8 flex items-center justify-center rounded-lg text-lg hover:bg-primary/10 transition-colors ${
-                  value === icon ? 'bg-primary/20 ring-2 ring-primary/40' : ''
+                  value === icon ? 'bg-primary/20 ring-primary ring-primary/40' : ''
                 }`}
               >
                 {icon}

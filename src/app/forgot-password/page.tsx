@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
             <Link href="/" className="inline-flex mb-8">
               <Logo size={48} />
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight mb-3">Reset password</h1>
+            <h1 className="text-accentxl font-bold tracking-tight mb-3">Reset password</h1>
             <p className="text-[#6b7280] leading-relaxed">
               Enter the email that you used when you signed up to recover your password. You will receive a password reset link.
             </p>
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                    className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
                   />
                 </div>
               </div>

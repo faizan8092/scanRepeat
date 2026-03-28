@@ -48,7 +48,7 @@ export function ColorPicker({ value, onChange }: { value: string, onChange: (v: 
           <button 
             key={c}
             onClick={() => onChange(c)}
-            className={`w-6 h-6 rounded-full border shadow-sm ${c === value ? 'ring-2 ring-primary ring-offset-1' : ''}`}
+            className={`w-6 h-6 rounded-full border shadow-sm ${c === value ? 'ring-primary ring-primary ring-offset-1' : ''}`}
             style={{ background: c }}
           />
         ))}

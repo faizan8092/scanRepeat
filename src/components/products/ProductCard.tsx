@@ -62,7 +62,7 @@ function Thumbnail({ product }: { product: Product }) {
     external_url: <ExternalLink size={28} className="text-purple-400" />,
   };
   const bgs: Record<Product['type'], string> = {
-    page_builder: 'bg-blue-50',
+    page_builder: 'bg-primary/5',
     file: 'bg-orange-50',
     external_url: 'bg-purple-50',
   };
@@ -352,7 +352,7 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
                 </div>
                 <button 
                   onClick={() => window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'))}
-                  className="ml-auto px-3 py-1.5 bg-foreground text-background text-[10px] font-black rounded-lg hover:bg-primary transition-colors whitespace-nowrap"
+                  className="ml-auto px-3 py-1.5 bg-primary-foreground text-background text-[10px] font-black rounded-lg hover:bg-primary transition-colors whitespace-nowrap"
                 >
                   UPGRADE
                 </button>
@@ -436,7 +436,7 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
       {showQREditor && (
         <div className="fixed inset-0 z-[9985] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowQREditor(false)} />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden" style={{ height: '80vh' }}>
+          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden" style={{ height: '80vh' }}>
             <button onClick={() => setShowQREditor(false)} className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 bg-white shadow-sm">
               <X size={18} />
             </button>

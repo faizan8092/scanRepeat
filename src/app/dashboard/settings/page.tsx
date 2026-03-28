@@ -178,7 +178,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-foreground">Account Profile</h1>
+        <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Account Profile</h1>
         <p className="text-sm text-muted-foreground font-medium mt-2">Update your personal information and public profile.</p>
       </div>
 
@@ -188,7 +188,7 @@ export default function SettingsPage() {
             {/* Avatar Section */}
             <div className="flex flex-col items-center gap-6 shrink-0">
                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                  <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-primary to-accent p-1 shadow-2xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500">
+                  <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-primary to-accent p-1 shadow-xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500">
                     <div className="w-full h-full rounded-[2.3rem] bg-card flex items-center justify-center overflow-hidden">
                       {avatar ? (
                         <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
@@ -197,7 +197,7 @@ export default function SettingsPage() {
                       )}
                     </div>
                   </div>
-                  <button className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-foreground border-4 border-card text-background flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                  <button className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-primary text-primary-foreground border-4 border-card flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                     <Camera size={20} />
                   </button>
                   <input 
@@ -209,7 +209,7 @@ export default function SettingsPage() {
                   />
                </div>
                 <div className="text-center">
-                  <p className="text-xs font-black text-foreground uppercase tracking-widest mb-1">Upload New</p>
+                  <p className="text-xs font-black text-primary-foreground uppercase tracking-widest mb-1">Upload New</p>
                   <p className="text-[10px] text-muted-foreground font-bold">Max 2MB • JPG, PNG, WEBP</p>
                 </div>
             </div>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                 
                 <div className="md:col-span-2 space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">
+                    <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">
                       Email Address <span className="text-destructive">*</span>
                     </label>
                     {isVerified ? (
@@ -269,7 +269,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">About / Bio</label>
+                <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">About / Bio</label>
                 <textarea 
                   rows={4}
                   placeholder="Tell us a little about yourself..."
@@ -283,7 +283,7 @@ export default function SettingsPage() {
                 <button 
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50 min-w-[240px] justify-center"
+                  className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50 min-w-[240px] justify-center"
                 >
                   {isSaving ? <Loader size={30} /> : (
                     <>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-2xl overflow-hidden p-8 md:p-12"
+              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-xl overflow-hidden p-8 md:p-12"
             >
               <button 
                 onClick={() => setShowEmailModal(false)}
@@ -327,14 +327,14 @@ export default function SettingsPage() {
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
                   <Mail size={32} />
                 </div>
-                <h2 className="text-2xl font-black text-foreground tracking-tight mb-2">Change Email Address</h2>
+                <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight mb-2">Change Email Address</h2>
                 <p className="text-sm text-muted-foreground font-medium">Enter your new email to receive a verification code.</p>
               </div>
 
               {!isVerifying ? (
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">New Email Address</label>
+                    <label className="text-xs font-black text-primary-foreground/80 uppercase tracking-widest block ml-1">New Email Address</label>
                     <div className="relative group">
                       <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                         <Mail size={18} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                   <button 
                     onClick={handleSendOtp}
                     disabled={!newEmail || isSending}
-                    className="w-full bg-foreground text-background py-4 rounded-2xl font-black shadow-xl hover:bg-primary transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-black shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2"
                   >
                     {isSending ? <Loader2 size={20} className="animate-spin" /> : 'Send Verification Code'}
                   </button>
@@ -359,7 +359,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="space-y-8">
                   <div className="text-center">
-                    <p className="text-sm font-bold text-foreground mb-6">Enter the 6-digit code sent to <span className="text-primary">{newEmail}</span></p>
+                    <p className="text-sm font-bold text-primary-foreground mb-6">Enter the 6-digit code sent to <span className="text-primary">{newEmail}</span></p>
                     <div className="flex justify-center gap-2 md:gap-3">
                       {otp.map((digit, i) => (
                         <input
@@ -382,7 +382,7 @@ export default function SettingsPage() {
                       animate={{ opacity: 1, y: 0 }}
                       className={cn(
                         "p-4 rounded-2xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2",
-                        status.type === 'success' ? "bg-success/10 text-success border border-success/20" : "bg-destructive/10 text-destructive border border-destructive/20"
+                        status.type === 'success' ? "bg-success/10 text-success border border-success/20" : "bg-destructive/10 text-destructive border border-accentestructive/20"
                       )}
                     >
                       {status.type === 'success' ? <CheckCircle2 size={14} /> : <ShieldCheck size={14} className="rotate-180" />}
@@ -393,7 +393,7 @@ export default function SettingsPage() {
                   <div className="flex flex-col items-center gap-4">
                     <button 
                       onClick={() => setIsVerifying(false)}
-                      className="text-xs font-black text-muted-foreground hover:text-foreground underline underline-offset-4"
+                      className="text-xs font-black text-muted-foreground hover:text-primary-foreground underline underline-offset-4"
                     >
                       Use a different email address
                     </button>
@@ -403,9 +403,9 @@ export default function SettingsPage() {
 
               {isChecking && (
                 <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
-                   <div className="bg-card p-6 rounded-3xl border border-border shadow-2xl flex items-center gap-4">
+                   <div className="bg-card p-6 rounded-3xl border border-border shadow-xl flex items-center gap-4">
                       <Loader2 size={24} className="text-primary animate-spin" />
-                      <span className="text-lg font-black text-foreground tracking-tight">Verifying Code...</span>
+                      <span className="text-lg font-black text-primary-foreground tracking-tight">Verifying Code...</span>
                    </div>
                 </div>
               )}
@@ -431,7 +431,7 @@ interface ProfileInputProps {
 function ProfileInput({ label, icon: Icon, value, onChange, className, error, readOnly, required }: ProfileInputProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      <label className="text-xs font-black text-foreground/80 uppercase tracking-widest block ml-1">
+      <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">
         {label} {required && <span className="text-destructive">*</span>}
       </label>
       <div className="relative group">
@@ -445,7 +445,7 @@ function ProfileInput({ label, icon: Icon, value, onChange, className, error, re
           onChange={(e) => onChange?.(e.target.value)}
           className={cn(
             "w-full bg-secondary/50 border border-border py-4 pl-14 pr-5 rounded-2xl text-sm font-bold transition-all outline-none",
-            error ? "border-destructive bg-destructive/5" : "focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5",
+            error ? "border-accentestructive bg-destructive/5" : "focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5",
             readOnly && "opacity-70 cursor-not-allowed"
           )}
         />

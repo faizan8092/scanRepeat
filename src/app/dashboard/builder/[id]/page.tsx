@@ -110,8 +110,8 @@ function SortableBlock({
       style={style}
       className={`group relative rounded-xl transition-all duration-150 cursor-pointer mb-3 ${
         selected
-          ? 'ring-2 ring-[#3B82F6] shadow-lg shadow-blue-100'
-          : 'hover:ring-2 hover:ring-slate-200'
+          ? 'ring-primary ring-[#3B82F6] shadow-lg shadow-blue-100'
+          : 'hover:ring-primary hover:ring-slate-200'
       } bg-white`}
       onClick={onSelect}
     >
@@ -353,7 +353,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
       {/* ── Top Bar ── */}
       <header className="h-14 border-b flex items-center justify-between px-5 bg-white shrink-0 z-20 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link href="/dashboard/products" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">
+          <Link href="/dashboard/products" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary-foreground transition-colors font-medium">
             <ArrowLeft size={16} /> Products
           </Link>
           <div className="h-4 w-px bg-border" />
@@ -363,7 +363,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <a href={shortCode ? `/p/${shortCode}` : '#'} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground border rounded-lg hover:bg-secondary transition-colors">
+          <a href={shortCode ? `/p/${shortCode}` : '#'} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-primary-foreground border rounded-lg hover:bg-secondary transition-colors">
             <Eye size={14} /> Preview
           </a>
           {savedAt && (
@@ -445,7 +445,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
               >
                 <div className="max-w-[540px] mx-auto transition-all duration-300" style={{ fontFamily: theme.fontFamily }}>
                   {blocks.length === 0 ? (
-                    <div className="min-h-[500px] border-2 border-dashed border-slate-300 rounded-2xl bg-white flex flex-col items-center justify-center text-center p-12">
+                    <div className="min-h-[500px] border-primary border-accentashed border-slate-300 rounded-2xl bg-white flex flex-col items-center justify-center text-center p-12">
                       <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-5">
                         <Plus size={28} className="text-slate-400" />
                       </div>
@@ -533,7 +533,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
 
             <div className="flex-1 overflow-y-auto w-full flex justify-center pb-6 scrollbar-hide px-4">
               {/* Phone Frame */}
-              <div className="w-[260px] bg-white border-[7px] border-slate-900 rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative shrink-0" style={{ height: 650 }}>
+              <div className="w-[260px] bg-white border-[7px] border-slate-900 rounded-[40px] shadow-xl overflow-hidden flex flex-col relative shrink-0" style={{ height: 650 }}>
                 {/* Dynamic Island */}
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 h-6 bg-slate-900 rounded-full z-50 flex items-center justify-between px-2 w-24">
                   <div className="w-2 h-2 rounded-full bg-slate-700" />
@@ -583,7 +583,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
         {/* Drag Overlay */}
         <DragOverlay>
           {activeDragType && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-white shadow-2xl rounded-xl border-2 border-primary text-sm font-bold text-primary">
+            <div className="flex items-center gap-2 px-3 py-2 bg-white shadow-xl rounded-xl border-primary border-primary text-sm font-bold text-primary">
               {iconMap[activeDragType]} Drop to add {BLOCK_LABELS[activeDragType]}
             </div>
           )}

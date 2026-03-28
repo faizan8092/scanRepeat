@@ -166,19 +166,19 @@ export default function LandingPage() {
       <main className="flex-1 relative">
         <section ref={heroRef} className="relative min-h-[90vh] flex items-center pt-32 pb-24 overflow-hidden bg-[#fafafa]">
           {/* Enhanced Background Design */}
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_0%_0%,#eff6ff_0%,transparent_50%)]" />
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_0%_0%,rgba(var(--primary),0.05),transparent_50%)]" />
           <div className="absolute top-0 right-0 w-[600px] h-[600px] -z-10 opacity-20 pointer-events-none">
-            <motion.div 
-               animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-               transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' } as any}
-               className="w-full h-full bg-gradient-to-tr from-blue-300 via-indigo-300 to-purple-300 blur-[100px] rounded-full"
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' } as any}
+              className="w-full h-full bg-gradient-to-tr from-primary/30 via-accent/30 to-primary/10 blur-[100px] rounded-full"
             />
           </div>
           <div className="absolute inset-0 opacity-[0.02] [background-image:linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] [background-size:40px_40px] -z-10" />
 
           <div className="container mx-auto px-4 relative z-10">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12 max-w-[1400px] mx-auto">
-              
+
               {/* LEFT COLUMN: Premium Typography */}
               <motion.div
                 style={{ y: heroY, opacity: heroOpacity }}
@@ -188,46 +188,46 @@ export default function LandingPage() {
                 className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left lg:max-w-[650px]"
               >
                 {/* Modern Status Badge */}
-                <motion.div variants={fadeUp} className="mb-8 px-5 py-2 rounded-full border border-blue-100 bg-white/80 backdrop-blur-md shadow-lg shadow-blue-500/5 flex items-center gap-2.5">
+                <motion.div variants={fadeUp} className="mb-8 px-5 py-2 rounded-full border border-primary/20 bg-white/80 backdrop-blur-md shadow-lg shadow-primary/5 flex items-center gap-2.5">
                   <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/70 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                   </span>
-                  <span className="text-[10px] font-black tracking-[0.25em] text-blue-600 uppercase">The Future of Packaging</span>
+                  <span className="text-[10px] font-black tracking-[0.25em] text-primary uppercase">The Future of Packaging</span>
                 </motion.div>
 
                 {/* Explosive Headline */}
-                <motion.h1 
-                  variants={fadeUp} 
+                <motion.h1
+                  variants={fadeUp}
                   className="text-[52px] md:text-[72px] lg:text-[88px] font-black tracking-[-0.04em] mb-8 leading-[0.98] text-slate-950"
                 >
-                  Turn physical packaging into <span className="text-blue-600">revenue.</span>
+                  Turn physical packaging into <span className="text-primary">revenue.</span>
                 </motion.h1>
 
                 {/* Refined Subtext */}
-                <motion.p 
-                  variants={fadeUp} 
+                <motion.p
+                  variants={fadeUp}
                   className="text-lg md:text-xl text-slate-500 mb-12 leading-relaxed max-w-xl font-medium"
                 >
                   Bridge the physical-digital gap. Track every scan, personalize every journey, and turn one-time buyers into lifelong fans with intelligent QR technology.
                 </motion.p>
-                
+
                 {/* Premium CTAs */}
                 <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-5 w-full lg:w-auto">
-                   <Link 
-                     href="/signup" 
-                     className="group relative w-full sm:w-auto px-10 py-5 bg-slate-900 text-white font-black text-base rounded-2xl shadow-2xl shadow-blue-900/10 transition-all hover:scale-[1.03] active:scale-[0.97] flex items-center justify-center gap-3 overflow-hidden"
-                   >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      <span className="relative z-10">Start Tracking Free</span>
-                      <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                   </Link>
-                   <Link 
-                     href="#how-it-works" 
-                     className="w-full sm:w-auto px-10 py-5 bg-white border border-slate-200 text-slate-900 font-bold text-base rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center gap-2 shadow-sm"
-                   >
-                     Watch Demo
-                   </Link>
+                  <Link
+                    href="/signup"
+                    className="group relative w-full sm:w-auto px-10 py-5 bg-slate-900 text-white font-black text-base rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.03] active:scale-[0.97] flex items-center justify-center gap-3 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <span className="relative z-10">Start Tracking Free</span>
+                    <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link
+                    href="#how-it-works"
+                    className="w-full sm:w-auto px-10 py-5 bg-white border border-slate-200 text-slate-900 font-bold text-base rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    Watch Demo
+                  </Link>
                 </motion.div>
               </motion.div>
 
@@ -239,12 +239,12 @@ export default function LandingPage() {
                 className="flex-1 relative flex justify-center lg:justify-end w-full"
               >
                 <div className="relative w-full max-w-[380px] md:max-w-[480px] lg:max-w-[550px] group">
-                   <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                   <img 
-                     src="/Assets/hero.svg" 
-                     alt="ScanRepeat Hero Illustration" 
-                     className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.08)] group-hover:translate-y-[-8px] transition-transform duration-700 ease-out" 
-                   />
+                  <div className="absolute -inset-4 bg-gradient-to-tr from-primary/15 to-accent/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                  <img
+                    src="/Assets/hero.svg"
+                    alt="ScanRepeat Hero Illustration"
+                    className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.08)] group-hover:translate-y-[-8px] transition-transform duration-700 ease-out"
+                  />
                 </div>
               </motion.div>
 
@@ -389,7 +389,7 @@ export default function LandingPage() {
                     </div>
                     <h3 className="text-[32px] font-bold mb-3 tracking-tight">The Reorder Funnel</h3>
                     <p className="text-[#9ca3af] text-lg leading-relaxed">
-                      Connect directly to Shopify. Auto-apply discount codes the moment a customer scans — lock in repeat revenue before the competition even knows they're shopping.
+                      Connect directly to Shopify. Auto-accentpply discount codes the moment a customer scans — lock in repeat revenue before the competition even knows they're shopping.
                     </p>
                   </div>
                   <div className="flex items-center gap-2 mt-8">
@@ -552,7 +552,7 @@ export default function LandingPage() {
                 Every unscanned box is revenue you're leaving on the table. Fix that in 5 minutes.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-2xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
+                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
                   Create your first QR Code <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link href="/pricing" className="inline-flex items-center gap-2 rounded-full bg-white hover:bg-white/80 border border-[#e5e7eb] text-[#0a0a0a] px-10 py-5 text-lg font-bold transition-all duration-300">

@@ -29,7 +29,7 @@ function TypeCard({ icon: Icon, title, desc, recommended, onClick }: { icon: any
   return (
     <button
       onClick={onClick}
-      className={`relative text-left rounded-2xl border-2 p-5 flex flex-col gap-3 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg group ${
+      className={`relative text-left rounded-2xl border-primary p-5 flex flex-col gap-3 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg group ${
         recommended
           ? 'border-primary/40 bg-primary/5 hover:border-primary shadow-sm'
           : 'border-slate-200 bg-white hover:border-primary/60'
@@ -60,7 +60,7 @@ function ShortUrlField({ slug, onChange }: { slug: string; onChange: (v: string)
   return (
     <div className="space-y-1.5">
       <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">Short URL</p>
-      <div className="flex items-center gap-2 p-3 border-2 border-slate-100 rounded-xl bg-slate-50 hover:border-primary/40 transition-colors">
+      <div className="flex items-center gap-2 p-3 border-primary border-slate-100 rounded-xl bg-slate-50 hover:border-primary/40 transition-colors">
         <span className="text-sm text-slate-400 whitespace-nowrap font-mono">scanrepeat.com/p/</span>
         {editing ? (
           <input
@@ -89,7 +89,7 @@ function FileDropzone({ file, onFile }: { file: File | null; onFile: (f: File) =
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+      className={`border-primary border-accentashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
         isDragActive ? 'border-primary bg-primary/5' : file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-primary/60 hover:bg-slate-50'
       }`}
     >
@@ -128,7 +128,7 @@ function ThumbnailUpload({ url, onFile, onUrl }: { url: string; onFile: (f: File
 
   return (
     <div className="flex items-start gap-4">
-      <div {...getRootProps()} className="w-28 h-28 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-primary/60 hover:bg-slate-50 transition-all overflow-hidden shrink-0">
+      <div {...getRootProps()} className="w-28 h-28 rounded-2xl border-primary border-accentashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-primary/60 hover:bg-slate-50 transition-all overflow-hidden shrink-0">
         <input {...getInputProps()} />
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -144,7 +144,7 @@ function ThumbnailUpload({ url, onFile, onUrl }: { url: string; onFile: (f: File
       </div>
       <div className="flex-1 space-y-1">
         <p className="text-xs font-medium text-slate-600">Or paste image URL</p>
-        <input value={url} onChange={e => onUrl(e.target.value)} placeholder="https://..." className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+        <input value={url} onChange={e => onUrl(e.target.value)} placeholder="https://..." className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
         <p className="text-[11px] text-slate-400">PNG, JPG up to 5MB. You can add this later.</p>
       </div>
     </div>
@@ -288,7 +288,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
     <div className="fixed inset-0 z-[9980] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col"
+        className="relative bg-white rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden flex flex-col"
         style={{ maxHeight: '92vh', animation: 'modalIn 0.18s ease-out' }}
       >
         <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
@@ -306,7 +306,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
           <>
             <div className="flex items-center justify-between px-8 pt-8 pb-2">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">What would you like to create?</h2>
+                <h2 className="text-primaryxl font-bold text-slate-900">What would you like to create?</h2>
                 <p className="text-sm text-slate-500 mt-1">Choose how your QR code will work</p>
               </div>
               <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"><X size={18} /></button>
@@ -354,7 +354,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
                   value={name}
                   onChange={e => handleNameChange(e.target.value)}
                   placeholder="e.g. Whey Protein 2.0"
-                  className="w-full text-base p-3.5 border-2 border-slate-100 rounded-2xl bg-white focus:border-primary outline-none transition-colors"
+                  className="w-full text-base p-3.5 border-primary border-slate-100 rounded-2xl bg-white focus:border-primary outline-none transition-colors"
                 />
               </div>
               <div className="space-y-1.5">
@@ -382,7 +382,7 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
             <div className="flex-1 overflow-y-auto p-8 space-y-6">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Product Name <span className="text-red-500">*</span></label>
-                <input autoFocus value={name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Product Brochure" className="w-full text-base p-3.5 border-2 border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
+                <input autoFocus value={name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Product Brochure" className="w-full text-base p-3.5 border-primary border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Upload File <span className="text-red-500">*</span></label>
@@ -409,11 +409,11 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
             <div className="flex-1 overflow-y-auto p-8 space-y-6">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Product Name <span className="text-red-500">*</span></label>
-                <input autoFocus value={name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Shopify Store" className="w-full text-base p-3.5 border-2 border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
+                <input autoFocus value={name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Shopify Store" className="w-full text-base p-3.5 border-primary border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Destination URL <span className="text-red-500">*</span></label>
-                <input value={destUrl} onChange={e => setDestUrl(e.target.value)} placeholder="https://yourstore.com/product/..." className="w-full text-base p-3.5 border-2 border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
+                <input value={destUrl} onChange={e => setDestUrl(e.target.value)} placeholder="https://yourstore.com/product/..." className="w-full text-base p-3.5 border-primary border-slate-100 rounded-2xl bg-white focus:border-primary outline-none" />
                 <div className="pt-1"><UrlChecker url={destUrl} /></div>
               </div>
               <ShortUrlField slug={slug} onChange={handleSlugChange} />

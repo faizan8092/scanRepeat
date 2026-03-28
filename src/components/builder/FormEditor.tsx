@@ -258,7 +258,7 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
           </DndContext>
           <button
             onClick={addField}
-            className="w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:border-primary/40 hover:text-primary transition-all flex items-center justify-center gap-2"
+            className="w-full py-2 border-primary border-accentashed border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:border-primary/40 hover:text-primary transition-all flex items-center justify-center gap-2"
           >
             <Plus size={14} /> Add New Field
           </button>
@@ -319,7 +319,7 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
               onChange={e => onChange({ ...props, completionMessage: e.target.value })}
               rows={3}
               placeholder="Thank you for your response!"
-              className="w-full text-sm p-3 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
+              className="w-full text-sm p-3 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
             />
           </div>
         </div>
@@ -353,8 +353,8 @@ function SortableFormField({ field, onUpdate, onRemove }: {
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white border-2 rounded-xl shadow-sm transition-all ${
-        isDragging ? 'border-primary ring-2 ring-primary/10' : 'border-slate-100 hover:border-slate-200'
+      className={`bg-white border-primary rounded-xl shadow-sm transition-all ${
+        isDragging ? 'border-primary ring-primary ring-primary/10' : 'border-slate-100 hover:border-slate-200'
       }`}
     >
       {/* Header row */}

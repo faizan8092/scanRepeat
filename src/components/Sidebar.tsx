@@ -46,7 +46,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       initial={false}
       animate={{ width: isCollapsed ? 80 : 256 }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-      className="fixed left-0 top-0 h-screen bg-background text-foreground z-50 flex flex-col border-r border-border shadow-[10px_0_40px_rgba(0,0,0,0.02)] overflow-visible"
+      className="fixed left-0 top-0 h-screen bg-background text-primary-foreground z-50 flex flex-col border-r border-border shadow-[10px_0_40px_rgba(0,0,0,0.02)] overflow-visible"
     >
       {/* Header / Logo */}
       <div className="h-20 flex items-center px-6 relative border-b border-border/50">
@@ -147,12 +147,12 @@ function NavItem({ label, icon: Icon, href, isActive, isCollapsed }: {
         "flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 group relative truncate",
         isActive 
           ? "bg-primary/10 text-primary font-black shadow-[0_10px_20px_rgba(var(--primary),0.05)]" 
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+          : "text-muted-foreground hover:bg-secondary hover:text-primary"
       )}
     >
       <div className={cn(
         "shrink-0 transition-all duration-300",
-        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground group-hover:scale-110"
+        isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
       )}>
         <Icon size={20} />
       </div>

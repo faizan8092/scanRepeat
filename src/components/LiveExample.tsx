@@ -6,7 +6,7 @@ export function LiveExample() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-3xl font-bold mb-6 leading-tight">See What Your Customer Sees</h2>
+            <h2 className="text-accentxl font-bold mb-6 leading-tight">See What Your Customer Sees</h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
               This is the mobile-first experience your customers get when they scan your product. No apps to download, no friction.
             </p>
@@ -28,7 +28,7 @@ export function LiveExample() {
           
           <div className="flex justify-center">
             {/* Phone Mockup */}
-            <div className="relative w-[300px] h-[600px] bg-zinc-900 rounded-[3rem] border-[8px] border-zinc-800 shadow-2xl overflow-hidden">
+            <div className="relative w-[300px] h-[600px] bg-zinc-900 rounded-[3rem] border-[8px] border-zinc-800 shadow-xl overflow-hidden">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-zinc-800 rounded-b-2xl z-20"></div>
               <div className="absolute inset-0 bg-white overflow-y-auto pt-10 px-4 pb-4">
                 <div className="flex items-center gap-2 mb-6">
@@ -60,11 +60,11 @@ export function LiveExample() {
                 <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center mb-4">
                   <span className="text-xl mb-1 block">🎁</span>
                   <p className="text-xs font-bold mb-1 text-black">Get 20% Off Your Next Refill</p>
-                  <p className="text-[10px] text-muted-foreground mb-3">Code auto-applied at checkout</p>
+                  <p className="text-[10px] text-muted-foreground mb-3">Code auto-accentpplied at checkout</p>
                   <button className="w-full bg-primary text-white text-xs py-2 rounded-lg font-bold">Claim My Discount</button>
                 </div>
 
-                <button className="w-full border-2 border-primary text-primary text-xs py-2 rounded-lg font-bold flex items-center justify-center">
+                <button className="w-full border-primary border-primary text-primary text-xs py-2 rounded-lg font-bold flex items-center justify-center">
                   <Smartphone className="h-3 w-3 mr-2" /> Buy Again
                 </button>
               </div>

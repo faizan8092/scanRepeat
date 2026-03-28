@@ -121,7 +121,7 @@ export default function SignupPage() {
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
                 />
               </div>
               <div className="space-y-2">
@@ -132,7 +132,7 @@ export default function SignupPage() {
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all"
                 />
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function SignupPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
               />
             </div>
             
@@ -234,8 +234,8 @@ export default function SignupPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-tr from-[#2970ff]/10 to-transparent" />
           
-          <div className="absolute top-12 left-12 right-12 p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-            <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">Launch in minutes.</h2>
+          <div className="absolute top-12 left-12 right-12 p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+            <h2 className="text-accentxl font-bold text-white mb-4 tracking-tight">Launch in minutes.</h2>
             <p className="text-white/80 text-lg leading-relaxed">
               ScanRepeat handles the infrastructure, analytics, and experience so you can focus on building your brand.
             </p>

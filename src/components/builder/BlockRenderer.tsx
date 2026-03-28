@@ -565,7 +565,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
               {(props.fields || []).map((field: any) => {
                 if (field.type === 'hidden') return null;
                 const opts: string[] = field.options?.length ? field.options : ['Option 1', 'Option 2'];
-                const base = "w-full text-sm px-4 py-3 border-2 border-slate-200/60 rounded-[18px] bg-white/40 backdrop-blur-sm focus:bg-white focus:border-slate-300 outline-none transition-all duration-300";
+                const base = "w-full text-sm px-4 py-3 border-primary border-slate-200/60 rounded-[18px] bg-white/40 backdrop-blur-sm focus:bg-white focus:border-slate-300 outline-none transition-all duration-300";
                 return (
                   <div key={field.id} className="space-y-1">
                     <p className="text-xs font-semibold text-slate-600">
@@ -585,7 +585,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
                     ) : field.type === 'multi_choice' ? (
                       <div className="space-y-1.5">
                         {opts.map((o: string, i: number) => (
-                          <label key={i} className="flex items-center gap-2.5 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                          <label key={i} className="flex items-center gap-2.5 p-2 border-primary border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
                             <input type="radio" name={field.id} className="w-3.5 h-3.5 shrink-0" style={{ accentColor: primaryColor }} />
                             <span className="text-xs text-slate-700">{o}</span>
                           </label>
@@ -594,7 +594,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
                     ) : field.type === 'checkbox' ? (
                       <div className="space-y-1.5">
                         {opts.map((o: string, i: number) => (
-                          <label key={i} className="flex items-center gap-2.5 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                          <label key={i} className="flex items-center gap-2.5 p-2 border-primary border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
                             <input type="checkbox" className="w-3.5 h-3.5 rounded shrink-0" style={{ accentColor: primaryColor }} />
                             <span className="text-xs text-slate-700">{o}</span>
                           </label>
@@ -605,7 +605,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
                         {opts.map((o: string, i: number) => <option key={i}>{o}</option>)}
                       </select>
                     ) : field.type === 'file_upload' ? (
-                      <label className="flex flex-col items-center justify-center gap-1.5 w-full border-2 border-dashed border-slate-300 rounded-xl p-3 cursor-pointer bg-slate-50">
+                      <label className="flex flex-col items-center justify-center gap-1.5 w-full border-primary border-accentashed border-slate-300 rounded-xl p-3 cursor-pointer bg-slate-50">
                         <span className="text-lg">📎</span>
                         <span className="text-[11px] text-slate-500 font-medium">Click to upload · Max 5 MB</span>
                         <input type="file" className="hidden" />
@@ -625,7 +625,7 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
               <label className="flex items-start gap-2 cursor-pointer">
                 <input type="checkbox" className="mt-0.5 w-4 h-4 rounded accent-slate-900 shrink-0" />
                 <span className="text-xs text-slate-500">
-                  I agree to <a href={props.termsUrl || '#'} className="text-blue-600 underline">{props.termsLabel || 'Terms and Privacy Policy'}</a>
+                  I agree to <a href={props.termsUrl || '#'} className="text-primary underline">{props.termsLabel || 'Terms and Privacy Policy'}</a>
                 </span>
               </label>
             )}

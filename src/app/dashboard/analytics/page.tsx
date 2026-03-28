@@ -33,7 +33,7 @@ const BROWSER_COLORS: Record<string, string> = {
   'Other': '#64748b'
 };
 
-const FUNNEL_COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#10b981'];
+const FUNNEL_COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--warning))', 'hsl(var(--success))'];
 
 // --- Animation Variants ---
 const containerVar = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
           // A safe neutral fallback - dark slate for most text/borders
           const getFallback = (fullMatch: string): string => {
             // Heuristic: if value looks like it might be a background (very light),
-            // return white; otherwise return a dark text-friendly color
+            // return white; otherwise return a dark text-primaryriendly color
             return '#334155'; // slate-700 — safe for text, icons, borders
           };
 
@@ -158,7 +158,7 @@ export default function AnalyticsPage() {
   }, [timeRange, isZeroData]);
 
   const metricsConfig = [
-    { label: 'Total QR Scans', key: 'totalScans', icon: ScanFace, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: 'Total QR Scans', key: 'totalScans', icon: ScanFace, color: 'text-primary/90', bg: 'bg-primary/50/10' },
     { label: 'Unique Visitors', key: 'uniqueVisitors', icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
     { label: 'Forms Submitted', key: 'formSubmissions', icon: FileSignature, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { label: 'Average Conversion', key: 'conversionRate', icon: MousePointerClick, color: 'text-orange-500', bg: 'bg-orange-500/10' },
@@ -170,7 +170,7 @@ export default function AnalyticsPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Analytics</h1>
+          <h1 className="text-accentxl font-black text-slate-800 tracking-tight">Analytics</h1>
           <p className="text-sm font-medium text-slate-500 mt-1">
             Real-time scanner intelligence and conversion tracking.
           </p>
@@ -199,7 +199,7 @@ export default function AnalyticsPage() {
             className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isExporting ? (
-              <span className="w-4 h-4 rounded-full border-2 border-slate-700 border-t-transparent animate-spin" />
+              <span className="w-4 h-4 rounded-full border-primary border-slate-700 border-t-transparent animate-spin" />
             ) : (
               <Download size={16} />
             )}
@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
             className="min-h-[60vh] flex flex-col items-center justify-center pt-10"
           >
             <Loader size={120} />
-            <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Analyzing Scanner Data</p>
+            <p className="text-xs font-black text-primary tracking-[0.2em] uppercase -mt-4 animate-pulse">Analyzing Scanner Data</p>
           </motion.div>
         ) : isZeroData || !data ? (
           <motion.div key="zero" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -245,7 +245,7 @@ export default function AnalyticsPage() {
                     </div>
                     <h3 className="text-slate-500 font-bold text-sm tracking-wide relative z-10">{m.label}</h3>
                     <div className="mt-1 flex items-baseline gap-2 relative z-10">
-                      <span className="text-3xl font-black text-slate-800 tracking-tight">{metricData.value}</span>
+                      <span className="text-accentxl font-black text-slate-800 tracking-tight">{metricData.value}</span>
                     </div>
                   </motion.div>
                 );
@@ -280,10 +280,10 @@ export default function AnalyticsPage() {
                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8', fontWeight: 600}} dy={10} />
                       <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8', fontWeight: 600}} />
                       <Tooltip 
-                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)' }}
+                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)', background: 'hsl(var(--card))' }}
                       />
-                      <Area type="monotone" dataKey="scans" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorScans)" activeDot={{ r: 6, strokeWidth: 0 }} />
-                      <Area type="monotone" dataKey="conversions" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorConv)" activeDot={{ r: 6, strokeWidth: 0 }} />
+                      <Area type="monotone" dataKey="scans" stroke="hsl(var(--primary))" strokeWidth={4} fillOpacity={1} fill="url(#colorScans)" activeDot={{ r: 6, strokeWidth: 0 }} />
+                      <Area type="monotone" dataKey="conversions" stroke="hsl(var(--success))" strokeWidth={4} fillOpacity={1} fill="url(#colorConv)" activeDot={{ r: 6, strokeWidth: 0 }} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -322,13 +322,13 @@ export default function AnalyticsPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent h-32 pointer-events-none rounded-t-[24px]" />
                 <div className="mb-2 relative z-10 flex justify-between items-start">
                   <div>
-                    <h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><Globe2 className="text-blue-500" size={22} /> Global Distribution Matrix</h2>
+                    <h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><Globe2 className="text-primary/90" size={22} /> Global Distribution Matrix</h2>
                     <p className="text-sm font-medium text-slate-500 mt-1">Live topographic scan events</p>
                   </div>
                   <div className="flex gap-2">
                     <span className="flex h-3 w-3 relative mt-1">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/70 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-primary/50"></span>
                     </span>
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Live</span>
                   </div>
@@ -352,8 +352,8 @@ export default function AnalyticsPage() {
                     </Geographies>
                     {data.geography.map(({ name, coordinates, scans }) => (
                       <Marker key={name} coordinates={coordinates as [number, number]}>
-                        <circle r={6} fill="#3b82f6" stroke="#fff" strokeWidth={2} />
-                        <circle r={18} fill="#3b82f6" opacity={0.3} className="animate-pulse" />
+                        <circle r={6} fill="hsl(var(--primary))" stroke="#fff" strokeWidth={2} />
+                        <circle r={18} fill="hsl(var(--primary))" opacity={0.3} className="animate-pulse" />
                         <text textAnchor="middle" y={-14} style={{ fontFamily: "inherit", fontSize: "10px", fontWeight: "bold", fill: "#475569" }}>
                           {name}
                         </text>
@@ -393,7 +393,7 @@ export default function AnalyticsPage() {
                             initial={{ width: 0 }} 
                             animate={{ width: `${percent}%` }}
                             transition={{ duration: 1, ease: 'easeOut', delay: i * 0.1 }}
-                            className="h-full rounded-full bg-blue-500 relative overflow-hidden"
+                            className="h-full rounded-full bg-primary/50 relative overflow-hidden"
                           />
                         </div>
                       </div>

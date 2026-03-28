@@ -47,7 +47,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 30 }}
           transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
-          className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden w-full max-w-4xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row"
+          className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-xl overflow-hidden w-full max-w-4xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row"
         >
           {/* Close Button */}
           <button 
@@ -87,7 +87,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
              <div className="relative z-10 flex items-center gap-3">
                 <div className="flex -space-x-3">
                    {[1,2,3,4].map(i => (
-                     <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 bg-[url('https://i.pravatar.cc/100?img=${i}')] bg-cover`} />
+                     <div key={i} className={`w-10 h-10 rounded-full border-primary border-slate-900 bg-slate-800 bg-[url('https://i.pravatar.cc/100?img=${i}')] bg-accentover`} />
                    ))}
                 </div>
                 <div className="ml-2">
@@ -110,7 +110,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
              </div>
              
              <div className="md:hidden mb-8">
-               <h2 className="text-2xl font-black text-slate-900 leading-tight mb-2">
+               <h2 className="text-primaryxl font-black text-slate-900 leading-tight mb-2">
                  {reason === 'limit' ? "You've Hit Your Limit!" : "Ready to scale?"}
                </h2>
                <p className="text-slate-500 text-sm">Upgrade to unlock unlimited active campaigns and pro tracking.</p>

@@ -148,7 +148,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-2 focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
               />
             </div>
             
@@ -229,8 +229,8 @@ export default function LoginPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-tr from-[#2970ff]/20 to-transparent" />
           
-          <div className="absolute bottom-12 left-12 right-12 p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-            <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">Streamline your physical brand conversions.</h2>
+          <div className="absolute bottom-12 left-12 right-12 p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+            <h2 className="text-accentxl font-bold text-white mb-4 tracking-tight">Streamline your physical brand conversions.</h2>
             <p className="text-white/80 text-lg leading-relaxed">
               Join thousands of brands using ScanRepeat to bridge the gap between their products and digital experiences.
             </p>

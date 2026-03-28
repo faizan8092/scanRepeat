@@ -75,7 +75,7 @@ function FormFieldInput({ field, accentColor, formStyle = 'solid' }: { field: Fo
   if (formStyle === 'underlined') {
     base = "w-full text-[15px] py-4 border-b-2 border-slate-200 bg-transparent focus:border-slate-800 outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800 px-0 rounded-none shadow-none";
   } else if (formStyle === 'bordered') {
-    base = "w-full text-[15px] px-5 py-4 border-2 border-slate-200 rounded-2xl bg-white focus:border-slate-800 outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800 shadow-sm";
+    base = "w-full text-[15px] px-5 py-4 border-primary border-slate-200 rounded-2xl bg-white focus:border-slate-800 outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800 shadow-sm";
   } else {
     // Modern Solid (Default)
     base = "w-full text-[15px] px-5 py-4 border border-slate-100 rounded-2xl bg-slate-50/80 hover:bg-slate-100/50 focus:bg-white focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(203,213,225,0.3)] outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800";
@@ -131,7 +131,7 @@ function FormFieldInput({ field, accentColor, formStyle = 'solid' }: { field: Fo
       return null;
     case 'file_upload':
       return (
-        <label className={`flex flex-col items-center justify-center gap-2 w-full ${formStyle === 'underlined' ? 'border-b border-slate-200' : 'border-2 border-dashed border-slate-300 rounded-xl'} p-4 cursor-pointer bg-slate-50 hover:bg-white transition-all`}>
+        <label className={`flex flex-col items-center justify-center gap-2 w-full ${formStyle === 'underlined' ? 'border-b border-slate-200' : 'border-primary border-accentashed border-slate-300 rounded-xl'} p-4 cursor-pointer bg-slate-50 hover:bg-white transition-all`}>
           <Upload size={20} className="text-slate-400" />
           <span className="text-xs text-slate-500 font-medium">Click to upload</span>
           <span className="text-[10px] text-slate-400">Max 5 MB</span>
@@ -380,7 +380,7 @@ export function FormOverlay({ formProps: props, theme, previewMode = false, posi
               <input type="checkbox" className="mt-0.5 w-4 h-4 rounded shrink-0" style={{ accentColor: primaryColor }} />
               <span className="text-xs text-slate-500">
                 I agree to{' '}
-                <a href={props.termsUrl || '#'} className="text-blue-600 underline hover:text-blue-800">
+                <a href={props.termsUrl || '#'} className="text-primary underline hover:text-blue-800">
                   {props.termsLabel || 'Terms and Privacy Policy'}
                 </a>
               </span>

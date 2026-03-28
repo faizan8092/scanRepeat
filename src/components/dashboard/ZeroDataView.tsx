@@ -26,14 +26,14 @@ export function ZeroDataView() {
         `}</style>
       </div>
       
-      <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3 tracking-tight max-w-2xl">
+      <h2 className="text-accentxl md:text-4xl font-black text-primary-foreground mb-3 tracking-tight max-w-2xl">
         Connect Your Physical Products
       </h2>
       <p className="text-base text-muted-foreground font-medium mb-6 max-w-lg mx-auto leading-relaxed">
         Start generating dynamic QR codes and building post-purchase funnels today.
       </p>
 
-      <Link href="/dashboard/builder" className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-foreground text-background font-bold text-base hover:bg-primary transition-all shadow-lg group mb-12">
+      <Link href="/dashboard/builder" className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-primary-foreground text-background font-bold text-base hover:bg-primary transition-all shadow-lg group mb-12">
         <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" /> Let's Get Started
       </Link>
       
@@ -47,7 +47,7 @@ export function ZeroDataView() {
              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300", step.bg, step.color)}>
                <step.icon size={20} />
              </div>
-             <h3 className="text-lg font-black text-foreground mb-1">{step.title}</h3>
+             <h3 className="text-lg font-black text-primary-foreground mb-1">{step.title}</h3>
              <p className="text-xs text-muted-foreground font-medium leading-tight">{step.desc}</p>
           </div>
         ))}

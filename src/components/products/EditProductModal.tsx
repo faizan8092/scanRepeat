@@ -70,7 +70,7 @@ export default function EditProductModal({ product, onClose, onUpdated }: EditPr
   return (
     <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-6 border-b shrink-0">
           <h2 className="text-xl font-bold text-slate-900">Edit Details</h2>
           <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
@@ -86,14 +86,14 @@ export default function EditProductModal({ product, onClose, onUpdated }: EditPr
               value={name} 
               onChange={e => setName(e.target.value)} 
               placeholder="e.g. Summer Sale" 
-              className="w-full text-base p-3 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" 
+              className="w-full text-base p-3 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" 
             />
           </div>
 
           {/* Short Code */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Short Code</label>
-            <div className="flex items-center gap-2 p-3 border-2 border-slate-100 rounded-xl bg-slate-50">
+            <div className="flex items-center gap-2 p-3 border-primary border-slate-100 rounded-xl bg-slate-50">
               <span className="text-sm text-slate-400 font-mono">/p/</span>
               <input 
                 value={slug} 
@@ -111,7 +111,7 @@ export default function EditProductModal({ product, onClose, onUpdated }: EditPr
                 value={destUrl} 
                 onChange={e => setDestUrl(e.target.value)} 
                 placeholder="https://..." 
-                className="w-full text-base p-3 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" 
+                className="w-full text-base p-3 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" 
               />
             </div>
           )}
@@ -152,7 +152,7 @@ function FileEditZone({ file, currentUrl, onFile }: { file: File | null; current
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, maxFiles: 1 });
 
   return (
-    <div {...getRootProps()} className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-all bg-slate-50/50">
+    <div {...getRootProps()} className="border-primary border-accentashed border-slate-200 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-all bg-slate-50/50">
       <input {...getInputProps()} />
       {file ? (
         <p className="text-sm font-bold text-primary truncate max-w-[300px] mx-auto">New file: {file.name}</p>
@@ -177,7 +177,7 @@ function ThumbnailEditZone({ url, onUrl, onFile }: { url: string; onUrl: (v: str
 
   return (
     <div className="flex gap-4">
-      <div {...getRootProps()} className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden shrink-0">
+      <div {...getRootProps()} className="w-20 h-20 rounded-xl border-primary border-accentashed border-slate-200 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden shrink-0">
         <input {...getInputProps()} />
         {url ? <img src={url} alt="" className="w-full h-full object-cover" /> : <Image size={20} className="text-slate-400" />}
       </div>
@@ -185,7 +185,7 @@ function ThumbnailEditZone({ url, onUrl, onFile }: { url: string; onUrl: (v: str
         value={url} 
         onChange={e => onUrl(e.target.value)} 
         placeholder="Or paste image URL..." 
-        className="flex-1 text-sm p-3 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none h-20" 
+        className="flex-1 text-sm p-3 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none h-20" 
       />
     </div>
   );

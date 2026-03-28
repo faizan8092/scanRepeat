@@ -60,12 +60,12 @@
   --secondary-foreground: 222 47% 11%;
   --muted: 210 40% 96%;
   --muted-foreground: 215 16% 47%;
-  --accent: 262 83% 58%;
+  --accent: 221 83% 43%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   --success: 142 71% 45%;
-  --warning: 38 92% 50%;
+  --warning: 142 71% 45%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
   --border: 214 32% 91%;
@@ -132,7 +132,7 @@
 .dark {
   --background: 222 47% 7%;
   --foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
+  --primary: 221 83% 53%;
   --card: 222 47% 10%;
   --border: 217 33% 17%;
   --muted: 217 33% 17%;
@@ -147,6 +147,18 @@
   
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6, .text-primary-foreground {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  p {
+    color: hsl(var(--muted-foreground));
+  }
+
+  label, .text-xs.font-black {
+    color: hsl(var(--foreground)) !important;
   }
 
   body {

@@ -90,7 +90,7 @@ export default function BillingPage() {
       <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black tracking-tight text-foreground">Select a Plan</h1>
+            <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Select a Plan</h1>
             <p className="text-sm text-muted-foreground font-medium mt-2">Choose the perfect plan for your business needs.</p>
           </div>
           <button 
@@ -109,14 +109,14 @@ export default function BillingPage() {
                 key={p.key} 
                 className={cn(
                   "relative flex flex-col bg-card rounded-[2rem] border overflow-hidden transition-all duration-300",
-                  p.popular ? "border-primary/50 shadow-lg shadow-primary/10 ring-2 ring-primary/20" : "border-border shadow-sm hover:border-primary/30"
+                  p.popular ? "border-primary/50 shadow-lg shadow-primary/10 ring-primary ring-primary/20" : "border-border shadow-sm hover:border-primary/30"
                 )}
               >
                 {p.popular && (
                   <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-accent" />
                 )}
                 <div className="p-8 pb-6 border-b border-border/50">
-                  <h3 className="text-2xl font-black mb-1 text-foreground">{p.name}</h3>
+                  <h3 className="text-primaryxl font-black mb-1 text-primary-foreground">{p.name}</h3>
                   <p className="text-xs font-bold text-muted-foreground mb-6 line-clamp-2">{p.tagline}</p>
                   
                   <div className="flex items-baseline gap-1 mb-1">
@@ -141,7 +141,7 @@ export default function BillingPage() {
                       "w-full py-4 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2",
                       isCurrent 
                         ? "bg-secondary text-muted-foreground cursor-not-allowed shadow-none" 
-                        : (p.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-foreground text-background hover:bg-foreground/90")
+                        : (p.popular ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-card border border-border text-foreground hover:bg-secondary")
                     )}
                   >
                     {isProcessing ? <Loader size={30} /> : (isCurrent ? 'Current Plan' : (p.key === 'free' ? 'Downgrade to Free' : 'Select Plan'))}
@@ -159,7 +159,7 @@ export default function BillingPage() {
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-foreground">Billing & Plan</h1>
+          <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Billing & Plan</h1>
           <p className="text-sm text-muted-foreground font-medium mt-2">Manage your subscription, invoices, and payments.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export default function BillingPage() {
                     <div className="inline-flex items-center px-4 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-black uppercase tracking-widest mb-4">
                       {isFreePlan ? 'Starter Plan' : 'Current Subscription'}
                     </div>
-                    <h2 className="text-4xl font-black text-foreground tracking-tight mb-2">
+                    <h2 className="text-4xl font-black text-primary-foreground tracking-tight mb-2">
                       {summary?.plan?.name} Plan
                     </h2>
                     <p className="text-muted-foreground font-bold text-sm">
@@ -193,7 +193,7 @@ export default function BillingPage() {
                     </p>
                   </div>
                   <div className="text-left md:text-right">
-                    <div className="text-4xl font-black text-foreground tracking-tight mb-1">
+                    <div className="text-4xl font-black text-primary-foreground tracking-tight mb-1">
                       {summary?.plan?.priceLabel}
                     </div>
                     {isFreePlan ? (
@@ -230,7 +230,7 @@ export default function BillingPage() {
                   <button 
                     onClick={handleUpgrade}
                     disabled={isProcessing}
-                    className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl font-bold flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xl font-bold flex items-center justify-center gap-2"
                   >
                     {isProcessing ? <Loader size={30} /> : (isFreePlan ? 'Upgrade to Growth' : 'Manage Subscription')}
                   </button>
@@ -246,7 +246,7 @@ export default function BillingPage() {
 
           <div className="bg-card rounded-[2.5rem] border border-border p-8 md:p-12 shadow-sm">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-black text-foreground">Payment Methods</h3>
+              <h3 className="text-xl font-black text-primary-foreground">Payment Methods</h3>
               {!isFreePlan && (
                 <button onClick={handlePortal} className="flex items-center gap-2 text-sm font-bold text-primary hover:underline">
                   <Plus size={18} /> Manage
@@ -255,11 +255,11 @@ export default function BillingPage() {
             </div>
             
             {(!info?.paymentMethods || info.paymentMethods.length === 0) ? (
-              <div className="p-10 rounded-3xl border border-dashed border-border bg-secondary/20 flex flex-col items-center justify-center text-center">
+              <div className="p-10 rounded-3xl border border-accentashed border-border bg-secondary/20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-muted-foreground mb-4">
                   <CreditCard size={20} />
                 </div>
-                <p className="text-sm font-black text-foreground mb-1">No payment methods</p>
+                <p className="text-sm font-black text-primary-foreground mb-1">No payment methods</p>
                 <p className="text-xs text-muted-foreground font-bold">Payment methods are only required for paid subscriptions.</p>
               </div>
             ) : (
@@ -267,11 +267,11 @@ export default function BillingPage() {
                 {info.paymentMethods.map(pm => (
                   <div key={pm.id} className="p-6 rounded-3xl border border-border bg-secondary/50 flex items-center justify-between group hover:border-primary/30 hover:bg-card transition-all duration-300">
                     <div className="flex items-center gap-6">
-                      <div className="w-16 h-10 bg-gradient-to-br from-foreground to-foreground/80 rounded-2xl flex items-center justify-center text-background text-[10px] font-black italic shadow-lg">
+                      <div className="w-16 h-10 bg-gradient-to-br from-primary-foreground to-primary-foreground/80 rounded-2xl flex items-center justify-center text-background text-[10px] font-black italic shadow-lg">
                         {pm.brand.toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-black text-foreground">{pm.brand.charAt(0).toUpperCase() + pm.brand.slice(1)} ending in {pm.last4}</p>
+                        <p className="text-sm font-black text-primary-foreground">{pm.brand.charAt(0).toUpperCase() + pm.brand.slice(1)} ending in {pm.last4}</p>
                         <p className="text-[10px] text-muted-foreground font-bold uppercase mt-1">
                           Expiry {pm.expMonth}/{pm.expYear} {pm.isDefault && '• Primary'}
                         </p>
@@ -286,7 +286,7 @@ export default function BillingPage() {
 
         <div className="lg:col-span-4 space-y-8">
           <div className="bg-card rounded-[2.5rem] border border-border p-8 shadow-sm">
-            <h3 className="text-xl font-black text-foreground mb-6">Recent Invoices</h3>
+            <h3 className="text-xl font-black text-primary-foreground mb-6">Recent Invoices</h3>
             {(!info?.invoices || info.invoices.length === 0) ? (
               <div className="py-12 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground/50 mb-4">
@@ -308,18 +308,18 @@ export default function BillingPage() {
               </div>
             )}
             {!isFreePlan && (
-              <button onClick={handlePortal} className="w-full mt-8 py-4 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors border border-border rounded-2xl">
+              <button onClick={handlePortal} className="w-full mt-8 py-4 text-sm font-bold text-muted-foreground hover:text-primary-foreground transition-colors border border-border rounded-2xl">
                 View All History
               </button>
             )}
           </div>
 
-          <div className="p-8 rounded-[2.5rem] bg-foreground text-background overflow-hidden relative group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
-               <Zap size={60} />
+          <div className="p-8 rounded-[2.5rem] bg-card border border-border text-foreground overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform duration-700">
+               <Zap size={60} className="text-primary" />
             </div>
-            <h3 className="text-lg font-black mb-2 italic">Need more?</h3>
-            <p className="text-background/60 text-xs font-bold leading-relaxed mb-6">Unlock custom features, API access, and unlimited scale with our Enterprise solutions.</p>
+            <h3 className="text-lg font-black mb-2 italic text-primary-foreground">Need more?</h3>
+            <p className="text-muted-foreground text-xs font-bold leading-relaxed mb-6">Unlock custom features, API access, and unlimited scale with our Enterprise solutions.</p>
             <button className="text-xs font-black text-primary flex items-center gap-2 group">
               Contact Sales <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -348,7 +348,7 @@ function UsageBar({ label, used, limit, percentage }: { label: string, used: num
     <div className="space-y-3">
       <div className="flex justify-between items-end">
         <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
-        <span className="text-sm font-black text-foreground">
+        <span className="text-sm font-black text-primary-foreground">
           {used.toLocaleString()}
           <span className="text-muted-foreground/40 font-bold ml-1">
             / {isUnlimited ? '∞' : limit.toLocaleString()}
@@ -374,13 +374,13 @@ function InvoiceItem({ date, amount, status, pdf }: { date: string, amount: stri
   return (
     <div className="flex items-center justify-between p-4 rounded-3xl hover:bg-secondary/50 transition-all duration-300 group">
       <div>
-        <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{date}</p>
+        <p className="text-sm font-black text-primary-foreground group-hover:text-primary transition-colors">{date}</p>
         <p className="text-[10px] text-muted-foreground font-bold mt-0.5">{status}</p>
       </div>
       <div className="flex items-center gap-4">
-        <span className="text-sm font-black text-foreground">{amount}</span>
+        <span className="text-sm font-black text-primary-foreground">{amount}</span>
         {pdf && (
-          <a href={pdf} target="_blank" rel="noreferrer" className="p-2.5 rounded-2xl bg-secondary text-muted-foreground hover:text-foreground hover:bg-border transition-all">
+          <a href={pdf} target="_blank" rel="noreferrer" className="p-2.5 rounded-2xl bg-secondary text-muted-foreground hover:text-primary-foreground hover:bg-border transition-all">
             <Download size={16} />
           </a>
         )}

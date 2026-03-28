@@ -45,7 +45,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-secondary/30 text-foreground font-sans selection:bg-primary/10">
+    <div className="min-h-screen bg-secondary/30 text-primary-foreground font-sans selection:bg-primary/10">
       <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
       
       <div className={cn("flex flex-col min-h-screen transition-all duration-500 ease-in-out", isCollapsed ? "pl-20" : "pl-64")}>
@@ -76,11 +76,11 @@ export default function DashboardLayout({
 
             <div className="h-8 w-px bg-border mx-1" />
 
-            <ThemeToggle />
+            
             
             <button className="relative p-2.5 rounded-xl hover:bg-secondary text-muted-foreground transition-colors group">
               <Bell size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-card ring-2 ring-destructive/20 animate-pulse" />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-primary border-card ring-primary ring-accentestructive/20 animate-pulse" />
             </button>
             
             <div className="relative">
@@ -99,10 +99,10 @@ export default function DashboardLayout({
                       user?.firstName?.substring(0, 1).toUpperCase() || user?.name?.substring(0, 2).toUpperCase() || 'U'
                     )}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-card shadow-sm" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-primary border-card shadow-sm" />
                 </div>
                 <div className="text-left hidden lg:block">
-                  <p className="text-xs font-bold text-foreground leading-tight">{user?.name || 'Ali Faizan'}</p>
+                  <p className="text-xs font-bold text-primary-foreground leading-tight">{user?.name || 'Ali Faizan'}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5">Admin Account</p>
                 </div>
                 <ChevronDown size={14} className={cn("text-muted-foreground transition-transform duration-300", isMenuOpen && "rotate-180")} />
@@ -116,17 +116,17 @@ export default function DashboardLayout({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       onClick={() => setIsMenuOpen(false)}
-                      className="fixed inset-0 z-40"
+                      className="fixed inset-0 z-[100] bg-transparent cursor-default w-screen h-screen overflow-hidden"
                     />
                     <motion.div 
                       initial={{ opacity: 0, scale: 0.95, y: 10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: 10 }}
                       transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                      className="absolute right-0 mt-3 w-64 bg-card rounded-3xl border border-border shadow-xl py-2 z-50 overflow-hidden"
+                      className="absolute right-0 mt-3 w-52 bg-card rounded-xl shadow-2xl border border-border shadow-xl py-1.5 z-[110] overflow-hidden"
                     >
-                      <div className="px-5 py-4 border-b border-border bg-secondary/50">
-                        <p className="text-sm font-bold text-foreground">{user?.name || 'Ali Faizan'}</p>
+                      <div className="px-3.5 py-2.5 border-b border-border bg-secondary/50">
+                        <p className="text-sm font-bold text-primary-foreground">{user?.name || 'Ali Faizan'}</p>
                         <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate">{user?.email || 'faizan@tezminds.com'}</p>
                       </div>
                       <div className="p-2 space-y-1">
@@ -188,15 +188,15 @@ function UserMenuItem({ icon: Icon, label, onClick, variant = 'default' }: {
     <button 
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group",
+        "w-full flex items-center gap-3 px-2.5 py-1.5 rounded-lg text-sm font-bold transition-all group",
         variant === 'danger' 
           ? "text-destructive hover:bg-destructive/10" 
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+          : "text-muted-foreground hover:bg-primary/10 hover:text-primary font-black"
       )}
     >
       <div className={cn(
-        "p-1.5 rounded-lg transition-colors",
-        variant === 'danger' ? "bg-destructive/10" : "bg-secondary group-hover:bg-card"
+        "p-1 rounded-md transition-colors",
+        variant === 'danger' ? "bg-destructive/10" : "bg-secondary group-hover:bg-primary/20"
       )}>
         <Icon size={16} />
       </div>

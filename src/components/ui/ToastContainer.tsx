@@ -32,7 +32,7 @@ const toastConfig = {
   info: {
     icon: Info,
     className: 'bg-white border-blue-500/30 text-blue-950 dark:bg-blue-950 dark:border-blue-500/30 dark:text-blue-400',
-    iconClassName: 'text-blue-600 dark:text-blue-500',
+    iconClassName: 'text-primary dark:text-primary/90',
   },
   delete: {
     icon: Trash2,

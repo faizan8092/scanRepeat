@@ -132,7 +132,7 @@ export default function ProductsPage() {
         {/* ── Header ─────────────────────────────────────────────────── */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Products</h1>
+            <h1 className="text-primaryxl font-bold text-slate-900">Products</h1>
             <p className="text-sm text-slate-500 mt-0.5">
               {total} {total === 1 ? 'product' : 'products'} {isZeroData ? '(Mock Mode)' : 'total'}
             </p>

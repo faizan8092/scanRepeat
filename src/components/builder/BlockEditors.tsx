@@ -50,7 +50,7 @@ export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: a
             <button
               key={l}
               onClick={() => onChange({ ...props, level: l, fontSize: levelDefaults[l] })}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${props.level === l ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg border-primary transition-all ${props.level === l ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
             >
               {l.toUpperCase()}
             </button>
@@ -65,9 +65,9 @@ export function HeadingEditor({ props, onChange }: { props: any; onChange: (p: a
 
       {/* Style row */}
       <div className="flex gap-2">
-        <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
-        <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-2 ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
-        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-2 ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
+        <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-primary ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
+        <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-primary ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
+        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-primary ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
         <ColorSwatch value={props.color || '#111827'} onChange={c => onChange({ ...props, color: c })} label="Text Color" />
       </div>
 
@@ -100,9 +100,9 @@ export function TextEditor({ props, onChange }: { props: any; onChange: (p: any)
         <SegmentedControl value={props.align || 'left'} onChange={v => onChange({ ...props, align: v })} options={[{ value: 'left', label: '←' }, { value: 'center', label: '↔' }, { value: 'right', label: '→' }]} />
       </FieldRow>
       <div className="flex gap-2 items-center">
-        <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
-        <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-2 ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
-        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-2 ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
+        <button onClick={() => onChange({ ...props, fontWeight: props.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`px-3 py-1.5 text-xs font-bold rounded-lg border-primary ${props.fontWeight === 'bold' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>B</button>
+        <button onClick={() => onChange({ ...props, fontStyle: props.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`px-3 py-1.5 text-xs italic rounded-lg border-primary ${props.fontStyle === 'italic' ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>I</button>
+        <button onClick={() => onChange({ ...props, underline: !props.underline })} className={`px-3 py-1.5 text-xs underline rounded-lg border-primary ${props.underline ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 text-slate-500'}`}>U</button>
         <ColorSwatch value={props.color || '#374151'} onChange={c => onChange({ ...props, color: c })} label="Text Color" />
       </div>
       <FieldRow label="Font Size">
@@ -176,7 +176,7 @@ export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any
       )}
 
       {replacingIdx !== null && (
-        <div className="p-3 bg-slate-50 border-2 border-primary/20 rounded-xl space-y-2">
+        <div className="p-3 bg-slate-50 border-primary border-primary/20 rounded-xl space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-primary uppercase">Replace Image {replacingIdx + 1}</span>
             <button onClick={() => setReplacingIdx(null)}><X size={14} /></button>
@@ -207,7 +207,7 @@ export function ImageEditor({ props, onChange }: { props: any; onChange: (p: any
       {props.showCaption && (
         <div className="space-y-1">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Caption</p>
-          <input value={props.caption || ''} onChange={e => onChange({ ...props, caption: e.target.value })} placeholder="Image caption..." className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+          <input value={props.caption || ''} onChange={e => onChange({ ...props, caption: e.target.value })} placeholder="Image caption..." className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
         </div>
       )}
     </div>
@@ -220,7 +220,7 @@ function SortableImageItem({ img, onRemove, onReplace }: { img: { id: string, sr
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative group w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm transition-all ${isDragging ? 'border-primary ring-2 ring-primary/20 scale-105 z-40' : 'border-slate-200'}`}
+      className={`relative group w-16 h-16 rounded-xl overflow-hidden border-primary shadow-sm transition-all ${isDragging ? 'border-primary ring-primary ring-primary/20 scale-105 z-40' : 'border-slate-200'}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={img.src} alt="" className="w-full h-full object-cover" />
@@ -384,7 +384,7 @@ function SortableSlideItem({ slide, onUpdate, onRemove, onReplace, isReplacing, 
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`bg-slate-50 rounded-xl border-2 ${isDragging ? 'border-primary shadow-lg ring-2 ring-primary/20 opacity-90 z-40' : 'border-slate-100'} p-2 space-y-2 transition-all`}
+      className={`bg-slate-50 rounded-xl border-primary ${isDragging ? 'border-primary shadow-lg ring-primary ring-primary/20 opacity-90 z-40' : 'border-slate-100'} p-2 space-y-2 transition-all`}
     >
       <div className="flex items-center gap-2">
         <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-400 p-1 hover:text-slate-600 transition-colors">
@@ -474,7 +474,7 @@ export function VideoEditor({ props, onChange }: { props: any; onChange: (p: any
               value={props.url || ''}
               onChange={e => onChange({ ...props, url: e.target.value, source: 'youtube' })}
               placeholder="https://youtube.com/watch?v=..."
-              className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
+              className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none"
             />
           </div>
           {ytId && (
@@ -498,7 +498,7 @@ export function VideoEditor({ props, onChange }: { props: any; onChange: (p: any
 
       <div className="space-y-1">
         <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Video Title</p>
-        <input value={props.title || ''} onChange={e => onChange({ ...props, title: e.target.value })} placeholder="Video title..." className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+        <input value={props.title || ''} onChange={e => onChange({ ...props, title: e.target.value })} placeholder="Video title..." className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
       </div>
       <Toggle checked={props.showTitle !== false} onChange={v => onChange({ ...props, showTitle: v })} label="Show Title" />
       {videoTab === 'youtube' && (
@@ -613,7 +613,7 @@ export function ReviewsEditor({ props, onChange }: { props: any; onChange: (p: a
         </div>
       ))}
       {adding ? (
-        <div className="bg-white border-2 border-slate-100 rounded-xl p-3 space-y-2">
+        <div className="bg-white border-primary border-slate-100 rounded-xl p-3 space-y-2">
           <input value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} placeholder="Reviewer name" className="w-full text-xs p-2 border rounded-lg outline-none" />
           <div className="flex gap-1">
             {[1,2,3,4,5].map(s => (
@@ -708,7 +708,7 @@ export function TimerEditor({ props, onChange }: { props: any; onChange: (p: any
       <LabeledInput label="Timer Title" value={props.title || ''} onChange={v => onChange({ ...props, title: v })} placeholder="Limited Time Offer!" />
       <div className="space-y-1">
         <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">End Date & Time</p>
-        <input type="datetime-local" value={props.endDateTime || ''} onChange={e => onChange({ ...props, endDateTime: e.target.value })} className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
+        <input type="datetime-local" value={props.endDateTime || ''} onChange={e => onChange({ ...props, endDateTime: e.target.value })} className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none" />
       </div>
       <FieldRow label="Style">
         <SegmentedControl value={props.style || 'bold'} onChange={v => onChange({ ...props, style: v })} options={[{ value: 'minimal', label: 'Minimal' }, { value: 'bold', label: 'Bold' }, { value: 'banner', label: 'Banner' }]} />
@@ -888,7 +888,7 @@ export function SocialShareEditor({ props, onChange }: { props: any; onChange: (
       {platforms.map((platform: any) => {
         const meta = PLATFORM_META[platform.id] || { label: platform.id, color: '#6B7280', placeholder: '' };
         return (
-          <div key={platform.id} className={`rounded-xl border-2 p-3 space-y-2 transition-all ${platform.enabled ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50 opacity-60'}`}>
+          <div key={platform.id} className={`rounded-xl border-primary p-3 space-y-2 transition-all ${platform.enabled ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50 opacity-60'}`}>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"

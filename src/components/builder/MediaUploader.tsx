@@ -127,7 +127,7 @@ export function MediaUploader({ type, onUploaded, label }: MediaUploaderProps) {
           onDrop={handleDrop}
           onDragOver={e => e.preventDefault()}
           onClick={() => !uploading && fileRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all group ${
+          className={`relative border-primary border-accentashed rounded-xl p-4 text-center cursor-pointer transition-all group ${
             uploading
               ? 'border-primary/50 bg-primary/5'
               : 'border-slate-200 hover:border-primary/40 hover:bg-primary/3'
@@ -163,7 +163,7 @@ export function MediaUploader({ type, onUploaded, label }: MediaUploaderProps) {
             onChange={e => { setUrlInput(e.target.value); clearState(); }}
             onKeyDown={e => e.key === 'Enter' && handleUrlSubmit()}
             placeholder={isImage ? 'https://example.com/image.jpg' : 'https://example.com/video.mp4'}
-            className="flex-1 text-xs p-2 border-2 border-slate-100 rounded-xl bg-white outline-none focus:border-primary"
+            className="flex-1 text-xs p-2 border-primary border-slate-100 rounded-xl bg-white outline-none focus:border-primary"
           />
           <button
             onClick={handleUrlSubmit}

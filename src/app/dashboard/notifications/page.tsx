@@ -17,7 +17,7 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-foreground">Notifications</h1>
+        <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Notifications</h1>
         <p className="text-sm text-muted-foreground font-medium mt-2">Manage how you receive updates and alerts.</p>
       </div>
 
@@ -54,7 +54,7 @@ export default function NotificationsPage() {
           >
             <div className="space-y-8">
               <div className="border-b border-border pb-6">
-                <h2 className="text-2xl font-black text-foreground tracking-tight capitalize">{activeTab} Notifications</h2>
+                <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight capitalize">{activeTab} Notifications</h2>
                 <p className="text-muted-foreground text-sm font-medium mt-1">Configure your preferences for {activeTab} delivery.</p>
               </div>
 
@@ -84,7 +84,7 @@ export default function NotificationsPage() {
               <div className="pt-10 flex justify-end">
                 <button 
                   onClick={handleSavePreferences}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30"
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary text-white font-black transition-all shadow-lg hover:shadow-primary/30"
                 >
                   <Save size={18} />
                   Save Preferences
@@ -121,7 +121,7 @@ function NotificationToggle({ title, description, defaultEnabled }: { title: str
   return (
     <div className="flex items-center justify-between p-6 rounded-3xl bg-secondary/50 border border-border/50 group hover:bg-card hover:border-border hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
       <div className="flex-1 pr-6">
-        <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{title}</h3>
+        <h3 className="text-sm font-black text-primary-foreground group-hover:text-primary transition-colors">{title}</h3>
         <p className="text-xs text-muted-foreground font-medium mt-1 leading-relaxed">{description}</p>
       </div>
       <button 

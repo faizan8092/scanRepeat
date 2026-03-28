@@ -32,12 +32,12 @@ export function ColorSwatch({ value, onChange, label }: { value: string; onChang
       <button
         onClick={handleOpen}
         title={label}
-        className="w-6 h-6 rounded-md border-2 border-white shadow-md ring-1 ring-black/10 cursor-pointer hover:scale-110 transition-transform"
+        className="w-6 h-6 rounded-md border-primary border-white shadow-md ring-1 ring-black/10 cursor-pointer hover:scale-110 transition-transform"
         style={{ background: value }}
       />
       {open && (
         <div
-          className="fixed z-[9999] bg-white rounded-xl shadow-2xl border p-3 w-52"
+          className="fixed z-[9999] bg-white rounded-xl shadow-xl border p-3 w-52"
           style={{ top: pos.top, left: pos.left, minWidth: 208 }}
         >
           {label && <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">{label}</p>}
@@ -53,7 +53,7 @@ export function ColorSwatch({ value, onChange, label }: { value: string; onChang
           </div>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {['#111827','#FFFFFF','#EF4444','#F59E0B','#16A34A','#3B82F6','#8B5CF6','#EC4899','#6B7280','#F3F4F6'].map(c => (
-              <button key={c} onClick={() => onChange(c)} className={`w-5 h-5 rounded-full border shadow-sm ${c === value ? 'ring-2 ring-primary ring-offset-1' : 'ring-1 ring-black/10'}`} style={{ background: c }} />
+              <button key={c} onClick={() => onChange(c)} className={`w-5 h-5 rounded-full border shadow-sm ${c === value ? 'ring-primary ring-primary ring-offset-1' : 'ring-1 ring-black/10'}`} style={{ background: c }} />
             ))}
           </div>
         </div>
@@ -81,8 +81,8 @@ export function SegmentedControl({
           onClick={() => onChange(opt.value)}
           className={`flex-1 px-2 py-1 text-xs font-medium rounded-md transition-all ${
             value === opt.value
-              ? 'bg-white text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
+              ? 'bg-white text-primary-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-primary-foreground'
           }`}
         >
           {opt.label}
@@ -192,7 +192,7 @@ export function LabeledInput({
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors ${mono ? 'font-mono uppercase' : ''}`}
+        className={`w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors ${mono ? 'font-mono uppercase' : ''}`}
       />
     </div>
   );
@@ -220,7 +220,7 @@ export function LabeledTextarea({
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full text-sm p-2.5 border-2 border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
+        className="w-full text-sm p-2.5 border-primary border-slate-100 rounded-xl bg-white focus:border-primary outline-none transition-colors resize-none"
       />
     </div>
   );

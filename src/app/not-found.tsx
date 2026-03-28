@@ -20,7 +20,7 @@ export default function NotFound() {
           <img 
             src="/assets/404.svg" 
             alt="404 - Not Found" 
-            className="w-full h-full object-contain animate-float drop-shadow-2xl"
+            className="w-full h-full object-contain animate-float drop-shadow-xl"
           />
         </div>
         <style>{`
@@ -33,7 +33,7 @@ export default function NotFound() {
           }
         `}</style>
         {/* --- TEXT CONTENT --- */}
-        <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">
+        <h2 className="text-accentxl md:text-5xl font-black text-primary-foreground mb-4 tracking-tight">
           Houston, We Have a Problem
         </h2>
         
@@ -45,7 +45,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
           <Link 
             href="/dashboard"
-            className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-foreground text-background font-bold hover:bg-primary transition-all shadow-[0_10px_40px_rgba(0,0,0,0.1)] hover:shadow-primary/30 w-full sm:w-auto justify-center group"
+            className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-primary-foreground text-background font-bold hover:bg-primary transition-all shadow-[0_10px_40px_rgba(0,0,0,0.1)] hover:shadow-primary/30 w-full sm:w-auto justify-center group"
           >
             <Home size={20} className="group-hover:scale-110 transition-transform" />
             Back to Dashboard
@@ -53,7 +53,7 @@ export default function NotFound() {
           
           <button 
             onClick={() => window.history.back()}
-            className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-secondary border border-border text-foreground font-bold hover:bg-border transition-all w-full sm:w-auto justify-center group"
+            className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-secondary border border-border text-primary-foreground font-bold hover:bg-border transition-all w-full sm:w-auto justify-center group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             Go Back

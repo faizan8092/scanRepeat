@@ -82,7 +82,7 @@ export default function DashboardPage() {
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-2">
           <QrCode size={40} />
         </div>
-        <h2 className="text-2xl font-bold">Connection Error</h2>
+        <h2 className="text-primaryxl font-bold">Connection Error</h2>
         <p className="text-muted-foreground max-w-md">{error}</p>
         <button 
           onClick={() => setIsZeroData(true)}
@@ -118,7 +118,7 @@ export default function DashboardPage() {
             <Calendar size={14} className="text-primary" />
              {format(new Date(), 'EEEE, MMMM dd, yyyy')}
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-foreground">Dashboard Overview</h1>
+          <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Dashboard Overview</h1>
         </div>
         
         <div className="flex items-center gap-3">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
             <Download size={18} />
              Export
           </button>
-          <Link href="/dashboard/products" className="flex items-center gap-2 px-5 py-4 rounded-2xl bg-foreground text-sm font-bold text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30">
+          <Link href="/dashboard/products" className="flex items-center gap-2 px-5 py-4 rounded-2xl bg-primary text-sm font-bold text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/30">
             <Plus size={18} />
              Create QR Code
           </Link>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                     <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">THIS PERIOD</div>
                   </div>
                 </div>
-                <div className="text-3xl font-black text-foreground tracking-tight mb-1">{stat.value}</div>
+                <div className="text-accentxl font-black text-primary-foreground tracking-tight mb-1">{stat.value}</div>
                 <div className="text-sm font-bold text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
@@ -183,12 +183,12 @@ export default function DashboardPage() {
               <div className="h-full bg-card rounded-[2.3rem] p-8 md:p-10 flex flex-col shadow-inner">
                 <div className="flex items-center justify-between mb-10">
                   <div>
-                    <h2 className="text-2xl font-black text-foreground tracking-tight">Scan Activity</h2>
+                    <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight">Scan Activity</h2>
                     <p className="text-sm text-muted-foreground font-medium">Real-time engagement across your physical branding.</p>
                   </div>
                   <div className="flex items-center gap-2 p-1 bg-secondary rounded-2xl font-bold text-xs text-muted-foreground">
-                    <button className="px-3 py-2 bg-card text-foreground rounded-xl shadow-sm">Daily</button>
-                    <button className="px-3 py-2 hover:text-foreground transition-colors" disabled>Weekly</button>
+                    <button className="px-3 py-2 bg-card text-primary-foreground rounded-xl shadow-sm">Daily</button>
+                    <button className="px-3 py-2 hover:text-primary-foreground transition-colors" disabled>Weekly</button>
                   </div>
                 </div>
 
@@ -243,13 +243,13 @@ export default function DashboardPage() {
 
             {/* Sidebar Mini sections */}
             <div className="lg:col-span-4 space-y-8">
-               <div className="p-8 rounded-[2.5rem] bg-foreground text-background shadow-xl flex flex-col h-full overflow-hidden relative group">
-                 <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-125 transition-transform duration-700">
-                   <QrCode size={120} />
+               <div className="p-8 rounded-[2.5rem] bg-card border border-border text-foreground shadow-xl flex flex-col h-full overflow-hidden relative group">
+                 <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform duration-700">
+                   <QrCode size={120} className="text-primary" />
                  </div>
                  <div className="relative z-10">
-                   <h3 className="text-xl font-black mb-2">Usage Limits</h3>
-                   <p className="text-background/60 text-sm font-medium mb-8">Your resource activity this month.</p>
+                   <h3 className="text-xl font-black mb-2 text-primary-foreground">Usage Limits</h3>
+                   <p className="text-muted-foreground text-sm font-medium mb-8">Your resource activity this month.</p>
                    
                    <div className="space-y-6">
                      <UsageLine label="Funnels" value={dashboard.usageLimits.funnels.current} max={dashboard.usageLimits.funnels.limit} unit="" />
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                      <UsageLine label="Assets" value={dashboard.usageLimits.assets.current} max={dashboard.usageLimits.assets.limit} unit=" GB" />
                    </div>
                    
-                   <button className="w-full mt-10 py-4 rounded-2xl bg-background/10 hover:bg-background/20 text-background font-bold text-sm transition-all border border-background/10">
+                   <button className="w-full mt-10 py-4 rounded-2xl bg-secondary hover:bg-secondary/80 text-foreground font-bold text-sm transition-all border border-border">
                      Manage Plan
                    </button>
                  </div>
@@ -269,7 +269,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
               <div>
-                <h2 className="text-2xl font-black text-foreground tracking-tight">Recent Products</h2>
+                <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight">Recent Products</h2>
                 <p className="text-sm text-muted-foreground font-medium">Monitoring the performance of your top packaging funnels.</p>
               </div>
               <button className="p-3 rounded-2xl bg-card border border-border hover:bg-secondary text-muted-foreground transition-all">
@@ -281,7 +281,7 @@ export default function DashboardPage() {
               {dashboard.recentProducts.length > 0 ? (
                 <>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-accentollapse">
                       <thead>
                         <tr className="bg-secondary/50 border-b border-border">
                           <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-wider">Product Info</th>
@@ -296,16 +296,16 @@ export default function DashboardPage() {
                           <tr key={product.id} className="hover:bg-secondary/80 transition-colors group">
                             <td className="px-8 py-6">
                               <div>
-                                <div className="text-sm font-black text-foreground mb-0.5">{product.name}</div>
+                                <div className="text-sm font-black text-primary-foreground mb-0.5">{product.name}</div>
                                 <div className="text-[10px] text-primary font-bold">UID: {product.shortCode}</div>
                               </div>
                             </td>
                             <td className="px-6 py-6 text-center">
-                              <div className="text-sm font-bold text-foreground">{product.engagement.toLocaleString()}</div>
+                              <div className="text-sm font-bold text-primary-foreground">{product.engagement.toLocaleString()}</div>
                               <div className="text-[10px] text-success font-bold">Total Scans</div>
                             </td>
                             <td className="px-6 py-6 text-center">
-                              <div className="text-sm font-bold text-foreground">{product.conversion}%</div>
+                              <div className="text-sm font-bold text-primary-foreground">{product.conversion}%</div>
                               <div className="w-16 h-1 mx-auto bg-muted rounded-full mt-2 overflow-hidden">
                                 <div 
                                   className="h-full bg-primary" 
@@ -325,7 +325,7 @@ export default function DashboardPage() {
                               </div>
                             </td>
                             <td className="px-8 py-6 text-right">
-                              <Link href={`/dashboard/products/${product.id}`} className="p-2 inline-block rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+                              <Link href={`/dashboard/products/${product.id}`} className="p-2 inline-block rounded-xl text-muted-foreground hover:text-primary-foreground hover:bg-secondary transition-all">
                                 <MoreHorizontal size={20} />
                               </Link>
                             </td>
@@ -365,10 +365,10 @@ function UsageLine({ label, value, max, unit }: { label: string, value: number, 
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-end">
-        <span className="text-xs font-bold text-background/50 uppercase tracking-widest">{label}</span>
-        <span className="text-sm font-black text-background">{value.toLocaleString()}<span className="text-background/40 font-bold">{unit}</span><span className="text-background/20 mx-1">/</span>{max.toLocaleString()}</span>
+        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
+        <span className="text-sm font-black text-primary-foreground">{value.toLocaleString()}<span className="text-muted-foreground/40 font-bold">{unit}</span><span className="text-muted-foreground/20 mx-1">/</span>{max.toLocaleString()}</span>
       </div>
-      <div className="h-2 w-full bg-background/5 rounded-full overflow-hidden">
+      <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: `${percent}%` }}

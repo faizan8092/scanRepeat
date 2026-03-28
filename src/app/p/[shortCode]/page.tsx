@@ -64,7 +64,7 @@ export default function ShortCodeRedirectPage({ params }: { params: Promise<{ sh
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-        <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-2xl mb-4">⚠️</div>
+        <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-primaryxl mb-4">⚠️</div>
         <h1 className="text-xl font-bold text-slate-800 mb-2">{error}</h1>
         <p className="text-sm text-slate-500 max-w-sm">Please check the URL or try scanning the QR code again.</p>
       </div>
@@ -114,7 +114,7 @@ export default function ShortCodeRedirectPage({ params }: { params: Promise<{ sh
   // Fallback for failed redirects or unknown product types
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-      <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-2xl mb-4">🚀</div>
+      <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center text-primaryxl mb-4">🚀</div>
       <h1 className="text-xl font-bold text-slate-800 mb-2">{productData?.name || 'Untitled Experience'}</h1>
       <p className="text-sm text-slate-500 mb-6 font-medium">
         {productData?.type === 'external_url' ? 'Click below to visit the destination' : 'Click below to view the file'}

@@ -18,7 +18,7 @@ const TEMPLATES: FormTemplate[] = [
     name: 'Modern Contact',
     description: 'Perfect for support and inquiries.',
     icon: <Mail className="w-6 h-6" />,
-    color: 'bg-blue-500',
+    color: 'bg-primary/50',
     props: {
       title: 'Contact Us',
       description: "We'll get back to you within 24 hours.",
@@ -90,7 +90,7 @@ export function FormTemplateModal({ isOpen, onClose, onSelect }: FormTemplateMod
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+      <div className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
         {/* Header */}
         <div className="px-6 py-5 border-b flex items-center justify-between bg-slate-50/50">
           <div>
@@ -108,7 +108,7 @@ export function FormTemplateModal({ isOpen, onClose, onSelect }: FormTemplateMod
             <div 
               key={tmpl.id}
               onClick={() => onSelect(tmpl.props)}
-              className="group relative flex flex-col bg-white border-2 border-slate-100 rounded-2xl p-5 hover:border-primary hover:shadow-xl hover:shadow-primary/5 cursor-pointer transition-all duration-300 active:scale-[0.98]"
+              className="group relative flex flex-col bg-white border-primary border-slate-100 rounded-2xl p-5 hover:border-primary hover:shadow-xl hover:shadow-primary/5 cursor-pointer transition-all duration-300 active:scale-[0.98]"
             >
               {/* Icon / Badge */}
               <div className={`w-12 h-12 ${tmpl.color} rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-${tmpl.color.replace('bg-', '')}/30 group-hover:scale-110 transition-transform`}>
@@ -133,7 +133,7 @@ export function FormTemplateModal({ isOpen, onClose, onSelect }: FormTemplateMod
           {/* Blank Option */}
           <div 
             onClick={() => onSelect({})}
-            className="md:col-span-3 mt-2 flex items-center justify-center p-4 border-2 border-dashed border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer group"
+            className="md:col-span-3 mt-2 flex items-center justify-center p-4 border-primary border-accentashed border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer group"
           >
             <p className="text-sm font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Skip and start from scratch →</p>
           </div>

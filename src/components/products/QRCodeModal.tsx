@@ -32,7 +32,7 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
     <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in"
+        className="relative bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in"
         style={{ animation: 'modalIn 0.18s ease-out' }}
       >
         <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
@@ -80,7 +80,7 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
                 <button
                   key={s}
                   onClick={() => setSize(s)}
-                  className={`flex-1 py-2 text-xs font-medium rounded-xl border-2 transition-all ${size === s ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                  className={`flex-1 py-2 text-xs font-medium rounded-xl border-primary transition-all ${size === s ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
                 >
                   {s === 200 ? 'Small' : s === 400 ? 'Medium' : 'Large'}<br />
                   <span className="text-[10px] opacity-70">{s}px</span>
@@ -98,7 +98,7 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
               <Download size={16} /> SVG
             </button>
           </div>
-          <button onClick={onEditAppearance} className="w-full py-2.5 text-sm font-medium rounded-xl border-2 border-dashed border-slate-300 text-slate-600 hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2">
+          <button onClick={onEditAppearance} className="w-full py-2.5 text-sm font-medium rounded-xl border-primary border-accentashed border-slate-300 text-slate-600 hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2">
             <Palette size={16} /> Edit QR Appearance
           </button>
         </div>

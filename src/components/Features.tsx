@@ -12,7 +12,7 @@ export function Features() {
     <section className="py-20" id="features">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">One QR Code. A Full Post-Purchase Experience.</h2>
+          <h2 className="text-accentxl md:text-4xl font-bold mb-4">One QR Code. A Full Post-Purchase Experience.</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             With ScanRepeat, your QR code becomes a mobile-first engagement page that drives loyalty and sales.
           </p>
@@ -35,7 +35,7 @@ export function Features() {
         </div>
 
         <div className="max-w-4xl mx-auto bg-primary/5 rounded-2xl p-8 md:p-12 border border-primary/10">
-          <h3 className="text-2xl font-bold text-center mb-10">The flow is simple:</h3>
+          <h3 className="text-primaryxl font-bold text-center mb-10">The flow is simple:</h3>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative">
             {[
               "You create your product (5 min)",
