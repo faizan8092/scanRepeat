@@ -134,6 +134,27 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
               options={[{ value: 'full', label: 'Full Screen' }, { value: 'popup', label: 'Popup' }]}
             />
           </FieldRow>
+          <FieldRow label="Design Style">
+            <SegmentedControl
+              value={props.formStyle || 'solid'}
+              onChange={(v: string) => onChange({ ...props, formStyle: v })}
+              options={[
+                { value: 'solid', label: 'Solid' },
+                { value: 'underlined', label: 'Underlined' },
+                { value: 'bordered', label: 'Bordered' },
+              ]}
+            />
+          </FieldRow>
+          <FieldRow label="Alignment">
+            <SegmentedControl
+              value={props.align || 'center'}
+              onChange={(v: string) => onChange({ ...props, align: v })}
+              options={[
+                { value: 'left', label: 'Left' },
+                { value: 'center', label: 'Center' },
+              ]}
+            />
+          </FieldRow>
         </div>
       )}
 
@@ -169,7 +190,8 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
             </div>
           )}
 
-          <SectionLabel>Title &amp; Description</SectionLabel>
+          {/* Title + Desc */}
+          <SectionLabel>Header Content</SectionLabel>
           <Toggle
             checked={!!props.showTitleAndDesc}
             onChange={(v: boolean) => onChange({ ...props, showTitleAndDesc: v })}
@@ -188,6 +210,28 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
                 value={props.description || ''}
                 onChange={(v: string) => onChange({ ...props, description: v })}
                 placeholder="Please provide the information below"
+              />
+            </div>
+          )}
+
+          <Toggle
+            checked={!!props.showContactInfo}
+            onChange={(v: boolean) => onChange({ ...props, showContactInfo: v })}
+            label="Show Contact Info"
+          />
+          {props.showContactInfo && (
+            <div className="space-y-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <LabeledInput
+                label="Contact Email"
+                value={props.contactEmail || ''}
+                onChange={(v: string) => onChange({ ...props, contactEmail: v })}
+                placeholder="hello@example.com"
+              />
+              <LabeledInput
+                label="Contact Phone"
+                value={props.contactPhone || ''}
+                onChange={(v: string) => onChange({ ...props, contactPhone: v })}
+                placeholder="+1 234 567 8900"
               />
             </div>
           )}
@@ -241,11 +285,33 @@ export function FormEditor({ props, onChange }: { props: any; onChange: (p: any)
           <SectionLabel>Post Submission</SectionLabel>
           <FieldRow label="Type">
             <SegmentedControl
-              value={props.completionType || 'toast'}
+              value={props.completionType || 'popup'}
               onChange={(v: string) => onChange({ ...props, completionType: v })}
               options={[{ value: 'toast', label: 'Toast' }, { value: 'popup', label: 'Popup' }]}
             />
           </FieldRow>
+          
+          <div className="space-y-2">
+            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Success Illustration</p>
+            <MediaUploader
+              type="image"
+              onUploaded={(url: string) => onChange({ ...props, completionImage: url })}
+              label="Upload Illustration"
+            />
+            {props.completionImage && (
+              <div className="flex items-center gap-2 mt-1">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={props.completionImage} alt="Illustration" className="w-12 h-12 rounded object-contain border" />
+                <button
+                  onClick={() => onChange({ ...props, completionImage: '' })}
+                  className="text-[11px] text-red-500 hover:text-red-700 font-medium"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="space-y-1">
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Success Message</p>
             <textarea

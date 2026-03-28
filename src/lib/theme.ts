@@ -3,7 +3,7 @@ import { createTheme } from '@mui/material/styles';
 // This is a basic MUI theme that will be enhanced by Tailwind's CSS variables
 export const theme = createTheme({
   typography: {
-    fontFamily: '"Tektur", "Geist", "Inter", sans-serif',
+    fontFamily: '"Red Hat Display", "Geist", "Inter", sans-serif',
   },
   palette: {
     primary: {

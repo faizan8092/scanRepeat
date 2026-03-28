@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { CreditCard, CheckCircle2, Download, Plus, Zap, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useToast } from '@/src/lib/toast-context';
+import { Loader } from '@/src/components/ui/Loader';
 import { 
   fetchMyPlan, 
   fetchBillingInfo, 
@@ -75,9 +76,9 @@ export default function BillingPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-muted-foreground font-medium uppercase text-[10px] tracking-widest">Loading subscription...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in duration-500">
+        <Loader size={120} />
+        <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Synchronizing Billing</p>
       </div>
     );
   }
@@ -143,8 +144,7 @@ export default function BillingPage() {
                         : (p.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-foreground text-background hover:bg-foreground/90")
                     )}
                   >
-                    {isProcessing ? <Loader2 size={18} className="animate-spin" /> : null}
-                    {isCurrent ? 'Current Plan' : (p.key === 'free' ? 'Downgrade to Free' : 'Select Plan')}
+                    {isProcessing ? <Loader size={30} /> : (isCurrent ? 'Current Plan' : (p.key === 'free' ? 'Downgrade to Free' : 'Select Plan'))}
                   </button>
                 </div>
               </div>
@@ -232,8 +232,7 @@ export default function BillingPage() {
                     disabled={isProcessing}
                     className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl font-bold flex items-center justify-center gap-2"
                   >
-                    {isProcessing && <Loader2 size={18} className="animate-spin" />}
-                    {isFreePlan ? 'Upgrade to Growth' : 'Manage Subscription'}
+                    {isProcessing ? <Loader size={30} /> : (isFreePlan ? 'Upgrade to Growth' : 'Manage Subscription')}
                   </button>
                   {summary?.subscription?.cancelAtPeriodEnd && (
                     <div className="px-4 py-2 bg-warning/10 border border-warning/20 rounded-xl text-[10px] font-black text-warning uppercase tracking-wider">

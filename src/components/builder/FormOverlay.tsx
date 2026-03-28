@@ -50,6 +50,12 @@ interface FormProps {
   buttonTextColor?: string;
   completionType?: 'toast' | 'popup';
   completionMessage?: string;
+  completionImage?: string;
+  formStyle?: 'solid' | 'underlined' | 'bordered';
+  align?: 'left' | 'center';
+  showContactInfo?: boolean;
+  contactEmail?: string;
+  contactPhone?: string;
   [key: string]: any;
 }
 
@@ -64,13 +70,24 @@ interface FormOverlayProps {
 }
 
 // ─── Field renderer ────────────────────────────────────────────────────────────
-function FormFieldInput({ field, accentColor }: { field: FormField; accentColor: string }) {
-  const base = "w-full text-sm px-4 py-3 border-2 border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none transition-all";
+function FormFieldInput({ field, accentColor, formStyle = 'solid' }: { field: FormField; accentColor: string; formStyle?: string }) {
+  let base = "";
+  if (formStyle === 'underlined') {
+    base = "w-full text-[15px] py-4 border-b-2 border-slate-200 bg-transparent focus:border-slate-800 outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800 px-0 rounded-none shadow-none";
+  } else if (formStyle === 'bordered') {
+    base = "w-full text-[15px] px-5 py-4 border-2 border-slate-200 rounded-2xl bg-white focus:border-slate-800 outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800 shadow-sm";
+  } else {
+    // Modern Solid (Default)
+    base = "w-full text-[15px] px-5 py-4 border border-slate-100 rounded-2xl bg-slate-50/80 hover:bg-slate-100/50 focus:bg-white focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(203,213,225,0.3)] outline-none transition-all duration-300 placeholder:text-slate-400 font-medium text-slate-800";
+  }
   const opts = field.options?.length ? field.options : ['Option 1', 'Option 2', 'Option 3'];
+
+  // Checkbox/Radio wrapper class
+  const checkWrapper = `flex items-center gap-3 p-2.5 cursor-pointer transition-colors group ${formStyle === 'underlined' ? 'border-b border-slate-200' : 'border border-slate-200 rounded-xl'}`;
 
   switch (field.type) {
     case 'textarea':
-      return <textarea placeholder={`${field.label}${field.required ? ' *' : ''}`} className={`${base} resize-none`} rows={3} />;
+      return <textarea placeholder={`${field.label}${field.required ? ' *' : ''}`} className={`${base} resize-none min-h-[100px]`} rows={3} />;
     case 'date':
       return <input type="date" className={base} />;
     case 'time':
@@ -86,7 +103,7 @@ function FormFieldInput({ field, accentColor }: { field: FormField; accentColor:
       return (
         <div className="space-y-2">
           {opts.map((o, i) => (
-            <label key={i} className="flex items-center gap-3 p-2.5 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-400 transition-colors group">
+            <label key={i} className={checkWrapper}>
               <input type="radio" name={field.id} value={o} className="w-4 h-4 shrink-0" style={{ accentColor }} />
               <span className="text-sm text-slate-700">{o}</span>
             </label>
@@ -97,7 +114,7 @@ function FormFieldInput({ field, accentColor }: { field: FormField; accentColor:
       return (
         <div className="space-y-2">
           {opts.map((o, i) => (
-            <label key={i} className="flex items-center gap-3 p-2.5 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-400 transition-colors">
+            <label key={i} className={checkWrapper}>
               <input type="checkbox" className="w-4 h-4 rounded shrink-0" style={{ accentColor }} />
               <span className="text-sm text-slate-700">{o}</span>
             </label>
@@ -111,10 +128,10 @@ function FormFieldInput({ field, accentColor }: { field: FormField; accentColor:
         </select>
       );
     case 'hidden':
-      return null; // hidden fields don't render
+      return null;
     case 'file_upload':
       return (
-        <label className="flex flex-col items-center justify-center gap-2 w-full border-2 border-dashed border-slate-300 rounded-xl p-4 cursor-pointer bg-slate-50 hover:bg-white hover:border-slate-400 transition-all">
+        <label className={`flex flex-col items-center justify-center gap-2 w-full ${formStyle === 'underlined' ? 'border-b border-slate-200' : 'border-2 border-dashed border-slate-300 rounded-xl'} p-4 cursor-pointer bg-slate-50 hover:bg-white transition-all`}>
           <Upload size={20} className="text-slate-400" />
           <span className="text-xs text-slate-500 font-medium">Click to upload</span>
           <span className="text-[10px] text-slate-400">Max 5 MB</span>
@@ -124,10 +141,33 @@ function FormFieldInput({ field, accentColor }: { field: FormField; accentColor:
           }} />
         </label>
       );
+    case 'phone':
+    {
+      const isUnderlined = formStyle === 'underlined';
+      return (
+        <div className="flex gap-3 items-end">
+          <div className={`relative flex flex-col justify-center w-[110px] shrink-0 ${isUnderlined ? 'border-b-2 border-slate-200 py-3 rounded-none' : 'bg-slate-50/80 border border-slate-100 rounded-2xl px-5 py-3.5'}`}>
+             {!isUnderlined && <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-0.5 mt-0 block text-left">Code</span>}
+             {isUnderlined && <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider absolute top-0 left-0">Code</span>}
+             <div className={`flex items-center justify-between ${isUnderlined ? 'pt-4' : ''}`}>
+               <span className="text-[15px] text-slate-800 font-medium">+44</span>
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="m6 9 6 6 6-6"/></svg>
+             </div>
+          </div>
+          <div className="flex-1 w-full relative">
+            <input
+              type="tel"
+              placeholder={field.placeholder || field.label}
+              className={`${base}`}
+            />
+          </div>
+        </div>
+      );
+    }
     default:
       return (
         <input
-          type={field.type === 'phone' ? 'tel' : field.type === 'email' ? 'email' : 'text'}
+          type={field.type === 'email' ? 'email' : 'text'}
           placeholder={`${field.label}${field.required ? ' *' : ''}`}
           className={base}
         />
@@ -212,15 +252,28 @@ export function FormOverlay({ formProps: props, theme, previewMode = false, posi
   if (submitted) {
     return (
       <div
-        className="z-50 flex items-center justify-center p-4"
-        style={{ position, top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+        className="z-50 flex items-center justify-center p-4 min-h-full"
+        style={{ position, top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,1)' }}
       >
-        <div className="bg-white rounded-3xl p-8 text-center shadow-2xl w-full max-w-xs animate-in zoom-in-95 duration-300">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white">
-            <Check size={28} />
-          </div>
-          <h3 className="text-base font-bold text-slate-800 mb-2">Response Received!</h3>
-          <p className="text-sm text-slate-500">{props.completionMessage || 'Thank you for your response.'}</p>
+        <div className="bg-white p-6 text-center w-full max-w-sm flex flex-col items-center">
+          {props.completionImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={props.completionImage} alt="Success" className="w-48 h-48 object-contain mb-8 mx-auto" />
+          ) : (
+            <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-xl shadow-emerald-500/30">
+              <Check size={36} strokeWidth={3} />
+            </div>
+          )}
+          <h3 className="text-[32px] font-extrabold text-slate-900 mb-2 leading-tight tracking-tight">Thank you!!</h3>
+          <p className="text-[16px] font-medium text-slate-500 leading-relaxed mb-10 max-w-[280px] mx-auto">
+            {props.completionMessage || 'Your message has been received! One of our team members will be in touch with you shortly.'}
+          </p>
+          <button
+            onClick={close}
+            className="w-full py-4.5 rounded-2xl font-bold text-[16px] tracking-wide transition-all bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/20 active:scale-[0.98]"
+          >
+            Go home
+          </button>
         </div>
       </div>
     );
@@ -237,60 +290,85 @@ export function FormOverlay({ formProps: props, theme, previewMode = false, posi
       onClick={(e) => { if (e.target === e.currentTarget && props.allowDismiss) close(); }}
     >
       <div
-        className={`w-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-bottom-4 duration-300 ${
-          isFullScreen ? 'rounded-t-3xl' : 'rounded-3xl mb-4 mx-4 max-h-[90%]'
-        } ${position === 'fixed' ? 'max-w-md mx-auto' : ''}`}
-        style={{ fontFamily: theme?.fontFamily, maxHeight: isFullScreen ? '90%' : '85%' }}
+        className={`w-full bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] flex flex-col animate-in slide-in-from-bottom-6 duration-500 ${
+          isFullScreen ? 'rounded-t-[40px]' : 'rounded-[32px] mb-6 mx-4 max-h-[92%]'
+        } ${position === 'fixed' ? 'max-w-md mx-auto' : ''} relative overflow-hidden ring-1 ring-slate-100`}
+        style={{ fontFamily: theme?.fontFamily, maxHeight: isFullScreen ? '100%' : '90%' }}
       >
+        {/* Background Base */}
+        <div className="absolute inset-0 pointer-events-none bg-white z-0" />
+
+
+
         {/* Drag handle + close */}
-        <div className="flex justify-center pt-3 pb-1 shrink-0 relative">
-          <div className="w-10 h-1 bg-slate-200 rounded-full" />
-          {/* Cross is ALWAYS visible */}
+        <div className="flex justify-center pt-4 pb-1 shrink-0 relative z-10">
+          <div className="w-12 h-1.5 bg-slate-300/50 rounded-full" />
           <button
             onClick={close}
-            className="absolute top-1.5 right-3 w-7 h-7 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition-colors"
+            className="absolute top-2 right-4 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm border border-slate-100 transition-all active:scale-90"
           >
-            <X size={14} />
+            <X size={16} strokeWidth={2.5} />
           </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-6 py-2 space-y-5">
-          {/* Logo / Icon area */}
+        <div className="flex-1 overflow-y-auto px-7 py-3 space-y-7 relative z-10 scrollbar-hide">
+          {/* Enhanced Logo area */}
           {props.showHeaderImage && (
-            <div className="flex justify-center pt-1">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-100 shadow-md shrink-0">
-                {props.headerImage ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={props.headerImage} alt="Logo" className="w-full h-full object-cover" />
-                ) : (
-                  <DefaultLogoSVG />
-                )}
+            <div className="flex justify-center pt-2 mb-6">
+              <div className="relative group">
+                <div 
+                  className="absolute inset-0 rounded-full blur-[20px] scale-[1.3] opacity-40 transition-opacity duration-500 group-hover:opacity-60" 
+                  style={{ backgroundColor: primaryColor }}
+                />
+                <div className="w-24 h-24 rounded-full overflow-hidden border-[6px] border-white shadow-lg relative z-10 bg-white transition-transform duration-500 hover:scale-[1.02]">
+                  {props.headerImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={props.headerImage} alt="Logo" className="w-full h-full object-cover" />
+                  ) : (
+                    <DefaultLogoSVG />
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {/* Title + Desc */}
           {props.showTitleAndDesc !== false && (
-            <div className="text-center space-y-1.5">
-              <h2 className="text-xl font-bold text-slate-800 leading-tight">
-                {props.title || 'Hi, great to connect with you!'}
+            <div className={`space-y-1.5 ${props.align === 'center' ? 'text-center' : 'text-left'}`}>
+              <h2 className="text-[36px] font-black text-slate-900 tracking-tight leading-none">
+                {props.title || 'Contact Us'}
               </h2>
-              <p className="text-sm text-slate-500">
-                {props.description || 'Please provide the information below to proceed further'}
+              <p className={`text-[16px] font-medium text-slate-500 ${props.align === 'center' ? 'mx-auto' : ''} w-full`}>
+                {props.description || 'We\'ll get back to you within 24 hours.'}
               </p>
             </div>
           )}
 
+          {/* Contact Info Header */}
+          {props.showContactInfo && (
+            <div className="flex justify-between items-start pt-2 pb-6 border-b border-slate-100">
+              {props.contactEmail && (
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-800">Email</p>
+                  <p className="text-xs text-slate-500 bg-transparent">{props.contactEmail}</p>
+                </div>
+              )}
+              {props.contactPhone && (
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-800">Phone</p>
+                  <p className="text-xs text-slate-500">{props.contactPhone}</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Fields */}
-          <div className="space-y-4">
+          <div className={`space-y-[18px] ${props.formStyle === 'underlined' ? 'mt-4' : 'mt-8'}`}>
             {(props.fields || []).map((field: FormField) => (
               field.type === 'hidden' ? null : (
-                <div key={field.id} className="space-y-1.5">
-                  <p className="text-xs font-semibold text-slate-600 ml-0.5">
-                    {field.label}{field.required && <span className="text-red-500 ml-0.5">*</span>}
-                  </p>
-                  <FormFieldInput field={field} accentColor={primaryColor} />
+                <div key={field.id} className="space-y-0">
+                  <FormFieldInput field={field} accentColor={primaryColor} formStyle={props.formStyle} />
                 </div>
               )
             ))}
@@ -311,17 +389,17 @@ export function FormOverlay({ formProps: props, theme, previewMode = false, posi
         </div>
 
         {/* Sticky submit */}
-        <div className="px-6 pb-6 pt-3 shrink-0 bg-white">
+        <div className="px-7 pb-8 pt-4 shrink-0 bg-transparent relative z-10 flex justify-start">
           <button
             onClick={handleSubmit}
-            className="w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-[0.98]"
+            className="w-fit min-w-[180px] px-8 py-4.5 rounded-2xl font-bold text-[16px] tracking-wide transition-all active:scale-[0.98] hover:shadow-xl shadow-lg"
             style={{
-              background: primaryColor,
+              background: '#2B3041', // matching the dark grey from the screenshot precisely
               color: props.buttonTextColor || '#FFFFFF',
-              boxShadow: `0 8px 24px ${primaryColor}40`,
+              boxShadow: `0 10px 25px -5px rgba(43, 48, 65, 0.4)`,
             }}
           >
-            {props.buttonLabel || 'Submit'}
+            {props.buttonLabel || 'Send Message'}
           </button>
         </div>
       </div>

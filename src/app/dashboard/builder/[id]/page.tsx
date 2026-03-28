@@ -24,6 +24,7 @@ import {
   SocialShareEditor, SpacerEditor,
 } from '@/src/components/builder/BlockEditors';
 import { FormEditor } from '@/src/components/builder/FormEditor';
+import { FormTemplateModal } from '@/src/components/builder/FormTemplateModal';
 
 import {
   ArrowLeft, Eye, Save, GripVertical, Trash2, ChevronUp, ChevronDown, Copy, Plus, X,
@@ -157,6 +158,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
+  const [formTemplateContext, setFormTemplateContext] = useState<{ overId: string | null } | null>(null);
 
   // Load product from API on mount
   useEffect(() => {
@@ -228,12 +230,30 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
   }, []);
 
   const addBlock = useCallback((type: BlockType) => {
+    if (type === 'form') {
+      setFormTemplateContext({ overId: null });
+      return;
+    }
     const id = crypto.randomUUID();
     const newBlock: PageBlock = { id, type, props: getDefaultProps(type) };
     setBlocks(prev => [...prev, newBlock]);
     setSelectedBlockId(id);
     scrollToBlock(id);
   }, [scrollToBlock]);
+
+  const confirmAddForm = (templateProps: any) => {
+    const id = crypto.randomUUID();
+    const newBlock: PageBlock = { id, type: 'form', props: { ...getDefaultProps('form'), ...templateProps } };
+    if (formTemplateContext?.overId) {
+      const overIdx = blocks.findIndex(b => b.id === formTemplateContext.overId);
+      setBlocks(prev => [...prev.slice(0, overIdx + 1), newBlock, ...prev.slice(overIdx + 1)]);
+    } else {
+      setBlocks(prev => [...prev, newBlock]);
+    }
+    setSelectedBlockId(id);
+    scrollToBlock(id);
+    setFormTemplateContext(null);
+  };
 
   const updateBlockProps = useCallback((id: string, newProps: any) => {
     setBlocks(prev => prev.map(b => b.id === id ? { ...b, props: { ...b.props, ...newProps } } : b));
@@ -285,6 +305,12 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
     if (activeId.startsWith('new-')) {
       // Drop from left panel: add new block at position of over
       const type = activeId.replace('new-', '') as BlockType;
+      
+      if (type === 'form') {
+        setFormTemplateContext({ overId });
+        return;
+      }
+
       const id = crypto.randomUUID();
       const newBlock: PageBlock = { id, type, props: getDefaultProps(type) };
       const overIdx = blocks.findIndex(b => b.id === overId);
@@ -563,6 +589,12 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
           )}
         </DragOverlay>
       </DndContext>
+
+      <FormTemplateModal
+        isOpen={!!formTemplateContext}
+        onClose={() => setFormTemplateContext(null)}
+        onSelect={confirmAddForm}
+      />
     </div>
   );
 }

@@ -10,6 +10,8 @@ interface QRCodeDisplayProps {
   className?: string;
 }
 
+import { Loader } from '@/src/components/ui/Loader';
+
 export function QRCodeDisplay({ url, settings, size = 240, className = '' }: QRCodeDisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dataUrl, setDataUrl] = useState<string>('');
@@ -49,7 +51,7 @@ export function QRCodeDisplay({ url, settings, size = 240, className = '' }: QRC
       <canvas ref={canvasRef} width={size} height={size} style={{ display: 'block', borderRadius: '8px' }} />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <Loader size={60} />
         </div>
       )}
     </div>

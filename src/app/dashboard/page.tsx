@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
 import { getDashboardData, DashboardData } from '@/src/lib/dashboard-service';
 import { format } from 'date-fns';
+import { Loader } from '@/src/components/ui/Loader';
 
 const containers = {
   hidden: { opacity: 0 },
@@ -68,9 +69,9 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-muted-foreground font-medium">Powering up your dashboard...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in duration-500">
+        <Loader size={120} />
+        <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Powering up your dashboard...</p>
       </div>
     );
   }

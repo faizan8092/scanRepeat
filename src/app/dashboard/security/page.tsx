@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Key, Eye, EyeOff, Smartphone, Laptop, LogOut, ChevronRight, Save, Trash2, AlertCircle, X, Loader2, Info } from 'lucide-react';
+import { Key, Eye, EyeOff, Smartphone, Laptop, LogOut, ChevronRight, Save, Trash2, AlertCircle, X, Info } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
+import { Loader } from '@/src/components/ui/Loader';
 import { updatePassword, getSessions, revokeAllSessions, revokeSession, Session } from '@/src/lib/auth-service';
 
 export default function SecurityPage() {
@@ -216,10 +217,14 @@ export default function SecurityPage() {
                 <button 
                   onClick={handleUpdatePassword}
                   disabled={isUpdatingPassword}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl disabled:opacity-50"
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-xl disabled:opacity-50 min-w-[200px] justify-center"
                 >
-                  {isUpdatingPassword ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                  Update Password
+                  {isUpdatingPassword ? <Loader size={30} /> : (
+                    <>
+                      <Save size={18} />
+                      Update Password
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -268,7 +273,7 @@ export default function SecurityPage() {
              <div className="space-y-3">
                 {isLoadingSessions ? (
                   <div className="flex justify-center p-4">
-                    <Loader2 size={24} className="text-primary animate-spin" />
+                    <Loader size={60} />
                   </div>
                 ) : sessions.length > 0 ? (
                   sessions.slice(0, 3).map((session, index) => (
@@ -371,10 +376,9 @@ export default function SecurityPage() {
                   <button 
                     onClick={handleDeleteAccount}
                     disabled={deleteConfirmText !== 'DELETE' || isDeleting}
-                    className="px-6 py-3 rounded-2xl bg-destructive text-background text-sm font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-destructive/90 transition-all flex items-center gap-2"
+                    className="px-6 py-3 rounded-2xl bg-destructive text-background text-sm font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-destructive/90 transition-all flex items-center justify-center gap-2 min-w-[160px]"
                   >
-                    {isDeleting ? <Loader2 size={16} className="animate-spin" /> : null}
-                    Delete account
+                    {isDeleting ? <Loader size={30} /> : 'Delete account'}
                   </button>
                 </div>
               </div>

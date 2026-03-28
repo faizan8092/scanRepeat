@@ -442,19 +442,29 @@ export default function PricingPage() {
         </section>
 
         {/* ── Final CTA ── */}
-        <section className="py-36 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2970ff] to-[#0040c1] -z-10" />
-          <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_60%_40%,white_1px,transparent_1px)] [background-size:32px_32px] -z-10" />
-          <div className="container mx-auto px-4 text-center text-white">
+        <section className="py-20 md:py-24 relative overflow-hidden bg-white border-t border-[#e5e7eb]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-[#f8fafc] -z-10" />
+          <motion.div
+            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" } as any}
+            className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#2970ff]/10 blur-[100px] -z-10"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 3 } as any}
+            className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#7c3aed]/10 blur-[100px] -z-10"
+          />
+
+          <div className="container mx-auto px-4 text-center text-[#0a0a0a]">
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}>
-              <motion.h2 variants={fadeUp} className="text-[48px] md:text-[72px] font-bold tracking-[-0.04em] mb-6 leading-[1.05] max-w-3xl mx-auto">
+              <motion.h2 variants={fadeUp} className="text-[48px] md:text-[72px] lg:text-[80px] font-bold tracking-[-0.04em] mb-6 leading-[1.05] max-w-3xl mx-auto text-[#0a0a0a]">
                 Your first 14 days are free.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/80 text-xl mb-12 max-w-xl mx-auto">
+              <motion.p variants={fadeUp} className="text-[#6b7280] text-xl mb-12 max-w-xl mx-auto font-medium">
                 No credit card. No commitment. Just set up your first QR code and start converting.
               </motion.p>
               <motion.div variants={fadeUp}>
-                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-white text-[#2970ff] px-10 py-5 text-lg font-black shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-2xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
                   Get started for free <ArrowRight className="w-5 h-5" />
                 </Link>
               </motion.div>

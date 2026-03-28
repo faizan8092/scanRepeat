@@ -517,46 +517,55 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
 
       if (submitted) {
         return (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 text-white">
-              <Check size={22} />
+          <div className="bg-white/90 backdrop-blur-xl border border-emerald-100 rounded-3xl p-8 text-center shadow-xl shadow-emerald-500/5 animate-in zoom-in-95">
+            <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-emerald-500/30">
+              <Check size={28} strokeWidth={3} />
             </div>
-            <h3 className="text-sm font-bold text-green-800 mb-1">Response Received!</h3>
-            <p className="text-xs text-green-700">{props.completionMessage || 'Thank you for your response.'}</p>
+            <h3 className="text-base font-black text-slate-800 mb-1">Response Received!</h3>
+            <p className="text-xs font-medium text-slate-500">{props.completionMessage || 'Thank you for your response.'}</p>
           </div>
         );
       }
 
       return (
-        <div className="w-full bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm" style={{ fontFamily: theme?.fontFamily }}>
-          <div className="p-5 space-y-4">
+        <div className="w-full bg-slate-50/50 rounded-[32px] overflow-hidden border border-slate-200/50 shadow-xl relative" style={{ fontFamily: theme?.fontFamily }}>
+          {/* Background Pattern */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.25]" style={{ 
+            backgroundImage: `radial-gradient(circle at 1px 1px, #94A3B8 1px, transparent 0)`,
+            backgroundSize: '16px 16px'
+          }} />
+
+          <div className="p-6 space-y-5 relative z-10">
             {/* Circular logo / icon */}
             {props.showHeaderImage && (
               <div className="flex justify-center pt-1">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-100 shadow">
-                  {props.headerImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={props.headerImage} alt="Logo" className="w-full h-full object-cover" />
-                  ) : (
-                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                      <circle cx="32" cy="32" r="32" fill="#1a1a2e"/>
-                      <path d="M32 14l4.5 13.5H51l-11.5 8.5 4.5 13.5L32 41l-12 8.5 4.5-13.5L13 27.5h14.5L32 14z" fill="#FFD700"/>
-                    </svg>
-                  )}
+                <div className="relative group">
+                  <div className="absolute inset-0 rounded-full blur-xl scale-125 opacity-20" style={{ backgroundColor: primaryColor }} />
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden border-4 border-white shadow-lg relative bg-white -rotate-3 group-hover:rotate-0 transition-transform duration-500 shrink-0">
+                    {props.headerImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={props.headerImage} alt="Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                        <circle cx="32" cy="32" r="32" fill="#1a1a2e"/>
+                        <path d="M32 14l4.5 13.5H51l-11.5 8.5 4.5 13.5L32 41l-12 8.5 4.5-13.5L13 27.5h14.5L32 14z" fill="#FFD700"/>
+                      </svg>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
             {props.showTitleAndDesc !== false && (
-              <div className="text-center space-y-1">
-                <h2 className="text-base font-bold text-slate-800 leading-snug">{props.title || 'Contact Us'}</h2>
-                <p className="text-xs text-slate-500">{props.description || 'Fill out the form below'}</p>
+              <div className="text-center space-y-1.5">
+                <h2 className="text-xl font-black text-slate-800 tracking-tight leading-tight">{props.title || 'Contact Us'}</h2>
+                <p className="text-xs font-medium text-slate-400">{props.description || 'Fill out the form below'}</p>
               </div>
             )}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {(props.fields || []).map((field: any) => {
                 if (field.type === 'hidden') return null;
                 const opts: string[] = field.options?.length ? field.options : ['Option 1', 'Option 2'];
-                const base = "w-full text-sm px-3.5 py-2.5 border-2 border-slate-200 rounded-xl bg-slate-50 outline-none";
+                const base = "w-full text-sm px-4 py-3 border-2 border-slate-200/60 rounded-[18px] bg-white/40 backdrop-blur-sm focus:bg-white focus:border-slate-300 outline-none transition-all duration-300";
                 return (
                   <div key={field.id} className="space-y-1">
                     <p className="text-xs font-semibold text-slate-600">
@@ -622,8 +631,12 @@ export function BlockRenderer({ block, theme }: BlockRendererProps) {
             )}
             <button
               onClick={() => setSubmitted(true)}
-              className="w-full py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]"
-              style={{ background: props.buttonColor || primaryColor, color: props.buttonTextColor || '#FFFFFF' }}
+              className="w-full py-4 rounded-[20px] font-black text-sm tracking-wide transition-all active:scale-[0.98] hover:brightness-110"
+              style={{ 
+                background: props.buttonColor || primaryColor, 
+                color: props.buttonTextColor || '#FFFFFF',
+                boxShadow: `0 10px 25px ${(props.buttonColor || primaryColor)}40`
+              }}
             >
               {props.buttonLabel || 'Submit'}
             </button>

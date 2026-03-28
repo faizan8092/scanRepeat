@@ -48,7 +48,7 @@ const config: Config = {
         full: "var(--radius-full)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ["var(--font-redhat)", "var(--font-sans)"],
         mono: ["var(--font-mono)"],
         tektur: ["Tektur", "sans-serif"],
       },

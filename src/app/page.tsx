@@ -164,124 +164,87 @@ export default function LandingPage() {
       <Navbar />
 
       <main className="flex-1 relative">
-        <section ref={heroRef} className="relative min-h-[90vh] flex items-center pt-32 pb-24 overflow-hidden">
-          {/* Immersive Background Design */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#f8fafc] to-white -z-20" />
-          <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center">
-            {/* Central Glow behind phone */}
+        <section ref={heroRef} className="relative min-h-[90vh] flex items-center pt-32 pb-24 overflow-hidden bg-[#fafafa]">
+          {/* Enhanced Background Design */}
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_0%_0%,#eff6ff_0%,transparent_50%)]" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] -z-10 opacity-20 pointer-events-none">
             <motion.div 
-              animate={{ 
-                scale: [1, 1.1, 1],
-                rotate: [0, 15, 0]
-              }}
-              transition={{ repeat: Infinity, duration: 20, ease: "easeInOut" } as any}
-              className="absolute w-[600px] lg:w-[800px] h-[600px] lg:h-[800px] bg-gradient-to-tr from-cyan-300 via-blue-500 to-purple-500 rounded-full blur-[100px] opacity-25" 
+               animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+               transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' } as any}
+               className="w-full h-full bg-gradient-to-tr from-blue-300 via-indigo-300 to-purple-300 blur-[100px] rounded-full"
             />
-            {/* Grid Pattern overlay for texture */}
-            <div className="absolute inset-0 opacity-[0.03] [background-image:linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] [background-size:60px_60px]" />
           </div>
+          <div className="absolute inset-0 opacity-[0.02] [background-image:linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] [background-size:40px_40px] -z-10" />
 
-          <div className="container mx-auto px-4 relative z-10 hero-mesh">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8 max-w-[1400px] mx-auto">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12 max-w-[1400px] mx-auto">
               
-              {/* LEFT COLUMN: Text Content */}
+              {/* LEFT COLUMN: Premium Typography */}
               <motion.div
                 style={{ y: heroY, opacity: heroOpacity }}
                 initial="hidden"
                 animate="show"
                 variants={stagger}
-                className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left lg:max-w-[450px]"
+                className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left lg:max-w-[650px]"
               >
-                {/* Avatars */}
-                <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8 bg-white/60 backdrop-blur-md pr-5 pl-2 py-2 rounded-full border border-gray-200/50 shadow-sm">
-                  <div className="flex -space-x-2">
-                    <img src="https://i.pravatar.cc/100?img=1" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-                    <img src="https://i.pravatar.cc/100?img=2" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-                    <img src="https://i.pravatar.cc/100?img=3" alt="user" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-                  </div>
-                  <span className="text-[13px] font-semibold text-gray-700">
-                    1500+ Trusted Brands
+                {/* Modern Status Badge */}
+                <motion.div variants={fadeUp} className="mb-8 px-5 py-2 rounded-full border border-blue-100 bg-white/80 backdrop-blur-md shadow-lg shadow-blue-500/5 flex items-center gap-2.5">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                   </span>
+                  <span className="text-[10px] font-black tracking-[0.25em] text-blue-600 uppercase">The Future of Packaging</span>
                 </motion.div>
 
-                {/* Impact Headline */}
+                {/* Explosive Headline */}
                 <motion.h1 
                   variants={fadeUp} 
-                  className="text-[48px] md:text-[64px] lg:text-[72px] font-black tracking-tight mb-6 leading-[1.05] text-[#0a0a0a]"
+                  className="text-[52px] md:text-[72px] lg:text-[88px] font-black tracking-[-0.04em] mb-8 leading-[0.98] text-slate-950"
                 >
-                  Turn physical packaging into repeat <span className="text-[#2970ff]">sales</span>.
+                  Turn physical packaging into <span className="text-blue-600">revenue.</span>
                 </motion.h1>
 
-                {/* Descriptive Subtext */}
+                {/* Refined Subtext */}
                 <motion.p 
                   variants={fadeUp} 
-                  className="text-lg text-gray-600 mb-10 leading-[1.6] font-medium max-w-xl"
+                  className="text-lg md:text-xl text-slate-500 mb-12 leading-relaxed max-w-xl font-medium"
                 >
-                  Work smarter, create faster, and achieve more with ScanRepeat's advanced intelligent QR codes designed to bridge the physical-digital gap.
+                  Bridge the physical-digital gap. Track every scan, personalize every journey, and turn one-time buyers into lifelong fans with intelligent QR technology.
                 </motion.p>
                 
-                <motion.div variants={fadeUp}>
+                {/* Premium CTAs */}
+                <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-5 w-full lg:w-auto">
                    <Link 
                      href="/signup" 
-                     className="inline-flex lg:hidden items-center justify-center rounded-full bg-[#0a0a0a] hover:bg-[#2970ff] px-8 py-4 text-base font-bold text-white shadow-xl transition-all duration-300"
+                     className="group relative w-full sm:w-auto px-10 py-5 bg-slate-900 text-white font-black text-base rounded-2xl shadow-2xl shadow-blue-900/10 transition-all hover:scale-[1.03] active:scale-[0.97] flex items-center justify-center gap-3 overflow-hidden"
                    >
-                     Get Started Free
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <span className="relative z-10">Start Tracking Free</span>
+                      <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                   </Link>
+                   <Link 
+                     href="#how-it-works" 
+                     className="w-full sm:w-auto px-10 py-5 bg-white border border-slate-200 text-slate-900 font-bold text-base rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center gap-2 shadow-sm"
+                   >
+                     Watch Demo
                    </Link>
                 </motion.div>
               </motion.div>
 
-              {/* CENTER COLUMN: Mobile Mockup */}
+              {/* RIGHT COLUMN: Enhanced Illustration */}
               <motion.div
-                initial={{ opacity: 0, y: 60 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: "spring", bounce: 0.1, duration: 1.5, delay: 0.2 } as any}
-                className="flex-1 relative flex justify-center w-full max-w-[340px] lg:max-w-none lg:w-auto z-20"
+                initial={{ opacity: 0, x: 40, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ type: "spring", bounce: 0.1, duration: 1.2, delay: 0.2 } as any}
+                className="flex-1 relative flex justify-center lg:justify-end w-full"
               >
-                {/* Mockup Container */}
-                <div className="relative w-full max-w-[320px] aspect-[1/2.15] bg-[#111] rounded-[3.5rem] p-3 sm:p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] ring-2 ring-black/10 mx-auto">
-                    {/* Screen inner */}
-                    <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative shadow-inner">
-                       {/* dynamic Island mock */}
-                       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[35%] h-6 bg-black rounded-full z-20"></div>
-                       {/* Top edge gradient representing phone screen edge */}
-                       <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/10 to-transparent z-10 pointer-events-none"></div>
-                       
-                       <img src="/Assets/hero-image.png" alt="ScanRepeat Interface" className="w-full h-full object-cover object-left-top opacity-95 scale-105" />
-                    </div>
-                </div>
-              </motion.div>
-
-              {/* RIGHT COLUMN: QR Code section */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ type: "spring", bounce: 0, duration: 1, delay: 0.4 } as any}
-                className="flex-[0.8] flex flex-col items-center lg:items-start w-full max-w-sm lg:max-w-[300px] z-10"
-              >
-                <div className="text-center lg:text-left mb-6 w-full">
-                  <h2 className="text-[28px] md:text-[36px] font-bold text-[#0a0a0a] leading-[1.1] mb-2 tracking-tight">
-                    Scan QR code to<br />try it out
-                  </h2>
-                </div>
-
-                <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl ring-1 ring-black/5 w-full flex flex-col items-center gap-8 border border-white">
-                  {/* QR Box with dot pattern imitation */}
-                  <div className="w-full aspect-square bg-[#f8faff] rounded-[1.5rem] flex items-center justify-center p-6 border border-[#e5e7eb] relative overflow-hidden group">
-                     {/* QR Code Graphic element */}
-                     <QrCode size={160} strokeWidth={1} className="text-[#2970ff] opacity-90 transition-transform duration-500 group-hover:scale-105" />
-                     {/* Overlay scanning line effect */}
-                     <motion.div 
-                       className="absolute top-0 left-0 w-full h-[2px] bg-[#2970ff]/60 shadow-[0_0_8px_2px_rgba(41,112,255,0.4)]"
-                       animate={{ y: [0, 200, 0] }}
-                       transition={{ repeat: Infinity, duration: 3, ease: "linear" } as any}
-                     />
-                  </div>
-
-                  <div className="flex gap-4 w-full">
-                     <Link href="/signup" className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-black text-white hover:bg-[#2970ff] text-sm font-bold shadow-lg transition-all">
-                        Create Yours <ArrowRight size={18} />
-                     </Link>
-                  </div>
+                <div className="relative w-full max-w-[380px] md:max-w-[480px] lg:max-w-[550px] group">
+                   <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                   <img 
+                     src="/Assets/hero.svg" 
+                     alt="ScanRepeat Hero Illustration" 
+                     className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.08)] group-hover:translate-y-[-8px] transition-transform duration-700 ease-out" 
+                   />
                 </div>
               </motion.div>
 
@@ -563,36 +526,36 @@ export default function LandingPage() {
         </section>
 
         {/* ─────────────────────────────────────── FINAL CTA ─────────────────────────────────────── */}
-        <section className="py-36 md:py-48 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#0e1932] to-[#0040c1] -z-10" />
+        <section className="py-20 md:py-24 relative overflow-hidden bg-white border-t border-[#e5e7eb]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-[#f8fafc] -z-10" />
           <motion.div
             animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
             transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" } as any}
-            className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#2970ff]/30 blur-[100px] -z-10"
+            className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#2970ff]/10 blur-[100px] -z-10"
           />
           <motion.div
             animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.4, 0.2] }}
             transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 3 } as any}
-            className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#7c3aed]/30 blur-[100px] -z-10"
+            className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#7c3aed]/10 blur-[100px] -z-10"
           />
 
-          <div className="container mx-auto px-4 text-center text-white relative z-10">
+          <div className="container mx-auto px-4 text-center text-[#0a0a0a] relative z-10">
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-xs font-semibold uppercase tracking-widest mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2970ff]/8 border border-[#2970ff]/20 text-[#2970ff] text-xs font-semibold uppercase tracking-widest mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2970ff] animate-pulse" />
                 Join 5,000+ brands already using ScanRepeat
               </motion.div>
-              <motion.h2 variants={fadeUp} className="text-[48px] md:text-[80px] lg:text-[96px] font-bold tracking-[-0.04em] mb-8 leading-[1.02] max-w-5xl mx-auto">
+              <motion.h2 variants={fadeUp} className="text-[48px] md:text-[80px] lg:text-[96px] font-bold tracking-[-0.04em] mb-8 leading-[1.02] max-w-5xl mx-auto text-[#0a0a0a]">
                 Start tracking your physical conversions today.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/70 text-xl max-w-xl mx-auto mb-12">
+              <motion.p variants={fadeUp} className="text-[#6b7280] text-xl max-w-xl mx-auto mb-12 font-medium">
                 Every unscanned box is revenue you're leaving on the table. Fix that in 5 minutes.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-white text-[#0a0a0a] px-10 py-5 text-lg font-bold shadow-2xl hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-300 transform-gpu">
+                <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] text-white px-10 py-5 text-lg font-bold shadow-2xl hover:-translate-y-1 hover:bg-[#2970ff] transition-all duration-300 transform-gpu">
                   Create your first QR Code <ArrowRight className="w-5 h-5" />
                 </Link>
-                <Link href="/pricing" className="inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white px-10 py-5 text-lg font-bold transition-all duration-300">
+                <Link href="/pricing" className="inline-flex items-center gap-2 rounded-full bg-white hover:bg-white/80 border border-[#e5e7eb] text-[#0a0a0a] px-10 py-5 text-lg font-bold transition-all duration-300">
                   View pricing
                 </Link>
               </motion.div>

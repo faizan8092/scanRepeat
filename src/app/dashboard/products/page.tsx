@@ -9,6 +9,7 @@ import { CreateProductModal } from '@/src/components/products/CreateProductModal
 import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
 import { fetchProducts, deleteProductApi, updateProductApi } from '@/src/lib/product-service';
 import { fetchMyPlan } from '@/src/lib/billing-service';
+import { Loader } from '@/src/components/ui/Loader';
 
 type StatusFilter = 'all' | 'published' | 'paused' | 'draft' | 'archived';
 
@@ -200,9 +201,9 @@ export default function ProductsPage() {
 
         {/* ── Product List ────────────────────────────────────────────── */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-             <Loader2 size={32} className="text-primary animate-spin mb-4" />
-             <p className="text-sm font-medium text-slate-500 tracking-wide uppercase text-[10px]">Loading products...</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
+             <Loader size={120} />
+             <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Synchronizing Products</p>
           </div>
         ) : showZeroState ? (
           <div className="mt-8">

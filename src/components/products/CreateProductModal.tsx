@@ -11,6 +11,7 @@ import { defaultTheme } from '@/src/types/builder';
 import { QRCustomizer } from './QRCustomizer';
 import { createProductApi, uploadFileApi } from '@/src/lib/product-service';
 import { useToast } from '@/src/lib/toast-context';
+import { Loader } from '@/src/components/ui/Loader';
 
 type Step = 'type_select' | 'page_details' | 'file_details' | 'url_details' | 'qr_customizer';
 
@@ -164,7 +165,7 @@ function UrlChecker({ url }: { url: string }) {
     return () => clearTimeout(t);
   }, [url]);
   if (status === 'idle') return null;
-  if (status === 'checking') return <p className="text-xs text-slate-400 flex items-center gap-1"><Loader2 size={12} className="animate-spin" /> Checking URL...</p>;
+  if (status === 'checking') return <p className="text-xs text-slate-400 flex items-center gap-1"><Loader size={24} /> Checking URL...</p>;
   if (status === 'ok') return <p className="text-xs text-green-600 flex items-center gap-1"><Check size={12} /> URL is reachable</p>;
   return <p className="text-xs text-orange-500 flex items-center gap-1"><AlertTriangle size={12} /> Could not reach this URL</p>;
 }
@@ -293,11 +294,9 @@ export function CreateProductModal({ onClose, onCreated }: CreateProductModalPro
         <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
 
         {isCreating && (
-          <div className="absolute inset-0 z-[9990] bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-              <Loader2 size={32} className="animate-spin" />
-            </div>
-            <p className="text-sm font-bold text-slate-800">Creating your product...</p>
+          <div className="absolute inset-0 z-[9990] bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1">
+            <Loader size={120} />
+            <p className="text-sm font-bold text-slate-800 -mt-4">Creating your product...</p>
             <p className="text-xs text-slate-500 tracking-wide uppercase">Finalizing your QR code</p>
           </div>
         )}

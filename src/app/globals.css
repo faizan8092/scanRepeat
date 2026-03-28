@@ -73,7 +73,7 @@
   --ring: 221 83% 53%;
 
   /* Typography Tokens */
-  --font-sans: var(--font-sans), 'Tektur', system-ui, sans-serif;
+  --font-sans: var(--font-redhat), var(--font-sans), system-ui, sans-serif;
   --font-mono: var(--font-mono), monospace;
 
   /* Font Sizes */

@@ -1,7 +1,8 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import { UploadCloud, Link2, X, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { UploadCloud, Link2, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { apiFetch, getApiUrl } from '@/src/lib/api';
+import { Loader } from '@/src/components/ui/Loader';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type MediaType = 'image' | 'video';
@@ -50,7 +51,6 @@ export function MediaUploader({ type, onUploaded, label }: MediaUploaderProps) {
   const handleFile = async (file: File) => {
     clearState();
 
-    // Client-side validation
     if (!allowedMimes.includes(file.type)) {
       setError(`Invalid file type. Allowed: ${mimeLabels}`);
       return;
@@ -142,9 +142,9 @@ export function MediaUploader({ type, onUploaded, label }: MediaUploaderProps) {
             onChange={e => { const f = e.target.files?.[0]; if (f) { handleFile(f); setFileKey(k => k + 1); } }}
           />
           {uploading ? (
-            <div className="flex flex-col items-center gap-2 py-1">
-              <Loader2 size={22} className="text-primary animate-spin" />
-              <p className="text-xs text-primary font-medium">Uploading...</p>
+            <div className="flex flex-col items-center gap-1 py-1">
+              <Loader size={45} />
+              <p className="text-[11px] text-primary font-bold">Uploading...</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-1.5 py-1">
@@ -175,7 +175,6 @@ export function MediaUploader({ type, onUploaded, label }: MediaUploaderProps) {
         </div>
       )}
 
-      {/* Feedback messages */}
       {error && (
         <div className="flex items-start gap-2 p-2.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
           <AlertCircle size={14} className="shrink-0 mt-0.5" />

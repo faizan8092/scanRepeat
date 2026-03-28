@@ -6,6 +6,7 @@ import { User, Save, Camera, Mail, Building2, UserCircle2, Briefcase, ShieldChec
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
+import { Loader } from '@/src/components/ui/Loader';
 
 export default function SettingsPage() {
   const { user, fetchProfile, updateProfile } = useAuth();
@@ -282,10 +283,14 @@ export default function SettingsPage() {
                 <button 
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50"
+                  className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-foreground text-background hover:bg-primary transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50 min-w-[240px] justify-center"
                 >
-                  {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                  Save Profile Changes
+                  {isSaving ? <Loader size={30} /> : (
+                    <>
+                      <Save size={18} />
+                      Save Profile Changes
+                    </>
+                  )}
                 </button>
               </div>
             </div>

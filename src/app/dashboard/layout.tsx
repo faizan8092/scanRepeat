@@ -10,6 +10,7 @@ import { useAuth } from '@/src/lib/auth-context';
 import { cn } from '@/src/lib/utils';
 import { useUpgradePrompt } from '@/src/hooks/useUpgradePrompt';
 import { UpgradeModal } from '@/src/components/ui/UpgradeModal';
+import { Loader } from '@/src/components/ui/Loader';
 
 export default function DashboardLayout({
   children,
@@ -34,7 +35,7 @@ export default function DashboardLayout({
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-secondary/30">
-        <div className="w-8 h-8 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
+        <Loader size={120} />
       </div>
     );
   }
