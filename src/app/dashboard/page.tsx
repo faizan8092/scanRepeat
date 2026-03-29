@@ -132,7 +132,7 @@ export default function DashboardPage() {
             <Download size={18} />
              Export
           </button>
-          <Link href="/dashboard/products" className="flex items-center gap-2 px-5 py-4 rounded-2xl bg-primary text-sm font-bold text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/30">
+          <Link href="/dashboard/products" className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-primary text-white text-sm font-black transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
             <Plus size={18} />
              Create QR Code
           </Link>

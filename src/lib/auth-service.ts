@@ -7,10 +7,10 @@ export type AuthUser = {
   name: string;
   email: string;
   avatar?: string | null;
-  company?: string;
-  role?: string;
-  bio?: string;
-  isVerified?: boolean;
+  company?: string | null;
+  role?: string | null;
+  bio?: string | null;
+  emailVerified?: boolean;
 };
 
 export type LoginResponse = {
@@ -98,9 +98,17 @@ export async function resetPassword(data: ResetPasswordRequest): Promise<{ messa
   });
 }
 
-export async function verifyEmail(token: string): Promise<{ message: string }> {
-  return apiFetch(getApiUrl(`/auth/verify-email/${encodeURIComponent(token)}`), {
-    method: 'GET',
+export async function verifyEmail(data: { email: string; otp: string }): Promise<{ message: string }> {
+  return apiFetch(getApiUrl('/auth/verify-email'), {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function resendVerification(data: { email: string }): Promise<{ message: string }> {
+  return apiFetch(getApiUrl('/auth/resend-verification'), {
+    method: 'POST',
+    body: JSON.stringify(data),
   });
 }
 

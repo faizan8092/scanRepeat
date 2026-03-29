@@ -69,14 +69,6 @@ export default function DashboardLayout({
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20 text-primary text-[11px] font-bold tracking-tight">
-              <Sparkles size={12} className="mr-1.5" />
-              PRO PLAN
-            </div>
-
-            <div className="h-8 w-px bg-border mx-1" />
-
-            
             
             <button className="relative p-2.5 rounded-xl hover:bg-secondary text-muted-foreground transition-colors group">
               <Bell size={20} className="group-hover:scale-110 transition-transform" />

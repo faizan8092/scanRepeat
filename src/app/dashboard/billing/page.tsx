@@ -230,7 +230,7 @@ export default function BillingPage() {
                   <button 
                     onClick={handleUpgrade}
                     disabled={isProcessing}
-                    className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xl font-bold flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-primary text-white font-black transition-all shadow-lg shadow-primary/20 hover:opacity-90 flex items-center justify-center gap-2"
                   >
                     {isProcessing ? <Loader size={30} /> : (isFreePlan ? 'Upgrade to Growth' : 'Manage Subscription')}
                   </button>

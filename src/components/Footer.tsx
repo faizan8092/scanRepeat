@@ -3,6 +3,9 @@ import { Mail, Facebook, Linkedin, Twitter, Globe, Phone, Github } from 'lucide-
 import { Logo } from './Logo';
 
 export function Footer() {
+
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-[#040411] text-white pt-24 pb-10 mt-auto">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -110,7 +113,7 @@ export function Footer() {
 
         {/* BOTTOM SECTION */}
         <div className="flex flex-col md:flex-row items-center justify-between text-[14px] text-slate-500 gap-6">
-          <p>Copyright 2024 all rights reserved</p>
+          <p>Copyright {currentYear} all rights reserved</p>
           <div className="flex items-center gap-12 font-medium">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/security" className="hover:text-white transition-colors">Security</Link>

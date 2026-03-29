@@ -217,7 +217,7 @@ export default function SecurityPage() {
                 <button 
                   onClick={handleUpdatePassword}
                   disabled={isUpdatingPassword}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xl disabled:opacity-50 min-w-[200px] justify-center"
+                  className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-primary text-white text-sm font-black transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] min-w-[220px]"
                 >
                   {isUpdatingPassword ? <Loader size={30} /> : (
                     <>

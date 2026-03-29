@@ -32,7 +32,7 @@ export default function LoginPage() {
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
 
     if (!minLength || !hasUpper || !hasDigit || !hasSpecial) {
-      setPasswordError('Password must be at least 8 characters with an uppercase letter, digit, and special character.');
+      setPasswordError('Min. 8 chars with uppercase, digit & special char.');
       return false;
     }
     setPasswordError('');
@@ -55,38 +55,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white text-[#0a0a0a] font-sans">
+    <div className="h-screen w-full flex bg-white text-primary-foreground font-sans overflow-hidden">
       {/* Left Side: Form */}
-      <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-24 py-12 relative">
-        <Link href="/" className="absolute top-8 left-8 lg:left-12 flex items-center gap-2 text-[#6b7280] hover:text-[#0a0a0a] transition-colors group">
+      <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-20 py-8 relative">
+        <Link href="/" className="absolute top-6 left-8 lg:left-12 flex items-center gap-2 text-muted-foreground hover:text-primary-foreground transition-all group">
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span className="text-sm font-medium">Back to site</span>
+          <span className="text-sm font-bold">Back to site</span>
         </Link>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-[440px] w-full mx-auto"
+          className="max-w-[420px] w-full mx-auto"
         >
-          <div className="mb-10 text-center lg:text-left">
-            <Link href="/" className="inline-flex mb-8">
-              <Logo size={42} />
+          <div className="mb-6 text-center lg:text-left">
+            <Link href="/" className="inline-flex mb-6">
+              <Logo size={40} />
             </Link>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back</h1>
-            <p className="text-[#6b7280]">Login to continue your brand journey</p>
+            <h1 className="text-3xl font-black tracking-tight mb-2">Welcome back</h1>
+            <p className="text-muted-foreground font-medium text-sm">Login to continue your brand journey</p>
           </div>
 
-          <div className="mb-8 relative h-[52px] group">
-            {/* 1. Our perfectly themed custom button (Visual Only) */}
+          <div className="mb-6 relative h-[48px] group">
             <div 
-              className="absolute inset-0 w-full h-full flex items-center justify-center gap-3 px-4 py-3 border border-[#e5e7eb] rounded-xl bg-white hover:bg-[#f9fafb] hover:border-[#d1d5db] transition-all duration-300 font-medium pointer-events-none"
+              className="absolute inset-0 w-full h-full flex items-center justify-center gap-3 px-4 py-2.5 border border-border rounded-xl bg-white hover:bg-secondary/50 hover:border-primary/30 transition-all duration-300 font-bold text-sm pointer-events-none"
             >
               <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="text-[#374151]">Continue with Google</span>
+              <span>Continue with Google</span>
             </div>
 
-            {/* 2. Hidden-but-clickable official Google button (Functional Only) */}
             <div className="absolute inset-0 opacity-0 cursor-pointer [&>div]:w-full [&>div]:h-full">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
@@ -107,19 +105,19 @@ export default function LoginPage() {
                 useOneTap
                 theme="outline"
                 size="large"
-                width="400" // We'll use a large width and let the wrapper clip it if needed
+                width="400"
                 text="continue_with"
                 shape="rectangular"
               />
             </div>
           </div>
 
-          <div className="relative mb-8">
+          <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#e5e7eb]"></div>
+              <div className="w-full border-t border-border"></div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-4 text-[#9ca3af] font-medium tracking-wider">Or</span>
+            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
+              <span className="bg-white px-4 text-muted-foreground">Or</span>
             </div>
           </div>
           
@@ -127,38 +125,35 @@ export default function LoginPage() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="mb-8 p-4 rounded-xl bg-rose-50 border border-rose-100 flex items-start gap-3"
+              className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex items-start gap-3"
             >
-              <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-rose-900 leading-relaxed font-medium">
-                Incorrect email or password. Please try again,{' '}
-                <Link href="/forgot-password" className="text-[#2970ff] hover:underline">reset your password</Link>
+              <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+              <p className="text-xs text-destructive leading-relaxed font-black">
+                Incorrect credentials.{' '}
+                <Link href="/forgot-password" title="reset password" className="text-primary hover:underline">Reset</Link>
                 {' '}or{' '}
-                <Link href="/signup" className="text-[#2970ff] hover:underline">sign up</Link>
+                <Link href="/signup" title="create account" className="text-primary hover:underline">Sign up</Link>
               </p>
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-[#374151]">Email Address</label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-black text-primary-foreground uppercase tracking-wider">Email Address</label>
               <input 
                 type="email" 
                 placeholder="hello@yourcompany.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#e5e7eb] focus:ring-primary focus:ring-[#2970ff]/20 focus:border-[#2970ff] outline-none transition-all placeholder:text-[#9ca3af]"
+                className="w-full px-4 py-3 rounded-xl border border-border focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all placeholder:text-muted-foreground bg-secondary/20 text-sm"
               />
             </div>
             
-            <div className="space-y-2">
-              <div className="flex justify-between items-end mb-1">
-                <div>
-                  <label className="text-sm font-semibold text-[#374151] block leading-none">Security Password</label>
-                  <span className="text-[10px] text-[#6b7280] font-medium leading-none">Update your login credentials regularly.</span>
-                </div>
-                <Link href="/forgot-password" className="text-sm font-medium text-[#2970ff] hover:underline">Forgot password?</Link>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-end mb-0.5">
+                <label className="text-xs font-black text-primary-foreground uppercase tracking-wider">Password</label>
+                <Link href="/forgot-password" className="text-xs font-black text-primary hover:underline">Forgot?</Link>
               </div>
               <div className="relative">
                 <input 
@@ -171,21 +166,21 @@ export default function LoginPage() {
                     if (passwordError) validatePassword(e.target.value);
                   }}
                   className={cn(
-                    "w-full px-4 py-3 rounded-xl border outline-none transition-all placeholder:text-[#9ca3af]",
-                    passwordError ? "border-rose-500 focus:ring-rose-500/20" : "border-[#e5e7eb] focus:ring-[#2970ff]/20 focus:border-[#2970ff]"
+                    "w-full px-4 py-3 rounded-xl border outline-none transition-all placeholder:text-muted-foreground bg-secondary/20 text-sm",
+                    passwordError ? "border-destructive focus:ring-destructive/5" : "border-border focus:ring-primary/5 focus:border-primary"
                   )}
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#374151]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary-foreground transition-all"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               <p className={cn(
-                "text-[10px] font-medium transition-all duration-300 px-1",
-                passwordError ? "text-rose-500" : "text-[#6b7280]"
+                "text-[10px] font-bold transition-all duration-300 px-1",
+                passwordError ? "text-destructive" : "text-muted-foreground"
               )}>
                 {passwordError || "Min. 8 chars with uppercase, digit & special char."}
               </p>
@@ -194,22 +189,22 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#171717] hover:bg-[#2970ff] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-all duration-300 disabled:opacity-50 disabled:hover:bg-[#171717] flex items-center justify-center gap-2 group"
+              className="w-full flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-primary text-white text-sm font-black transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 group mt-2"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
               ) : (
                 <>
                   <LogIn size={20} className="transition-transform group-hover:translate-x-1" />
-                  <span>Login</span>
+                  <span>Login to Dashboard</span>
                 </>
               )}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-[#6b7280]">
+          <p className="mt-6 text-center text-muted-foreground text-sm font-medium">
             Don't have an account?{' '}
-            <Link href="/signup" className="font-bold text-[#2970ff] hover:underline">Sign up</Link>
+            <Link href="/signup" className="font-black text-primary hover:underline">Sign up</Link>
           </p>
         </motion.div>
       </div>
@@ -220,24 +215,23 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full h-full relative rounded-[2.5rem] overflow-hidden bg-[#f8faff]"
+          className="w-full h-full relative rounded-[2.5rem] overflow-hidden bg-secondary"
         >
-          <img 
-            src="/Assets/hero-image.png" 
-            alt="Dashboard Preview" 
-            className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80"
+          <motion.img 
+            src="/Assets/auth.svg" 
+            alt="Authentication" 
+            className="absolute inset-0 w-full h-full object-contain p-20"
+            animate={{ 
+              y: [0, -20, 0],
+            }}
+            transition={{ 
+              duration: 5, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#2970ff]/20 to-transparent" />
-          
-          <div className="absolute bottom-12 left-12 right-12 p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
-            <h2 className="text-accentxl font-bold text-white mb-4 tracking-tight">Streamline your physical brand conversions.</h2>
-            <p className="text-white/80 text-lg leading-relaxed">
-              Join thousands of brands using ScanRepeat to bridge the gap between their products and digital experiences.
-            </p>
-          </div>
         </motion.div>
       </div>
     </div>
   );
 }
-

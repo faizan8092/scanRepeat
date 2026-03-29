@@ -2,79 +2,86 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, Camera, Mail, Building2, UserCircle2, Briefcase, ShieldCheck, CheckCircle2, Loader2, ArrowRight, X } from 'lucide-react';
+import { User, Save, Camera, Mail, CheckCircle2, Loader2, Phone, Globe, ChevronDown, ShieldAlert, X, Send } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
-import { Loader } from '@/src/components/ui/Loader';
+import { resendVerification } from '@/src/lib/auth-service';
+
+// Comprehensive Country List
+const COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
+  "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi",
+  "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
+  "Denmark", "Djibouti", "Dominica", "Dominican Republic",
+  "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia",
+  "Fiji", "Finland", "France",
+  "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guyana",
+  "Haiti", "Honduras", "Hungary",
+  "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy",
+  "Jamaica", "Japan", "Jordan",
+  "Kazakhstan", "Kenya", "Kiribati", "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan",
+  "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg",
+  "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar",
+  "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway",
+  "Oman",
+  "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
+  "Qatar",
+  "Romania", "Russia", "Rwanda",
+  "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria",
+  "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
+  "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan",
+  "Vanuatu", "Vatican City", "Venezuela", "Vietnam",
+  "Yemen",
+  "Zambia", "Zimbabwe"
+];
 
 export default function SettingsPage() {
   const { user, fetchProfile, updateProfile } = useAuth();
   const { addToast } = useToast();
-  const [isVerifying, setIsVerifying] = React.useState(false);
-  const [otp, setOtp] = React.useState(['', '', '', '', '', '']);
-  const [isVerified, setIsVerified] = React.useState(false);
-  const [isSending, setIsSending] = React.useState(false);
-  const [isChecking, setIsChecking] = React.useState(false);
-  const [status, setStatus] = React.useState<{ type: 'error' | 'success' | null, message: string }>({ type: null, message: '' });
   
-  // Profile Form States
   const [firstName, setFirstName] = React.useState(user?.firstName || '');
   const [lastName, setLastName] = React.useState(user?.lastName || '');
   const [email, setEmail] = React.useState(user?.email || '');
-  const [company, setCompany] = React.useState(user?.company || '');
-  const [role, setRole] = React.useState(user?.role || '');
+  const [phone, setPhone] = React.useState(user?.phone || '');
+  const [country, setCountry] = React.useState(user?.company || 'India'); 
   const [bio, setBio] = React.useState(user?.bio || '');
   const [avatar, setAvatar] = React.useState<string | null>(user?.avatar || null);
+  const [emailVerified, setEmailVerified] = React.useState(user?.emailVerified || false);
   const [isSaving, setIsSaving] = React.useState(false);
+
+  // Verification Modal States
   const [showEmailModal, setShowEmailModal] = React.useState(false);
-  const [newEmail, setNewEmail] = React.useState('');
-  const [errors, setErrors] = React.useState<{ firstName?: string, email?: string }>({});
+  const [isSending, setIsSending] = React.useState(false);
+  const [isSent, setIsSent] = React.useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const otpRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
-  // Initial fetch to ensure we have the latest user data
   React.useEffect(() => {
     fetchProfile().then(data => {
       setFirstName(data.firstName || '');
       setLastName(data.lastName || '');
       setEmail(data.email || '');
-      setCompany(data.company || '');
-      setRole(data.role || '');
+      setPhone(data.phone || '');
       setBio(data.bio || '');
       setAvatar(data.avatar || null);
-    }).catch(() => {
-      // fallback to current user
-    });
+      setEmailVerified(data.emailVerified || false);
+      if (data.company) setCountry(data.company);
+    }).catch(() => {});
   }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validation: File Type
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-      if (!allowedTypes.includes(file.type)) {
-        addToast('error', 'Invalid file format', 'Please upload a JPG, PNG, WEBP, or GIF image.');
-        return;
-      }
-
-      // Validation: File Size (2MB = 2 * 1024 * 1024 bytes)
-      const maxSize = 2 * 1024 * 1024;
-      if (file.size > maxSize) {
-        addToast('error', 'File too large', 'Profile image must be less than 2MB.');
-        return;
-      }
-
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64 = reader.result as string;
         setAvatar(base64);
         try {
           await updateProfile({ avatar: base64 });
-          addToast('success', 'Profile image updated instantly!');
+          addToast('success', 'Avatar updated!');
         } catch (err) {
-          addToast('error', 'Upload failed', 'There was an error saving your image.');
+          addToast('error', 'Upload failed');
         }
       };
       reader.readAsDataURL(file);
@@ -82,385 +89,229 @@ export default function SettingsPage() {
   };
 
   const handleSaveProfile = async () => {
-    const newErrors: { firstName?: string, email?: string } = {};
-    if (!firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!email.trim()) newErrors.email = 'Email is required';
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      addToast('error', 'Required fields missing', 'Please fill in all mandatory information.');
-      return;
-    }
-
-    setErrors({});
     setIsSaving(true);
-    
     try {
-      await updateProfile({
-        firstName,
-        lastName,
-        name: `${firstName} ${lastName}`.trim(),
-        company,
-        role,
-        bio,
-        avatar
+      await updateProfile({ 
+        firstName, 
+        lastName, 
+        name: `${firstName} ${lastName}`.trim(), 
+        phone,
+        bio, 
+        avatar,
+        company: country 
       });
-      addToast('success', 'Profile updated successfully!', 'Your changes have been saved to your account.');
+      addToast('success', 'Profile updated!');
     } catch (err) {
-      addToast('error', 'Update failed', 'There was an error saving your changes.');
+      addToast('error', 'Update failed');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSendOtp = async () => {
+  const handleSendLink = async () => {
     setIsSending(true);
-    // Simulate sending email
-    await new Promise(r => setTimeout(r, 1500));
-    setIsSending(false);
-    setIsVerifying(true);
-  };
-
-  const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) value = value[value.length - 1];
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-
-    // Auto focus next
-    if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus();
-    }
-
-    // Auto check if all filled
-    if (newOtp.every(digit => digit !== '') && newOtp.length === 6) {
-      checkOtp(newOtp.join(''));
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const checkOtp = async (code: string) => {
-    setIsChecking(true);
-    setStatus({ type: null, message: '' });
-    // Simulate verification
-    await new Promise(r => setTimeout(r, 2000));
-    setIsChecking(false);
-    
-    if (code === '123456') {
-      setStatus({ type: 'success', message: 'Email updated and verified successfully!' });
-      setTimeout(() => {
-        setEmail(newEmail);
-        setIsVerified(true);
-        setIsVerifying(false);
-        setShowEmailModal(false);
-        setNewEmail('');
-        setOtp(['', '', '', '', '', '']);
-      }, 1500);
-    } else {
-      setOtp(['', '', '', '', '', '']);
-      setStatus({ type: 'error', message: 'Invalid code. Please check your email and try again.' });
-      otpRefs.current[0]?.focus();
+    try {
+      await resendVerification({ email });
+      setIsSent(true);
+      addToast('success', 'Verification Sent!', `We've emailed a verification link to ${email}.`);
+    } catch (err: any) {
+      addToast('error', 'Failed to send link', err?.message || 'Please try again.');
+    } finally {
+      setIsSending(false);
     }
   };
 
   const openEmailModal = () => {
     setShowEmailModal(true);
-    setNewEmail('');
-    setIsVerifying(false);
-    setStatus({ type: null, message: '' });
+    setIsSent(false);
   };
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-4xl font-black tracking-tight text-primary-foreground">Account Profile</h1>
-        <p className="text-sm text-muted-foreground font-medium mt-2">Update your personal information and public profile.</p>
+    <div className="h-[calc(100vh-140px)] flex flex-col gap-6 overflow-hidden">
+      <div className="flex items-center justify-between shrink-0">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-primary-foreground">Account Profile</h1>
+          <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.1em] mt-1">Manage personal presence & verification</p>
+        </div>
+        <button 
+          onClick={handleSaveProfile}
+          disabled={isSaving}
+          className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-white font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+        >
+          {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+          Save Changes
+        </button>
       </div>
 
-      <div className="bg-card rounded-[2.5rem] border border-border shadow-sm overflow-hidden">
-        <div className="p-8 md:p-12 lg:p-16">
-          <div className="flex flex-col lg:flex-row gap-16">
-            {/* Avatar Section */}
-            <div className="flex flex-col items-center gap-6 shrink-0">
-               <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                  <div className="w-40 h-40 rounded-[2.5rem] bg-gradient-to-tr from-primary to-accent p-1 shadow-xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500">
-                    <div className="w-full h-full rounded-[2.3rem] bg-card flex items-center justify-center overflow-hidden">
-                      {avatar ? (
-                        <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-5xl font-black text-primary">{firstName?.substring(0, 1).toUpperCase() || 'U'}</span>
-                      )}
-                    </div>
+      <div className="flex-1 bg-card rounded-[2.5rem] border border-border/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="flex-1 p-8 lg:p-10 overflow-y-auto custom-scrollbar space-y-10">
+          
+          {/* Avatar Area */}
+          <div className="flex flex-col items-center gap-4 py-2">
+            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <div className="w-28 h-28 rounded-3xl bg-primary/5 p-1 border-2 border-primary/10 group-hover:border-primary/30 transition-all duration-300 overflow-hidden shadow-sm">
+                {avatar ? (
+                  <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-2xl" />
+                ) : (
+                  <div className="w-full h-full rounded-2xl bg-secondary flex items-center justify-center text-2xl font-black text-primary/40">
+                    {firstName?.substring(0, 1).toUpperCase() || 'U'}
                   </div>
-                  <button className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-primary text-primary-foreground border-4 border-card flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                    <Camera size={20} />
-                  </button>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleImageUpload} 
-                    className="hidden" 
-                    accept="image/*" 
-                  />
-               </div>
-                <div className="text-center">
-                  <p className="text-xs font-black text-primary-foreground uppercase tracking-widest mb-1">Upload New</p>
-                  <p className="text-[10px] text-muted-foreground font-bold">Max 2MB • JPG, PNG, WEBP</p>
+                )}
+                <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                  <Camera className="text-white" size={20} />
                 </div>
+              </div>
+              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Profile Avatar</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+            <SettingsInput label="First Name" value={firstName} onChange={setFirstName} icon={User} />
+            <SettingsInput label="Last Name" value={lastName} onChange={setLastName} icon={User} />
+            
+            <SettingsInput 
+              label="Email Address" 
+              value={email} 
+              icon={Mail} 
+              verified={emailVerified}
+              notVerified={!emailVerified} 
+              onAction={openEmailModal}
+            />
+
+            <SettingsInput label="Phone Number" value={phone} onChange={setPhone} icon={Phone} />
+
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none px-1">Country Location</label>
+              <div className="relative group">
+                <select 
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full bg-secondary/20 border border-border py-4 pl-5 pr-14 rounded-2xl text-sm font-black transition-all outline-none appearance-none focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 text-slate-700 cursor-pointer shadow-sm shadow-primary/5"
+                >
+                  {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <Globe size={16} className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors pointer-events-none" />
+                <ChevronDown size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
+              </div>
             </div>
 
-            {/* Form Section */}
-            <div className="flex-1 space-y-10 max-w-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <ProfileInput 
-                  label="First Name" 
-                  required
-                  icon={User} 
-                  value={firstName} 
-                  onChange={(val) => {
-                    setFirstName(val);
-                    if (errors.firstName) setErrors({...errors, firstName: undefined});
-                  }} 
-                  error={errors.firstName}
-                />
-                <ProfileInput label="Last Name" icon={UserCircle2} value={lastName} onChange={setLastName} />
-                
-                <div className="md:col-span-2 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">
-                      Email Address <span className="text-destructive">*</span>
-                    </label>
-                    {isVerified ? (
-                      <div className="flex items-center gap-1 text-success text-[10px] font-black uppercase tracking-wider">
-                         <CheckCircle2 size={12} />
-                         Verified
-                      </div>
-                    ) : (
-                      <button 
-                        onClick={openEmailModal}
-                        className="text-[10px] font-black text-primary hover:text-primary/80 uppercase tracking-wider underline flex items-center gap-1"
-                      >
-                        <ShieldCheck size={10} />
-                        Change Email
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                      <Mail size={18} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    </div>
-                    <input 
-                      type="text"
-                      readOnly
-                      value={email}
-                      className="w-full bg-secondary/30 border border-border py-4 pl-14 pr-5 rounded-2xl text-sm font-bold opacity-70 cursor-not-allowed outline-none"
-                    />
-                  </div>
-                </div>
-
-                <ProfileInput label="Company" icon={Building2} value={company} onChange={setCompany} className="md:col-span-2" />
-                <ProfileInput label="Professional Role" icon={Briefcase} value={role} onChange={setRole} className="md:col-span-2" />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">About / Bio</label>
-                <textarea 
-                  rows={4}
-                  placeholder="Tell us a little about yourself..."
-                  className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 p-5 rounded-3xl text-sm font-bold transition-all outline-none resize-none"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </div>
-
-              <div className="pt-6 border-t border-border flex justify-end">
-                <button 
-                  onClick={handleSaveProfile}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50 min-w-[240px] justify-center"
-                >
-                  {isSaving ? <Loader size={30} /> : (
-                    <>
-                      <Save size={18} />
-                      Save Profile Changes
-                    </>
-                  )}
-                </button>
-              </div>
+            <div className="md:col-span-2 space-y-3">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1">Public Bio</label>
+              <textarea 
+                rows={3}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Tell us about yourself..."
+                className="w-full bg-secondary/20 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 p-5 rounded-3xl text-sm font-bold transition-all outline-none resize-none text-slate-700 shadow-sm shadow-primary/5"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Change Email Modal */}
+      {/* Verification Modal */}
       <AnimatePresence>
         {showEmailModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => !isChecking && setShowEmailModal(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-xl overflow-hidden p-8 md:p-12"
-            >
-              <button 
-                onClick={() => setShowEmailModal(false)}
-                className="absolute top-6 right-6 p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-colors"
-                disabled={isChecking}
-              >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowEmailModal(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-xl overflow-hidden p-8 md:p-12">
+              <button onClick={() => setShowEmailModal(false)} className="absolute top-6 right-6 p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-colors" >
                 <X size={20} />
               </button>
-
               <div className="text-center mb-10">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
-                  <Mail size={32} />
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6"> 
+                  {isSent ? <Send size={32} /> : <Mail size={32} />} 
                 </div>
-                <h2 className="text-primaryxl font-black text-primary-foreground tracking-tight mb-2">Change Email Address</h2>
-                <p className="text-sm text-muted-foreground font-medium">Enter your new email to receive a verification code.</p>
+                <h2 className="text-3xl font-black text-primary-foreground tracking-tight mb-2">Verify Email</h2>
+                <p className="text-sm text-muted-foreground font-bold italic px-4">Verify your address to unlock all brand features.</p>
               </div>
 
-              {!isVerifying ? (
+              {!isSent ? (
                 <div className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-xs font-black text-primary-foreground/80 uppercase tracking-widest block ml-1">New Email Address</label>
-                    <div className="relative group">
-                      <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                        <Mail size={18} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      </div>
-                      <input 
-                        type="email"
-                        placeholder="new@email.com"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        className="w-full bg-secondary/50 border border-border focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 py-4 pl-14 pr-5 rounded-2xl text-sm font-bold transition-all outline-none"
-                      />
-                    </div>
+                  <div className="p-8 rounded-3xl bg-secondary/40 text-center space-y-4 border border-border/50">
+                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none">Associated Email</p>
+                    <p className="text-xl font-black text-primary break-all">{email}</p>
                   </div>
-                  <button 
-                    onClick={handleSendOtp}
-                    disabled={!newEmail || isSending}
-                    className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-black shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                  >
-                    {isSending ? <Loader2 size={20} className="animate-spin" /> : 'Send Verification Code'}
+                  <button onClick={handleSendLink} disabled={isSending} className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    {isSending ? <Loader2 size={20} className="animate-spin" /> : 'Send Verification Link'}
                   </button>
                 </div>
               ) : (
-                <div className="space-y-8">
-                  <div className="text-center">
-                    <p className="text-sm font-bold text-primary-foreground mb-6">Enter the 6-digit code sent to <span className="text-primary">{newEmail}</span></p>
-                    <div className="flex justify-center gap-2 md:gap-3">
-                      {otp.map((digit, i) => (
-                        <input
-                          key={i}
-                          ref={el => { otpRefs.current[i] = el; }}
-                          type="text"
-                          maxLength={1}
-                          value={digit}
-                          onChange={(e) => handleOtpChange(i, e.target.value)}
-                          onKeyDown={(e) => handleKeyDown(i, e)}
-                          className="w-10 h-12 md:w-12 md:h-14 text-center bg-secondary/50 border border-border rounded-xl text-lg font-black focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-                        />
-                      ))}
+                <div className="space-y-8 flex flex-col items-center">
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-center w-full">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white mx-auto mb-4">
+                       <CheckCircle2 size={24} />
                     </div>
-                  </div>
-
-                  {status.message && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={cn(
-                        "p-4 rounded-2xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2",
-                        status.type === 'success' ? "bg-success/10 text-success border border-success/20" : "bg-destructive/10 text-destructive border border-accentestructive/20"
-                      )}
-                    >
-                      {status.type === 'success' ? <CheckCircle2 size={14} /> : <ShieldCheck size={14} className="rotate-180" />}
-                      {status.message}
-                    </motion.div>
-                  )}
-
-                  <div className="flex flex-col items-center gap-4">
-                    <button 
-                      onClick={() => setIsVerifying(false)}
-                      className="text-xs font-black text-muted-foreground hover:text-primary-foreground underline underline-offset-4"
-                    >
-                      Use a different email address
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {isChecking && (
-                <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
-                   <div className="bg-card p-6 rounded-3xl border border-border shadow-xl flex items-center gap-4">
-                      <Loader2 size={24} className="text-primary animate-spin" />
-                      <span className="text-lg font-black text-primary-foreground tracking-tight">Verifying Code...</span>
-                   </div>
+                    <p className="text-base font-black text-emerald-600 mb-2">Sent Successfully!</p>
+                    <p className="text-sm font-bold text-emerald-600/70 leading-relaxed italic">A secure verification link has been delivered to your inbox. Please check your email and click the link to verify your account.</p>
+                  </motion.div>
+                  
+                  <button onClick={() => setShowEmailModal(false)} className="w-full py-4 rounded-2xl bg-secondary text-primary-foreground font-black hover:bg-secondary/80 transition-all uppercase tracking-widest text-sm">
+                    Done
+                  </button>
+                  
+                  <button onClick={() => setIsSent(false)} className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors underline underline-offset-4 uppercase tracking-widest"> 
+                    Didn't receive it? Send again
+                  </button>
                 </div>
               )}
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--border) / 0.5); border-radius: 10px; }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.1); }
+      `}</style>
     </div>
   );
 }
 
-interface ProfileInputProps {
-  label: string;
-  icon: any;
-  value: string;
-  onChange?: (val: string) => void;
-  className?: string;
-  error?: string;
-  readOnly?: boolean;
-  required?: boolean;
-}
-
-function ProfileInput({ label, icon: Icon, value, onChange, className, error, readOnly, required }: ProfileInputProps) {
+function SettingsInput({ label, value, onChange, icon: Icon, verified, notVerified, onAction }: { 
+  label: string, 
+  value: string, 
+  onChange?: (v: string) => void, 
+  icon: any,
+  verified?: boolean,
+  notVerified?: boolean,
+  onAction?: () => void
+}) {
   return (
-    <div className={cn("space-y-3", className)}>
-      <label className="text-xs font-black text-primary-foreground/90 uppercase tracking-widest block ml-1">
-        {label} {required && <span className="text-destructive">*</span>}
-      </label>
+    <div className="space-y-3">
+      <div className="flex items-center justify-between px-1">
+        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{label}</label>
+        {verified && (
+          <div className="flex items-center gap-1 text-[9px] font-black text-emerald-500 uppercase tracking-wider leading-none">
+             <CheckCircle2 size={10} strokeWidth={3} className="fill-emerald-500 text-white" />
+             Verified
+          </div>
+        )}
+        {notVerified && onAction && (
+          <button onClick={onAction} className="flex items-center gap-1 text-[9px] font-black text-destructive hover:underline hover:text-destructive/80 transition-colors uppercase tracking-wider leading-none">
+             <ShieldAlert size={10} strokeWidth={3} />
+             Verify Email
+          </button>
+        )}
+      </div>
       <div className="relative group">
-        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Icon size={18} className={cn("text-muted-foreground transition-colors", error ? "text-destructive" : "group-focus-within:text-primary")} />
-        </div>
         <input 
-          type="text"
+          type="text" 
           value={value}
-          readOnly={readOnly}
+          readOnly={!onChange}
           onChange={(e) => onChange?.(e.target.value)}
           className={cn(
-            "w-full bg-secondary/50 border border-border py-4 pl-14 pr-5 rounded-2xl text-sm font-bold transition-all outline-none",
-            error ? "border-accentestructive bg-destructive/5" : "focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5",
-            readOnly && "opacity-70 cursor-not-allowed"
+            "w-full bg-secondary/20 border border-border py-4 pl-5 pr-14 rounded-2xl text-sm font-bold transition-all outline-none text-slate-700 shadow-sm shadow-primary/5",
+            !onChange && "opacity-70 cursor-not-allowed border-transparent pointer-events-none select-none"
           )}
         />
-        {error && (
-          <motion.p 
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-[10px] font-black text-destructive uppercase tracking-widest mt-1.5 ml-1"
-          >
-            {error}
-          </motion.p>
-        )}
+        <Icon size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" />
       </div>
     </div>
   );
 }
-
-
