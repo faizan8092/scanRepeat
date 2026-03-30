@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, ChevronLeft, ChevronRight, Loader2, QrCode } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/src/lib/utils';
+import { Plus, Search, ChevronLeft, ChevronRight, Loader2, QrCode, Trash2, CheckSquare } from 'lucide-react';
 import { Product, MOCK_PRODUCTS } from '@/src/types/product';
 import { useToast } from '@/src/lib/toast-context';
+import { PremiumSelect } from '@/src/components/ui/PremiumSelect';
 import { ProductCard } from '@/src/components/products/ProductCard';
 import { CreateProductModal } from '@/src/components/products/CreateProductModal';
 import { ZeroDataView } from '@/src/components/dashboard/ZeroDataView';
-import { fetchProducts, deleteProductApi, updateProductApi } from '@/src/lib/product-service';
+import { fetchProducts, deleteProductApi, updateProductApi, createProductApi } from '@/src/lib/product-service';
 import { fetchMyPlan } from '@/src/lib/billing-service';
 import { Loader } from '@/src/components/ui/Loader';
 
@@ -29,6 +32,7 @@ export default function ProductsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [isZeroData, setIsZeroData] = useState(false);
   const [isExhausted, setIsExhausted] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Unified fetch function
   const loadData = useCallback(async () => {
@@ -116,6 +120,63 @@ export default function ProductsPage() {
     addToast('success', `"${product.name}" created successfully!`, 'New product is now live on your dashboard.');
   }, [loadData, addToast, isZeroData]);
 
+  const handleDuplicate = useCallback(async (product: Product) => {
+    try {
+      if (isZeroData) {
+        const { generateShortCode } = require('@/src/types/product');
+        const dup: Product = {
+          ...product,
+          id: `prd_${Date.now()}`,
+          name: `${product.name} (Copy)`,
+          shortCode: generateShortCode(8),
+          status: 'draft',
+          scans: 0,
+          countries: 0,
+          mobilePercent: 0,
+          reorders: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          publishedAt: undefined,
+        };
+        setProducts(prev => [dup, ...prev]);
+        addToast('success', 'Product Duplicated (Mock)', 'Mock campaign copy created.');
+        return;
+      }
+      
+      // For real API, we just create a new product with these details
+      const { id, shortCode, createdAt, updatedAt, scans, countries, ...rest } = product;
+      const response = await createProductApi({
+        ...rest,
+        name: `${product.name} (Copy)`,
+        status: 'draft'
+      });
+      await loadData();
+      addToast('success', 'Product Duplicated', 'Campaign copied successfully.');
+    } catch (err) {
+      addToast('error', 'Duplication failed', 'Could not create a copy at this time.');
+    }
+  }, [loadData, addToast, isZeroData]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.length} campaigns?`)) return;
+    try {
+      if (isZeroData) {
+        setProducts(prev => prev.filter(p => !selectedIds.includes(p.id)));
+      } else {
+        await Promise.all(selectedIds.map(id => deleteProductApi(id)));
+        await loadData();
+      }
+      addToast('delete', 'Bulk Deletion Complete', 'Selected campaigns have been removed.');
+      setSelectedIds([]);
+    } catch (err) {
+      addToast('error', 'Bulk action failed', 'Some products could not be deleted.');
+    }
+  };
+
   const tabs: { key: StatusFilter; label: string }[] = [
     { key: 'all', label: 'All' },
     { key: 'published', label: 'Published' },
@@ -166,8 +227,63 @@ export default function ProductsPage() {
         </div>
 
 
+        {/* ── Bulk Actions Toolbar ─────────────────────────────────────── */}
+        <AnimatePresence>
+          {selectedIds.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-primary shadow-2xl shadow-primary/20 rounded-2xl p-4 flex items-center justify-between text-white"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-2 rounded-xl">
+                  <CheckSquare size={20} />
+                </div>
+                <div>
+                  <h4 className="font-black text-sm uppercase tracking-tight">{selectedIds.length} Campaigns Selected</h4>
+                  <p className="text-[10px] font-bold text-white/70">Bulk actions apply to all selected items</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setSelectedIds([])}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition-colors"
+                >
+                  DESELECT ALL
+                </button>
+                <button 
+                  onClick={handleBulkDelete}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-xl text-xs font-black transition-colors flex items-center gap-2"
+                >
+                  <Trash2 size={14} /> DELETE SELECTED
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* ── Filter + Search bar ─────────────────────────────────────── */}
         <div className="flex items-center gap-4 flex-wrap">
+          <button 
+            onClick={() => {
+              if (selectedIds.length === products.length) setSelectedIds([]);
+              else setSelectedIds(products.map(p => p.id));
+            }}
+            className={cn(
+              "p-2.5 rounded-xl border transition-all flex items-center gap-3 font-bold text-xs uppercase tracking-widest bg-white hover:bg-slate-50",
+              selectedIds.length === products.length && "border-primary bg-primary/5 text-primary"
+            )}
+          >
+            <div className={cn(
+              "w-4 h-4 rounded-md border-2 border-slate-300 flex items-center justify-center transition-all",
+              selectedIds.length > 0 && "bg-primary border-primary"
+            )}>
+              {selectedIds.length === products.length && <CheckSquare size={10} className="text-white" />}
+              {selectedIds.length > 0 && selectedIds.length < products.length && <div className="w-2 h-0.5 bg-white rounded-full" />}
+            </div>
+            Select All
+          </button>
           {/* Status tabs */}
           <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
             {tabs.map(tab => (
@@ -215,6 +331,9 @@ export default function ProductsPage() {
               <ProductCard
                 key={product.id}
                 product={product}
+                isSelected={selectedIds.includes(product.id)}
+                onToggleSelect={() => toggleSelect(product.id)}
+                onDuplicate={() => handleDuplicate(product)}
                 onUpdate={handleUpdate}
                 onDelete={handleDelete}
               />
@@ -222,18 +341,19 @@ export default function ProductsPage() {
 
             {/* Pagination Controls */}
             <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-100">
-               <div className="flex items-center gap-4">
-                  <span className="text-sm text-slate-500 font-medium">Show</span>
-                  <select 
-                    value={limit}
-                    onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
-                    className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm outline-none focus:border-primary"
-                  >
-                    {[10, 20, 50, 100].map(val => (
-                       <option key={val} value={val}>{val}</option>
-                    ))}
-                  </select>
-                  <span className="text-sm text-slate-500 font-medium">per page</span>
+               <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">Show</span>
+                  <div className="w-28">
+                    <PremiumSelect 
+                      options={['10', '20', '50', '100']} 
+                      value={String(limit)} 
+                      onChange={(val) => { setLimit(Number(val)); setPage(1); }}
+                      searchable={false}
+                      variant="compact"
+                      className="!space-y-0"
+                    />
+                  </div>
+                  <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">per page</span>
                </div>
 
                <div className="flex items-center gap-1.5">

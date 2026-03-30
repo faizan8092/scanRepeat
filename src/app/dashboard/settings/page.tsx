@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Save, Camera, Mail, CheckCircle2, Loader2, Phone, Globe, ChevronDown, ShieldAlert, X, Send } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { PremiumSelect } from '@/src/components/ui/PremiumSelect';
 import { useAuth } from '@/src/lib/auth-context';
 import { useToast } from '@/src/lib/toast-context';
 import { resendVerification } from '@/src/lib/auth-service';
@@ -183,20 +184,14 @@ export default function SettingsPage() {
 
             <SettingsInput label="Phone Number" value={phone} onChange={setPhone} icon={Phone} />
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none px-1">Country Location</label>
-              <div className="relative group">
-                <select 
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full bg-secondary/20 border border-border py-4 pl-5 pr-14 rounded-2xl text-sm font-black transition-all outline-none appearance-none focus:bg-card focus:border-primary/30 focus:ring-4 focus:ring-primary/5 text-slate-700 cursor-pointer shadow-sm shadow-primary/5"
-                >
-                  {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <Globe size={16} className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors pointer-events-none" />
-                <ChevronDown size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-              </div>
-            </div>
+            <PremiumSelect 
+              label="Country Location" 
+              options={COUNTRIES} 
+              value={country} 
+              onChange={setCountry} 
+              icon={Globe}
+              searchable={true} 
+            />
 
             <div className="md:col-span-2 space-y-3">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1">Public Bio</label>

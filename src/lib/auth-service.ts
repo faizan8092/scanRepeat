@@ -10,6 +10,7 @@ export type AuthUser = {
   company?: string | null;
   role?: string | null;
   bio?: string | null;
+  phone?: string | null;
   emailVerified?: boolean;
 };
 

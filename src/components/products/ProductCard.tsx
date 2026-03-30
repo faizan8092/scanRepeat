@@ -1,9 +1,11 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/src/lib/utils';
 import Link from 'next/link';
 import {
   Eye, Edit, QrCode, BarChart2, MoreVertical, Copy, Archive, Trash2, Globe, FileText,
-  ExternalLink, X, BarChart3, Smartphone, Repeat, Palette,
+  ExternalLink, X, BarChart3, Smartphone, Repeat, Palette, CheckSquare, Square,
 } from 'lucide-react';
 import { Product, upsertProduct, deleteProduct, archiveProduct, getProductQR } from '@/src/types/product';
 import { customizeQRApi, pauseProductApi, unpauseProductApi } from '@/src/lib/product-service';
@@ -15,6 +17,9 @@ import EditProductModal from './EditProductModal';
 
 interface ProductCardProps {
   product: Product;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
+  onDuplicate?: () => void;
   onUpdate: (p: Product) => void;
   onDelete: (id: string) => void;
 }
@@ -123,7 +128,14 @@ function MoreMenu({ product, onEdit, onDuplicate, onArchive, onPause, onDelete }
   );
 }
 
-export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
+export function ProductCard({ 
+  product, 
+  isSelected = false, 
+  onToggleSelect, 
+  onDuplicate, 
+  onUpdate, 
+  onDelete 
+}: ProductCardProps) {
   const { addToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
@@ -155,6 +167,11 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
   };
 
   const handleDuplicate = () => {
+    if (onDuplicate) {
+      onDuplicate();
+      return;
+    }
+    // Fallback if prop not provided (existing logic)
     const { generateShortCode } = require('@/src/types/product');
     const dup: Product = {
       ...product,
@@ -229,16 +246,34 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
   return (
     <>
       <div
-        className={`bg-white rounded-2xl border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md overflow-hidden relative ${
-          (product.status === 'archived' || product.isLockedDueToPlan) ? 'opacity-60' : ''
-        }`}
+        className={cn(
+          "bg-white rounded-2xl border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md overflow-hidden relative group",
+          product.status === 'archived' && "opacity-60",
+          isSelected && "border-primary ring-2 ring-primary/10 shadow-xl shadow-primary/5"
+        )}
         style={{ animation: 'cardIn 0.3s ease-out' }}
       >
         <style>{`@keyframes cardIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>
+        
+        {/* Select Overlay/Checkbox */}
+        <button 
+          onClick={(e) => { e.stopPropagation(); onToggleSelect?.(); }}
+          className={cn(
+            "absolute left-4 top-4 z-[20] w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center",
+            isSelected 
+              ? "bg-primary border-primary shadow-lg shadow-primary/20 scale-110" 
+              : "bg-white/80 backdrop-blur-sm border-slate-200 opacity-0 group-hover:opacity-100"
+          )}
+        >
+          {isSelected && <CheckSquare size={14} className="text-white" />}
+        </button>
 
-        <div className="flex items-start gap-5 p-5">
+        <div className={cn(
+            "flex items-start gap-5 p-5 relative transition-all",
+            isSelected && "bg-primary/5 ml-8"
+          )}>
           {/* Thumbnail */}
-          <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border bg-slate-50">
+          <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border bg-slate-50 relative">
             <Thumbnail product={product} />
           </div>
 
@@ -339,24 +374,28 @@ export function ProductCard({ product, onUpdate, onDelete }: ProductCardProps) {
             </div>
           </div>
 
-          {/* Locked Overlay */}
+          {/* Locked Overlay — Now much more vibrant and high-end */}
           {product.isLockedDueToPlan && (
-            <div className="absolute inset-x-0 top-0 bg-white/40 backdrop-blur-[1px] h-full flex items-center justify-center p-6 z-[1] select-none">
-              <div className="bg-white/90 border border-amber-200 rounded-2xl p-4 shadow-xl flex items-center gap-4 max-w-sm">
-                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
-                  <Archive size={20} />
+            <div className="absolute inset-0 bg-primary/10 backdrop-blur-[2px] flex items-center justify-center p-6 z-[10] select-none rounded-2xl">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white border-2 border-amber-400/50 rounded-[2rem] p-5 shadow-[0_20px_50px_-20px_rgba(245,158,11,0.2)] flex items-center gap-5 max-w-sm animate-in fade-in zoom-in duration-300"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0 shadow-inner">
+                  <Archive size={24} />
                 </div>
-                <div>
-                  <h4 className="text-xs font-black text-slate-800 uppercase tracking-wide mb-0.5">Plan limit reached</h4>
-                  <p className="text-[10px] text-slate-500 font-bold leading-tight">This campaign is paused. Upgrade your plan to reactivate it immediately.</p>
+                <div className="flex-1">
+                  <h4 className="text-sm font-black text-slate-800 uppercase tracking-tighter mb-1">Plan limit reached</h4>
+                  <p className="text-xs text-slate-500 font-bold leading-tight">This campaign is paused. Upgrade your plan to reactivate it immediately.</p>
                 </div>
                 <button 
                   onClick={() => window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'))}
-                  className="ml-auto px-3 py-1.5 bg-primary-foreground text-background text-[10px] font-black rounded-lg hover:bg-primary transition-colors whitespace-nowrap"
+                  className="px-5 py-2.5 bg-primary text-white text-[11px] font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap active:scale-95"
                 >
                   UPGRADE
                 </button>
-              </div>
+              </motion.div>
             </div>
           )}
         </div>

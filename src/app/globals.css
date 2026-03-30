@@ -116,10 +116,10 @@
   --radius-full: 9999px;
 
   /* Elevation / Shadow Tokens */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
   /* Z-Index Scale */
   --z-dropdown: 100;
@@ -144,12 +144,18 @@
     box-sizing: border-box;
     border-color: hsl(var(--border));
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
 
-  h1, h2, h3, h4, h5, h6, .text-primary-foreground {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .text-primary-foreground {
     color: hsl(var(--foreground)) !important;
   }
 
@@ -157,7 +163,8 @@
     color: hsl(var(--muted-foreground));
   }
 
-  label, .text-xs.font-black {
+  label,
+  .text-xs.font-black {
     color: hsl(var(--foreground)) !important;
   }
 
@@ -202,8 +209,8 @@
 }
 
 /* Final Global Overrides for Cursor */
-a, 
-button, 
+a,
+button,
 [role="button"],
 input[type="button"],
 input[type="submit"],
@@ -216,5 +223,6 @@ select {
 
 button:disabled,
 input:disabled {
-  cursor: pointer !important; /* Force pointer even if disabled as per request */
+  cursor: pointer !important;
+  /* Force pointer even if disabled as per request */
 }

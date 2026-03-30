@@ -16,28 +16,28 @@ import { cn } from '@/src/lib/utils';
 const toastConfig = {
   success: {
     icon: CheckCircle2,
-    className: 'bg-white border-emerald-500/30 text-emerald-950 dark:bg-emerald-950 dark:border-emerald-500/30 dark:text-emerald-400',
-    iconClassName: 'text-emerald-600 dark:text-emerald-500',
+    className: 'bg-primary border-primary/20 text-white shadow-primary/20 shadow-lg',
+    iconClassName: 'bg-white/20 text-white',
   },
   error: {
     icon: AlertCircle,
-    className: 'bg-white border-rose-500/30 text-rose-950 dark:bg-rose-950 dark:border-rose-500/30 dark:text-rose-400',
-    iconClassName: 'text-rose-600 dark:text-rose-500',
+    className: 'bg-destructive border-destructive/20 text-white shadow-destructive/20 shadow-lg',
+    iconClassName: 'bg-white/20 text-white',
   },
   warning: {
     icon: AlertTriangle,
-    className: 'bg-white border-amber-500/30 text-amber-950 dark:bg-amber-950 dark:border-amber-500/30 dark:text-amber-400',
-    iconClassName: 'text-amber-600 dark:text-amber-500',
+    className: 'bg-warning border-warning/20 text-white shadow-warning/20 shadow-lg',
+    iconClassName: 'bg-white/20 text-white',
   },
   info: {
     icon: Info,
-    className: 'bg-white border-blue-500/30 text-blue-950 dark:bg-blue-950 dark:border-blue-500/30 dark:text-blue-400',
-    iconClassName: 'text-primary dark:text-primary/90',
+    className: 'bg-primary border-primary/20 text-white shadow-primary/20 shadow-lg',
+    iconClassName: 'bg-white/20 text-white',
   },
   delete: {
     icon: Trash2,
-    className: 'bg-white border-slate-500/30 text-slate-950 dark:bg-slate-950 dark:border-slate-500/30 dark:text-slate-400',
-    iconClassName: 'text-slate-600 dark:text-slate-500',
+    className: 'bg-destructive border-destructive/20 text-white shadow-destructive/20 shadow-lg',
+    iconClassName: 'bg-white/20 text-white',
   },
 };
 
@@ -55,30 +55,30 @@ export function ToastContainer() {
             <motion.div
               key={toast.id}
               layout
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+              initial={{ opacity: 0, x: 20, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.95, transition: { duration: 0.2 } }}
               className={cn(
-                "pointer-events-auto flex items-start gap-4 p-4 rounded-2xl border shadow-xl backdrop-blur-xl",
+                "pointer-events-auto flex items-start gap-4 p-4 rounded-2xl border shadow-xl backdrop-blur-xl transition-all duration-300",
                 config.className
               )}
             >
-              <div className={cn("p-2 rounded-xl bg-white/40 dark:bg-black/20 shrink-0", config.iconClassName)}>
-                <Icon size={20} />
+              <div className={cn("inline-flex items-center justify-center p-2 rounded-xl shrink-0 transition-colors duration-300", config.iconClassName)}>
+                <Icon size={20} className="transition-transform duration-300" />
               </div>
               
-              <div className="flex-1 pt-0.5">
-                <p className="text-sm font-semibold tracking-tight leading-tight">{toast.message}</p>
+              <div className="flex-1 pt-0.5 text-white">
+                <p className="text-sm font-semibold tracking-tight leading-tight !text-white">{toast.message}</p>
                 {toast.description && (
-                  <p className="text-xs font-medium opacity-80 mt-1 leading-snug">{toast.description}</p>
+                  <p className="text-xs font-medium opacity-80 mt-1 leading-snug !text-white">{toast.description}</p>
                 )}
               </div>
 
               <button 
                 onClick={() => removeToast(toast.id)}
-                className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-lg transition-colors mt-0.5"
+                className="p-1 hover:bg-white/10 rounded-lg transition-colors mt-0.5"
               >
-                <X size={16} className="opacity-40 hover:opacity-100 transition-opacity" />
+                <X size={16} className="text-white opacity-60 hover:opacity-100 transition-opacity" />
               </button>
             </motion.div>
           );
