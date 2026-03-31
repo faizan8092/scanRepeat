@@ -8,13 +8,14 @@ import {
   Package,
   BarChart3,
   Settings,
-  ChevronLeft,
-  ChevronRight,
   LogOut,
   Zap,
   Bell,
   CreditCard,
-  Shield
+  Shield,
+  QrCode,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,7 +41,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
   const mainItems = [
     { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { label: 'Products', icon: Package, href: '/dashboard/products' },
+    { label: 'Product QRs', icon: QrCode, href: '/dashboard/products' },
     { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics' },
   ];
 

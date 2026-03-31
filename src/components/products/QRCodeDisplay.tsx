@@ -1,88 +1,138 @@
 'use client';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import QRCode from 'qrcode';
+import React, { useEffect, useRef, useState } from 'react';
+import QRCodeStyling, { 
+  Options, 
+  DrawType, 
+  TypeNumber, 
+  Mode, 
+  ErrorCorrectionLevel, 
+  DotType, 
+  CornerSquareType, 
+  CornerDotType 
+} from 'qr-code-styling';
 import { QRSettings } from '@/src/types/product';
+import { Loader } from '@/src/components/ui/Loader';
 
 interface QRCodeDisplayProps {
   url: string;
   settings: QRSettings;
   size?: number;
   className?: string;
+  downloadRef?: React.MutableRefObject<QRCodeStyling | null>;
 }
 
-import { Loader } from '@/src/components/ui/Loader';
-
-export function QRCodeDisplay({ url, settings, size = 240, className = '' }: QRCodeDisplayProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dataUrl, setDataUrl] = useState<string>('');
+export function QRCodeDisplay({ url, settings, size = 240, className = '', downloadRef }: QRCodeDisplayProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const qrCodeRef = useRef<QRCodeStyling | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const generate = useCallback(async () => {
-    if (!url) return;
-    setLoading(true);
-    try {
-      const opts: QRCode.QRCodeRenderersOptions = {
-        width: size,
-        margin: settings.margin,
-        color: {
-          dark: settings.foreground,
-          light: settings.background,
-        },
-        errorCorrectionLevel: settings.errorLevel as any,
-      };
-      if (canvasRef.current) {
-        await QRCode.toCanvas(canvasRef.current, url, opts);
-        setDataUrl(canvasRef.current.toDataURL('image/png'));
+  // Map our internal settings to qr-code-styling options
+  const getOptions = (url: string, settings: QRSettings, size: number): Options => {
+    return {
+      width: size,
+      height: size,
+      type: 'canvas' as DrawType,
+      data: url,
+      image: settings.logoUrl || undefined,
+      margin: settings.margin * 4, // Scale margin for library
+      qrOptions: {
+        typeNumber: 0 as TypeNumber,
+        mode: 'Byte' as Mode,
+        errorCorrectionLevel: settings.errorLevel as ErrorCorrectionLevel
+      },
+      imageOptions: {
+        hideBackgroundDots: true,
+        imageSize: settings.logoSize,
+        crossOrigin: 'anonymous',
+      },
+      dotsOptions: {
+        color: settings.foreground,
+        type: settings.dotStyle as DotType
+      },
+      backgroundOptions: {
+        color: settings.background,
+      },
+      cornersSquareOptions: {
+        color: settings.eyeColorOuter || settings.foreground,
+        type: settings.eyeStyle as CornerSquareType
+      },
+      cornersDotOptions: {
+        color: settings.eyeColorInner || settings.foreground,
+        type: settings.eyeStyle as CornerDotType
       }
-    } catch (e) {
-      console.error('QR gen error:', e);
-    } finally {
-      setLoading(false);
-    }
-  }, [url, settings, size]);
+    };
+  };
 
   useEffect(() => {
-    const t = setTimeout(generate, 120);
-    return () => clearTimeout(t);
-  }, [generate]);
+    if (!url) return;
+    setLoading(true);
+
+    const options = getOptions(url, settings, size);
+
+    if (!qrCodeRef.current) {
+      qrCodeRef.current = new QRCodeStyling(options);
+      if (containerRef.current) {
+        qrCodeRef.current.append(containerRef.current);
+      }
+    } else {
+      qrCodeRef.current.update(options);
+    }
+
+    if (downloadRef) {
+      downloadRef.current = qrCodeRef.current;
+    }
+
+    setLoading(false);
+  }, [url, settings, size, downloadRef]);
 
   return (
-    <div className={`relative inline-block transition-opacity duration-150 ${loading ? 'opacity-50' : 'opacity-100'} ${className}`}>
-      <canvas ref={canvasRef} width={size} height={size} style={{ display: 'block', borderRadius: '8px' }} />
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Loader size={60} />
-        </div>
-      )}
+    <div className="flex flex-col items-center gap-4">
+      <div 
+        className={`relative inline-block border-8 transition-all p-1.5 duration-300 ${loading ? 'opacity-50' : 'opacity-100'} ${className}`}
+        style={{ 
+          borderColor: settings.frameStyle !== 'none' ? settings.frameColor : 'transparent',
+          borderRadius: settings.frameStyle === 'bubble' ? '40px' : settings.frameStyle !== 'none' ? '24px' : '12px',
+          backgroundColor: settings.background,
+          paddingBottom: settings.showLabel ? '40px' : '10px'
+        }}
+      >
+        <div ref={containerRef} className="rounded-lg overflow-hidden flex items-center justify-center bg-white" />
+        
+        {settings.showLabel && (
+          <div 
+            className="absolute bottom-2 left-0 right-0 text-center px-4 transition-all"
+            style={{ 
+              color: settings.labelColor,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+             {settings.frameStyle === 'modern' && (
+               <div className="w-8 h-1 bg-current rounded-full mb-1 opacity-20" />
+             )}
+             <span className="text-[12px] font-black uppercase tracking-[0.1em] truncate w-full">
+               {settings.labelText || 'SCAN ME'}
+             </span>
+          </div>
+        )}
+
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px]">
+            <Loader size={60} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-// ─── QR Download helpers ──────────────────────────────────────────────────────
-export async function downloadQRPng(url: string, settings: QRSettings, size: number, filename: string) {
-  const dataUrl = await QRCode.toDataURL(url, {
-    width: size,
-    margin: settings.margin,
-    color: { dark: settings.foreground, light: settings.background },
-    errorCorrectionLevel: settings.errorLevel as any,
-  });
-  const a = document.createElement('a');
-  a.href = dataUrl;
-  a.download = `${filename}-qr.png`;
-  a.click();
+export async function downloadQRPng(instance: QRCodeStyling | null, filename: string) {
+  if (!instance) return;
+  await instance.download({ name: filename, extension: 'png' });
 }
 
-export async function downloadQRSvg(url: string, settings: QRSettings, filename: string) {
-  const svg = await QRCode.toString(url, {
-    type: 'svg',
-    margin: settings.margin,
-    color: { dark: settings.foreground, light: settings.background },
-    errorCorrectionLevel: settings.errorLevel as any,
-  });
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${filename}-qr.svg`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+export async function downloadQRSvg(instance: QRCodeStyling | null, filename: string) {
+  if (!instance) return;
+  await instance.download({ name: filename, extension: 'svg' });
 }

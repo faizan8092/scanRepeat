@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { X, Copy, Check, Download, Palette } from 'lucide-react';
 import { Product, QRSettings, defaultQR, getProductQR } from '@/src/types/product';
 import { QRCodeDisplay, downloadQRPng, downloadQRSvg } from './QRCodeDisplay';
 import { HexColorPicker } from 'react-colorful';
+import QRCodeStyling from 'qr-code-styling';
 
 const BASE_URL = 'scanrepeat.com/p/';
 
@@ -17,6 +18,7 @@ type SizeOption = 200 | 400 | 800;
 export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalProps) {
   const [copied, setCopied] = useState(false);
   const [size, setSize] = useState<SizeOption>(400);
+  const qrRef = useRef<QRCodeStyling | null>(null);
   const url = `https://${BASE_URL}${product.shortCode}`;
   const qrSettings = getProductQR(product);
 
@@ -25,8 +27,15 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  const downloadPng = () => downloadQRPng(url, qrSettings, size, product.name.replace(/\s+/g, '-').toLowerCase());
-  const downloadSvg = () => downloadQRSvg(url, qrSettings, product.name.replace(/\s+/g, '-').toLowerCase());
+  const downloadPng = () => {
+    if (qrRef.current) {
+      qrRef.current.update({ width: size, height: size });
+      downloadQRPng(qrRef.current, product.name.replace(/\s+/g, '-').toLowerCase());
+      // Reset after tiny delay back to modal preview size
+      setTimeout(() => qrRef.current?.update({ width: 220, height: 220 }), 500);
+    }
+  };
+  const downloadSvg = () => downloadQRSvg(qrRef.current, product.name.replace(/\s+/g, '-').toLowerCase());
 
   return (
     <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4">
@@ -50,18 +59,13 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
 
         {/* QR Preview */}
         <div className="flex flex-col items-center px-6 py-6 gap-4">
-          <div className="bg-slate-50 rounded-2xl p-5 border">
-            {product.qrDataUrl ? (
-              <img 
-                src={product.qrDataUrl} 
-                alt="QR Code" 
-                width={200} 
-                height={200} 
-                className="rounded-xl"
-              />
-            ) : (
-              <QRCodeDisplay url={url} settings={qrSettings} size={200} />
-            )}
+          <div className="bg-white rounded-2xl p-5 border shadow-inner">
+             <QRCodeDisplay 
+                url={url} 
+                settings={qrSettings} 
+                size={220} 
+                downloadRef={qrRef}
+             />
           </div>
 
           {/* Short URL + Copy */}

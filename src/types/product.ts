@@ -8,12 +8,17 @@ export interface QRSettings {
   background: string;
   logoUrl: string;
   logoSize: number;      // 10–30 (percent)
-  dotStyle: 'square' | 'rounded' | 'dots';
+  dotStyle: 'square' | 'rounded' | 'dots' | 'extra-rounded' | 'classy' | 'classy-rounded';
+  eyeStyle: 'square' | 'rounded' | 'extra-rounded' | 'leaf';
+  eyeColorInner?: string;
+  eyeColorOuter?: string;
   errorLevel: 'L' | 'M' | 'H' | 'Q';
   margin: number;
   showLabel: boolean;
   labelText: string;
   labelColor: string;
+  frameStyle: 'none' | 'basic' | 'modern' | 'bubble';
+  frameColor: string;
 }
 
 export interface Product {
@@ -43,7 +48,12 @@ export interface Product {
   qrForeground?: string;
   qrBackground?: string;
   qrLogoUrl?: string;
-  qrDotStyle?: 'square' | 'rounded' | 'dots';
+  qrDotStyle?: string;
+  qrEyeStyle?: string;
+  qrEyeColorInner?: string;
+  qrEyeColorOuter?: string;
+  qrFrameStyle?: string;
+  qrFrameColor?: string;
   qrErrorLevel?: 'L' | 'M' | 'H' | 'Q';
   qrLabelText?: string;
   qrLabelColor?: string;
@@ -72,12 +82,17 @@ export function getProductQR(p: Product): QRSettings {
     background: p.qrBackground || p.qr?.background || defaultQR.background,
     logoUrl: p.qrLogoUrl || p.qr?.logoUrl || defaultQR.logoUrl,
     logoSize: p.qrLogoSize || p.qr?.logoSize || defaultQR.logoSize,
-    dotStyle: (p.qrDotStyle || p.qr?.dotStyle || defaultQR.dotStyle) as 'square' | 'rounded' | 'dots',
+    dotStyle: (p.qrDotStyle || p.qr?.dotStyle || defaultQR.dotStyle) as any,
+    eyeStyle: (p.qrEyeStyle || p.qr?.eyeStyle || defaultQR.eyeStyle) as any,
+    eyeColorInner: p.qrEyeColorInner || p.qr?.eyeColorInner || defaultQR.eyeColorInner,
+    eyeColorOuter: p.qrEyeColorOuter || p.qr?.eyeColorOuter || defaultQR.eyeColorOuter,
     errorLevel: (p.qrErrorLevel || p.qr?.errorLevel || defaultQR.errorLevel) as 'L' | 'M' | 'H' | 'Q',
     margin: p.qrMargin !== undefined ? p.qrMargin : (p.qr?.margin !== undefined ? p.qr.margin : defaultQR.margin),
     showLabel: p.qrShowLabel !== undefined ? p.qrShowLabel : (p.qr?.showLabel !== undefined ? p.qr.showLabel : defaultQR.showLabel),
     labelText: p.qrLabelText || p.qr?.labelText || defaultQR.labelText,
     labelColor: p.qrLabelColor || p.qr?.labelColor || defaultQR.labelColor,
+    frameStyle: (p.qrFrameStyle || p.qr?.frameStyle || defaultQR.frameStyle) as any,
+    frameColor: p.qrFrameColor || p.qr?.frameColor || defaultQR.frameColor,
   };
 }
 
@@ -88,11 +103,16 @@ export const defaultQR: QRSettings = {
   logoUrl: '',
   logoSize: 20,
   dotStyle: 'square',
+  eyeStyle: 'square',
+  eyeColorInner: '#000000',
+  eyeColorOuter: '#000000',
   errorLevel: 'H',
   margin: 4,
   showLabel: false,
-  labelText: 'Scan to view product',
+  labelText: 'SCAN ME',
   labelColor: '#374151',
+  frameStyle: 'none',
+  frameColor: '#000000',
 };
 
 // ─── Short code generator (frontend mock — nanoid) ────────────────────────────
