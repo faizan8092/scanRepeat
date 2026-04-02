@@ -99,10 +99,11 @@ export async function resetPassword(data: ResetPasswordRequest): Promise<{ messa
   });
 }
 
-export async function verifyEmail(data: { email: string; otp: string }): Promise<{ message: string }> {
+export async function verifyEmail(data: string | { email: string; otp: string }): Promise<{ message: string }> {
+  const body = typeof data === 'string' ? { token: data } : data;
   return apiFetch(getApiUrl('/auth/verify-email'), {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
   });
 }
 
