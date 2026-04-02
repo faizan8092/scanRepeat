@@ -62,13 +62,15 @@
 
 ```bash
 src/
-├── app/          # Next.js App Router (Pages & API)
+├── app/          # Next.js App Router (Pages, Layouts, Global Styles)
 ├── components/   # Reusable UI components
 │   ├── builder/  # Page builder specific components
-│   └── products/ # QR & Product management
-├── lib/          # Utilities, Hooks, and Store configuration
-├── types/        # TypeScript Definitions
-└── globals.css   # Global styles and Tailwind directives
+│   ├── dashboard/# Dashboard UI components
+│   ├── products/ # QR & Product management components
+│   └── ui/       # Shared UI primitives (Buttons, Inputs, etc.)
+├── hooks/        # Custom React hooks
+├── lib/          # API services, contexts, utilities, and Redux store
+└── types/        # TypeScript Definitions
 ```
 
 ## 🚢 Deployment
