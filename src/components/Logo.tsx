@@ -18,8 +18,8 @@ export function Logo({ className, size = 28, showText = true }: LogoProps) {
         <div 
           className="w-[85%] h-[85%] bg-primary shadow-sm"
           style={{ 
-            maskImage: 'url(/Assets/Logo.svg)', 
-            WebkitMaskImage: 'url(/Assets/Logo.svg)',
+            maskImage: 'url(/assets/Logo.svg)', 
+            WebkitMaskImage: 'url(/assets/Logo.svg)',
             maskRepeat: 'no-repeat',
             WebkitMaskRepeat: 'no-repeat',
             maskSize: 'contain',

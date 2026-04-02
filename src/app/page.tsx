@@ -241,7 +241,7 @@ export default function LandingPage() {
                 <div className="relative w-full max-w-[380px] md:max-w-[480px] lg:max-w-[550px] group">
                   <div className="absolute -inset-4 bg-gradient-to-tr from-primary/15 to-accent/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                   <img
-                    src="/Assets/hero.svg"
+                    src="/assets/hero.svg"
                     alt="ScanRepeat Hero Illustration"
                     className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.08)] group-hover:translate-y-[-8px] transition-transform duration-700 ease-out"
                   />

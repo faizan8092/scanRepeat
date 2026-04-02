@@ -237,7 +237,7 @@ export default function SignupPage() {
           className="w-full h-full relative rounded-[2.5rem] overflow-hidden bg-secondary"
         >
           <motion.img 
-            src="/Assets/auth.svg" 
+            src="/assets/auth.svg" 
             alt="Authentication" 
             className="absolute inset-0 w-full h-full object-contain p-20"
             animate={{ 
