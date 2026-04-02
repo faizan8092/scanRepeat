@@ -45,7 +45,7 @@ export default function EditProductModal({ product, onClose, onUpdated }: EditPr
       if (product.type === 'file' && file) {
         const upload = await uploadFileApi(file);
         finalFileUrl = upload.url;
-        finalFileType = file.type.includes('pdf') ? 'application/pdf' : file.type;
+        finalFileType = (file.type.includes('pdf') ? 'pdf' : (file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'pdf'))) as any;
       }
 
       const updated = await updateProductApi(product.id, {
