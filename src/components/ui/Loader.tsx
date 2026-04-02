@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Lottie from 'lottie-react';
-import loaderAnimation from '@/public/Assets/loader.json';
+import loaderAnimation from '@/public/assets/loader.json';
 
 interface LoaderProps {
   size?: number;
