@@ -13,7 +13,7 @@ import { ToastContainer } from '@/src/components/ui/ToastContainer';
 import '@fontsource/tektur';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const googleClientId = "1083412880398-g1q5krcippp82nl479mktte24i7eip6g.apps.googleusercontent.com";
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
