@@ -18,7 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <ReduxProvider store={store}>
-        <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+        <NextThemesProvider attribute="class" defaultTheme="light" forcedTheme="light">
           <MUIThemeProvider theme={theme}>
             <CssBaseline />
             <ToastProvider>

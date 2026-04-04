@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 import { Logo } from './Logo';
 
 export function Navbar() {
@@ -18,7 +17,6 @@ export function Navbar() {
           <Link href="/#faq" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">FAQ</Link>
         </nav>
         <div className="flex items-center space-x-3">
-          <ThemeToggle />
           <Link href="/login" className="text-sm font-semibold text-[#374151] hover:text-[#0a0a0a] transition-colors px-3 py-2">Login</Link>
           <Link 
             href="/signup" 
