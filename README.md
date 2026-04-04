@@ -1,8 +1,8 @@
-# 🚀 scanRepeat
+# 🚀 QRBold
 
-**scanRepeat** is a premium, all-in-one platform for creating dynamic QR codes, building custom landing pages, and tracking advanced analytics. Designed for brands and creators who want to bridge the physical and digital worlds with style.
+**QRBold** is a premium, all-in-one platform for creating dynamic QR codes, building custom landing pages, and tracking advanced analytics. Designed for brands and creators who want to bridge the physical and digital worlds with style.
 
-![scanRepeat Banner](https://images.unsplash.com/photo-1590650046871-92c8872c5f16?q=80&w=2070&auto=format&fit=crop)
+![QRBold Banner](https://images.unsplash.com/photo-1590650046871-92c8872c5f16?q=80&w=2070&auto=format&fit=crop)
 
 ## ✨ Features
 
@@ -35,27 +35,32 @@
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
-   git clone https://github.com/faizan8092/scanRepeat.git
-   cd scanRepeat
+   git clone https://github.com/faizan8092/QRBold.git
+   cd QRBold
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up Environment Variables**
    Create a `.env.local` file in the root directory and add your keys:
+
    ```env
    NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
    # Add other keys as required
    ```
 
 4. **Run the development server**
+
    ```bash
    npm run dev
    ```
+
    Open [http://localhost:3000](http://localhost:3000) to see the result.
 
 ## 📂 Project Structure

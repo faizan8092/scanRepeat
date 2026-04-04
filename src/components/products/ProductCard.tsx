@@ -362,7 +362,7 @@ export function ProductCard({
                   <p className="text-xs text-slate-500 font-bold leading-tight">This campaign is paused. Upgrade your plan to reactivate it immediately.</p>
                 </div>
                 <button
-                  onClick={() => window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'))}
+                  onClick={() => window.dispatchEvent(new CustomEvent('QRBold_show_upgrade'))}
                   className="px-5 py-2.5 bg-primary text-white text-[11px] font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap active:scale-95"
                 >
                   UPGRADE

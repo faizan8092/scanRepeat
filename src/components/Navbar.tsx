@@ -9,7 +9,7 @@ export function Navbar() {
     <header className="fixed top-0 z-50 w-full border-b border-[#e5e7eb]/80 bg-white/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/">
-          <Logo size={26} />
+          <Logo size={28} />
         </Link>
         <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold">
           <Link href="/#features" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">Features</Link>

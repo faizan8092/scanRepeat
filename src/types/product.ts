@@ -135,7 +135,7 @@ export function slugFromName(name: string): string {
 }
 
 // ─── In-memory product store (frontend-only — replace with API calls) ─────────
-const STORAGE_KEY = 'scanrepeat_products';
+const STORAGE_KEY = 'QRBold_products';
 
 export function loadProducts(): Product[] {
   if (typeof window === 'undefined') return MOCK_PRODUCTS;

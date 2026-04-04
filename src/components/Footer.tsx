@@ -16,17 +16,17 @@ export function Footer() {
             <div className="w-[72px] h-[72px] bg-white rounded-full flex items-center justify-center mb-8">
               <Mail className="w-8 h-8 text-[#040411]" strokeWidth={2} />
             </div>
-            <h2 className="text-[44px] md:text-[56px] font-bold mb-6 tracking-tight leading-[1.05]">Keep up with the<br/>latest</h2>
+            <h2 className="text-[44px] md:text-[56px] font-bold mb-6 tracking-tight leading-[1.05]">Keep up with the<br />latest</h2>
             <p className="text-slate-400 text-[17px]">Join our newsletter to stay up to date on features and releases.</p>
           </div>
-          
+
           {/* Right */}
           <div className="flex flex-col justify-center max-w-lg w-full">
             <label className="text-base font-semibold mb-4 text-white">Newsletter</label>
             <div className="flex flex-col sm:flex-row gap-4 w-full">
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
+              <input
+                type="email"
+                placeholder="Enter your email"
                 className="flex-1 bg-white text-slate-900 px-8 py-4 md:py-5 rounded-full focus:outline-none focus:ring-4 focus:ring-[#6b65ff]/50 font-medium placeholder:font-normal placeholder:text-slate-400"
               />
               <button className="bg-[#6b65ff] hover:bg-[#5a55f0] text-white px-10 py-4 md:py-5 rounded-full font-bold transition-all shadow-lg shadow-[#6b65ff]/20 hover:-translate-y-0.5 min-w-[160px]">
@@ -45,10 +45,10 @@ export function Footer() {
           {/* Col 1 */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-8">
-               <div className="brightness-0 invert opacity-90">
-                 <Logo size={32} showText={false} />
-               </div>
-               <span className="text-primaryxl font-bold tracking-tight text-white">ScanRepeat</span>
+              <div className="brightness-0 invert opacity-90">
+                <Logo size={32} showText={false} />
+              </div>
+              <span className="text-primaryxl font-bold tracking-tight text-white">QRBold</span>
             </div>
             <p className="text-[15.5px] text-slate-400 mb-10 leading-relaxed max-w-[280px]">
               Make your physical engagement and repeat sales more simple with us.
@@ -70,15 +70,15 @@ export function Footer() {
                   <Phone className="w-4 h-4 fill-current opacity-80" /> +1 (469) 409 9209
                 </p>
                 <p className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 fill-current opacity-80" /> hello@scanrepeat.com
+                  <Mail className="w-4 h-4 fill-current opacity-80" /> hello@QRBold.com
                 </p>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-xl font-bold mb-5 text-white">Address</h3>
               <div className="space-y-3 text-[15.5px] text-slate-400 leading-relaxed">
-                <p>5600 Tennyson Parkway Plano<br/>Texas USA</p>
+                <p>5600 Tennyson Parkway Plano<br />Texas USA</p>
                 <p className="mt-1">07.00 AM - 19.00 PM</p>
               </div>
             </div>
@@ -89,7 +89,7 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-7 text-white">Explore</h3>
             <ul className="space-y-5 text-[15.5px] text-slate-400">
               <li><Link href="/" className="hover:text-white transition-colors block">Home</Link></li>
-              <li><Link href="/#how-it-works" className="hover:text-white transition-colors block">Why ScanRepeat?</Link></li>
+              <li><Link href="/#how-it-works" className="hover:text-white transition-colors block">Why QRBold?</Link></li>
               <li><Link href="/#features" className="hover:text-white transition-colors block">Features</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors block">FAQs</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors block">Contact</Link></li>

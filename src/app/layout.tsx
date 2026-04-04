@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ScanRepeat | Turn Packaging Into a Purchase Funnel",
+  title: "QRBold | Turn Packaging Into a Purchase Funnel",
   description: "Add a QR code to your product. Customers scan it, learn how to use your product, and reorder — all in one tap.",
   icons: {
     icon: "/favicon.ico",

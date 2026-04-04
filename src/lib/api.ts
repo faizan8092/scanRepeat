@@ -64,7 +64,7 @@ export async function apiFetch<T = any>(
           method: 'POST',
           credentials: 'include',
         });
-        
+
         if (refreshRes.ok) {
           const { data } = await refreshRes.json();
           const newToken = data.accessToken;
@@ -74,12 +74,12 @@ export async function apiFetch<T = any>(
           onRefreshed(newToken);
         } else {
           isRefreshing = false;
-          window.dispatchEvent(new CustomEvent('scanrepeat_unauthorized'));
+          window.dispatchEvent(new CustomEvent('QRBold_unauthorized'));
           throw new Error('Session expired');
         }
       } catch (err) {
         isRefreshing = false;
-        window.dispatchEvent(new CustomEvent('scanrepeat_unauthorized'));
+        window.dispatchEvent(new CustomEvent('QRBold_unauthorized'));
         throw err;
       }
     }

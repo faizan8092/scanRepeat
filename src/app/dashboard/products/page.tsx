@@ -20,7 +20,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useToast();
-  
+
   // Pagination & Filters state
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<StatusFilter>('all');
@@ -28,7 +28,7 @@ export default function ProductsPage() {
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   const [showCreate, setShowCreate] = useState(false);
   const [isZeroData, setIsZeroData] = useState(false);
   const [isExhausted, setIsExhausted] = useState(false);
@@ -55,7 +55,7 @@ export default function ProductsPage() {
         }),
         fetchMyPlan().catch(() => null)
       ]);
-      
+
       setProducts(data.products);
       setTotal(data.total);
       setTotalPages(data.totalPages);
@@ -142,7 +142,7 @@ export default function ProductsPage() {
         addToast('success', 'Product Duplicated (Mock)', 'Mock campaign copy created.');
         return;
       }
-      
+
       // For real API, we just create a new product with these details
       const { id, shortCode, createdAt, updatedAt, scans, countries, ...rest } = product;
       const response = await createProductApi({
@@ -199,13 +199,12 @@ export default function ProductsPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setIsZeroData(!isZeroData)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm ${
-                isZeroData 
-                  ? 'bg-warning/20 border-warning text-warning' 
-                  : 'bg-warning/10 border-warning/20 text-warning hover:bg-warning/20'
-              }`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm ${isZeroData
+                ? 'bg-warning/20 border-warning text-warning'
+                : 'bg-warning/10 border-warning/20 text-warning hover:bg-warning/20'
+                }`}
             >
               <QrCode size={18} />
               {isZeroData ? 'Show Real Data' : 'Show Mock Data'}
@@ -214,7 +213,7 @@ export default function ProductsPage() {
               onClick={() => {
                 if (isExhausted && !isZeroData) {
                   // Fire global event for real limit reached
-                  window.dispatchEvent(new CustomEvent('scanrepeat_show_upgrade'));
+                  window.dispatchEvent(new CustomEvent('QRBold_show_upgrade'));
                   return;
                 }
                 setShowCreate(true);
@@ -230,7 +229,7 @@ export default function ProductsPage() {
         {/* ── Bulk Actions Toolbar ─────────────────────────────────────── */}
         <AnimatePresence>
           {selectedIds.length > 0 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -246,13 +245,13 @@ export default function ProductsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={() => setSelectedIds([])}
                   className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition-colors"
                 >
                   DESELECT ALL
                 </button>
-                <button 
+                <button
                   onClick={handleBulkDelete}
                   className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-xl text-xs font-black transition-colors flex items-center gap-2"
                 >
@@ -265,7 +264,7 @@ export default function ProductsPage() {
 
         {/* ── Filter + Search bar ─────────────────────────────────────── */}
         <div className="flex items-center gap-4 flex-wrap">
-          <button 
+          <button
             onClick={() => {
               if (selectedIds.length === products.length) setSelectedIds([]);
               else setSelectedIds(products.map(p => p.id));
@@ -290,11 +289,10 @@ export default function ProductsPage() {
               <button
                 key={tab.key}
                 onClick={() => { setFilter(tab.key); setPage(1); }}
-                className={`px-3.5 py-1.5 text-sm font-medium rounded-lg transition-all ${
-                  filter === tab.key
-                    ? 'bg-white shadow-sm text-slate-900'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
+                className={`px-3.5 py-1.5 text-sm font-medium rounded-lg transition-all ${filter === tab.key
+                  ? 'bg-white shadow-sm text-slate-900'
+                  : 'text-slate-500 hover:text-slate-700'
+                  }`}
               >
                 {tab.label}
               </button>
@@ -318,8 +316,8 @@ export default function ProductsPage() {
         {/* ── Product List ────────────────────────────────────────────── */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
-             <Loader size={120} />
-             <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Synchronizing Products</p>
+            <Loader size={120} />
+            <p className="text-xs font-black text-slate-400 tracking-[0.2em] uppercase -mt-4">Synchronizing Products</p>
           </div>
         ) : showZeroState ? (
           <div className="mt-8">
@@ -341,42 +339,42 @@ export default function ProductsPage() {
 
             {/* Pagination Controls */}
             <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-100">
-               <div className="flex items-center gap-3">
-                  <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">Show</span>
-                  <div className="w-28">
-                    <PremiumSelect 
-                      options={['10', '20', '50', '100']} 
-                      value={String(limit)} 
-                      onChange={(val) => { setLimit(Number(val)); setPage(1); }}
-                      searchable={false}
-                      variant="compact"
-                      className="!space-y-0"
-                    />
-                  </div>
-                  <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">per page</span>
-               </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">Show</span>
+                <div className="w-28">
+                  <PremiumSelect
+                    options={['10', '20', '50', '100']}
+                    value={String(limit)}
+                    onChange={(val) => { setLimit(Number(val)); setPage(1); }}
+                    searchable={false}
+                    variant="compact"
+                    className="!space-y-0"
+                  />
+                </div>
+                <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">per page</span>
+              </div>
 
-               <div className="flex items-center gap-1.5">
-                  <button 
-                    disabled={page === 1}
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-                  
-                  <div className="flex items-center px-4">
-                    <span className="text-sm font-bold text-slate-900">Page {page} of {totalPages || 1}</span>
-                  </div>
+              <div className="flex items-center gap-1.5">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft size={18} />
+                </button>
 
-                  <button 
-                    disabled={page >= totalPages}
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
-               </div>
+                <div className="flex items-center px-4">
+                  <span className="text-sm font-bold text-slate-900">Page {page} of {totalPages || 1}</span>
+                </div>
+
+                <button
+                  disabled={page >= totalPages}
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
             </div>
           </div>
         ) : (

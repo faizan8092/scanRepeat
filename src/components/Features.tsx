@@ -1,8 +1,8 @@
-import { 
-  Layout, 
-  Play, 
-  ShieldCheck, 
-  Ticket, 
+import {
+  Layout,
+  Play,
+  ShieldCheck,
+  Ticket,
   Zap,
   ChevronRight
 } from 'lucide-react';
@@ -14,10 +14,10 @@ export function Features() {
         <div className="text-center mb-16">
           <h2 className="text-accentxl md:text-4xl font-bold mb-4">One QR Code. A Full Post-Purchase Experience.</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            With ScanRepeat, your QR code becomes a mobile-first engagement page that drives loyalty and sales.
+            With QRBold, your QR code becomes a mobile-first engagement page that drives loyalty and sales.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {[
             { title: "Teaches Usage", desc: "Teaches customers how to use your product correctly", icon: Layout },

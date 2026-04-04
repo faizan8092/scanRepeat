@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push('/login');
     };
 
-    window.addEventListener('scanrepeat_unauthorized', handleUnauthorized);
+    window.addEventListener('QRBold_unauthorized', handleUnauthorized);
 
     // Attempt to refresh session on load
     (async () => {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
 
     return () => {
-      window.removeEventListener('scanrepeat_unauthorized', handleUnauthorized);
+      window.removeEventListener('QRBold_unauthorized', handleUnauthorized);
     };
   }, []);
 
@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await apiRegister({ email, password, name });
       handleLoginSuccess(response);
-      addToast('success', 'Account created!', "Welcome to ScanRepeat. Let's build something great.");
+      addToast('success', 'Account created!', "Welcome to QRBold. Let's build something great.");
       router.push('/dashboard');
     } catch (err) {
       console.error("AuthContext Signup Error:", err);

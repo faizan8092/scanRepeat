@@ -9,16 +9,16 @@ interface LogoProps {
   showText?: boolean;
 }
 
-export function Logo({ className, size = 28, showText = true }: LogoProps) {
-  const fontSize = size * 0.65;
-  
+export function Logo({ className, size = 32, showText = true }: LogoProps) {
+  const fontSize = size * 0.72;
+
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
+    <div className={cn("flex items-center gap-1.5", className)}>
       <div className="relative shrink-0 flex items-center justify-center overflow-hidden" style={{ width: size, height: size }}>
-        <div 
+        <div
           className="w-[85%] h-[85%] bg-primary shadow-sm"
-          style={{ 
-            maskImage: 'url(/assets/Logo.svg)', 
+          style={{
+            maskImage: 'url(/assets/Logo.svg)',
             WebkitMaskImage: 'url(/assets/Logo.svg)',
             maskRepeat: 'no-repeat',
             WebkitMaskRepeat: 'no-repeat',
@@ -28,11 +28,11 @@ export function Logo({ className, size = 28, showText = true }: LogoProps) {
         />
       </div>
       {showText && (
-        <span 
-          className="font-black tracking-tighter text-foreground select-none leading-none"
+        <span
+          className="font-black tracking-tighter text-foreground select-none leading-[1.1] pt-0.5"
           style={{ fontSize: fontSize > 0 ? fontSize : undefined }}
         >
-          ScanRepeat
+          QRBold
         </span>
       )}
     </div>

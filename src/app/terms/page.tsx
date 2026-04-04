@@ -11,12 +11,12 @@ export default function TermsPage() {
     {
       id: "1",
       title: "1. INTRODUCTION",
-      content: "ScanRepeat (“we”, “our”, “us”) is a platform that enables businesses to create QR codes, dynamic product pages, and track engagement analytics. By using our services, you agree to these Terms."
+      content: "QRBold (“we”, “our”, “us”) is a platform that enables businesses to create QR codes, dynamic product pages, and track engagement analytics. By using our services, you agree to these Terms."
     },
     {
       id: "2",
       title: "2. SERVICES",
-      content: "ScanRepeat provides:\n- QR code generation\n- Dynamic product pages\n- Analytics (scans, device, location)\n- Optional redirects and integrations"
+      content: "QRBold provides:\n- QR code generation\n- Dynamic product pages\n- Analytics (scans, device, location)\n- Optional redirects and integrations"
     },
     {
       id: "3",
@@ -51,7 +51,7 @@ export default function TermsPage() {
     {
       id: "9",
       title: "9. CONTACT",
-      content: "If you have any questions, contact us at support@scanrepeat.com"
+      content: "If you have any questions, contact us at support@QRBold.com"
     }
   ];
 
@@ -79,7 +79,7 @@ export default function TermsPage() {
             <span className="text-primary font-black text-xs uppercase tracking-[0.2em] mb-4 block">Legal Center</span>
             <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">Terms and Conditions</h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-medium">
-              Last Updated: 2026. Please read these terms carefully before using the ScanRepeat platform.
+              Last Updated: 2026. Please read these terms carefully before using the QRBold platform.
             </p>
           </motion.div>
         </div>
@@ -90,7 +90,7 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto">
           <div className="space-y-16">
             {sections.map((section, index) => (
-              <motion.div 
+              <motion.div
                 key={section.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -109,7 +109,7 @@ export default function TermsPage() {
             ))}
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="mt-32 p-10 rounded-[2.5rem] bg-secondary border border-border text-center"
@@ -117,8 +117,8 @@ export default function TermsPage() {
             <ShieldCheck size={48} className="mx-auto text-primary mb-6" />
             <h3 className="text-2xl font-black mb-4">Have questions?</h3>
             <p className="text-muted-foreground mb-8 font-medium">If you have any questions or concerns regarding our terms, our legal team is here to help.</p>
-            <a 
-              href="mailto:support@scanrepeat.com" 
+            <a
+              href="mailto:support@QRBold.com"
               className="inline-flex items-center gap-2.5 px-10 py-4 rounded-2xl bg-primary text-white font-black shadow-lg shadow-primary/20 hover:scale-[1.05] transition-all"
             >
               Contact Support
@@ -129,7 +129,7 @@ export default function TermsPage() {
 
       {/* FOOTER */}
       <footer className="py-12 border-t border-border text-center text-muted-foreground text-sm font-medium">
-        &copy; {new Date().getFullYear()} ScanRepeat. All rights reserved.
+        &copy; {new Date().getFullYear()} QRBold. All rights reserved.
       </footer>
     </div>
   );

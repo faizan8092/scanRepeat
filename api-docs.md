@@ -1,6 +1,6 @@
-# ScanRepeat API Documentation
+# QRBold API Documentation
 
-Welcome to the ScanRepeat API documentation. This document provides all the necessary information for frontend implementation, including detailed request payload structures, response shapes, authentication methods, and common workflows.
+Welcome to the QRBold API documentation. This document provides all the necessary information for frontend implementation, including detailed request payload structures, response shapes, authentication methods, and common workflows.
 
 ---
 
@@ -36,7 +36,7 @@ http://localhost:5000/api/v1
 
 ## 🔐 Authentication
 
-Most endpoints require authentication. ScanRepeat uses **JWT Access Tokens** sent via the `Authorization` header.
+Most endpoints require authentication. QRBold uses **JWT Access Tokens** sent via the `Authorization` header.
 
 ### Header Format
 
@@ -1018,7 +1018,7 @@ if (product.type === 'page_builder') {
 }
 ```
 
-6. **QR Scan Logic:** When a user scans a QR, the frontend should hit `GET /p/:shortCode`. If the response `type` is `external_url` or `file`, perform an immediate `window.location.replace(data.redirectUrl)`. If it's `page_builder`, render the landing page components.
+1. **QR Scan Logic:** When a user scans a QR, the frontend should hit `GET /p/:shortCode`. If the response `type` is `external_url` or `file`, perform an immediate `window.location.replace(data.redirectUrl)`. If it's `page_builder`, render the landing page components.
 
 ---
 

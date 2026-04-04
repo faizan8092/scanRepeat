@@ -103,7 +103,7 @@ const TESTIMONIALS = [
     role: "Founder, AURA Skincare",
     avatar: "SC",
     rating: 5,
-    text: "We printed ScanRepeat QR codes on our serums and saw repeat purchases jump 42% in 60 days. The reorder funnel is genuinely brilliant.",
+    text: "We printed QRBold QR codes on our serums and saw repeat purchases jump 42% in 60 days. The reorder funnel is genuinely brilliant.",
   },
   {
     name: "Marcus Rivera",
@@ -122,7 +122,7 @@ const TESTIMONIALS = [
 ];
 
 const FAQS = [
-  { q: "Do I need to reprint my packaging?", a: "No. If you already have a QR code on your packaging, simply point it to your ScanRepeat page. For new print runs, download our high-res QR code in SVG format." },
+  { q: "Do I need to reprint my packaging?", a: "No. If you already have a QR code on your packaging, simply point it to your QRBold page. For new print runs, download our high-res QR code in SVG format." },
   { q: "Does it work with Shopify?", a: "Yes — natively. Paste your Shopify product URL as the reorder link and the one-click reorder experience works out of the box." },
   { q: "Can I customize the look of the landing page?", a: "Absolutely. Use our page builder to match your brand colors, fonts, and layout. Add video, FAQs, image galleries, and a custom domain." },
   { q: "Is there a free trial?", a: "Every plan comes with a 14-day free trial — no credit card required. You can generate QR codes and test the full platform before committing." },
@@ -242,7 +242,7 @@ export default function LandingPage() {
                   <div className="absolute -inset-4 bg-gradient-to-tr from-primary/15 to-accent/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                   <img
                     src="/assets/hero.svg"
-                    alt="ScanRepeat Hero Illustration"
+                    alt="QRBold Hero Illustration"
                     className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.08)] group-hover:translate-y-[-8px] transition-transform duration-700 ease-out"
                   />
                 </div>
@@ -458,7 +458,7 @@ export default function LandingPage() {
                 Brands that made the switch.
               </motion.h2>
               <motion.p variants={fadeUp} className="text-lg text-[#6b7280] max-w-xl mx-auto">
-                Real stories from teams using ScanRepeat to close the loop between physical and digital.
+                Real stories from teams using QRBold to close the loop between physical and digital.
               </motion.p>
             </motion.div>
 
@@ -543,7 +543,7 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
               <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2970ff]/8 border border-[#2970ff]/20 text-[#2970ff] text-xs font-semibold uppercase tracking-widest mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2970ff] animate-pulse" />
-                Join 5,000+ brands already using ScanRepeat
+                Join 5,000+ brands already using QRBold
               </motion.div>
               <motion.h2 variants={fadeUp} className="text-[48px] md:text-[80px] lg:text-[96px] font-bold tracking-[-0.04em] mb-8 leading-[1.02] max-w-5xl mx-auto text-[#0a0a0a]">
                 Start tracking your physical conversions today.

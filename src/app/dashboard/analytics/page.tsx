@@ -44,7 +44,7 @@ export default function AnalyticsPage() {
   const [isZeroData, setIsZeroData] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState<DashboardAnalyticsResponse | null>(null);
-  
+
   const dashboardRef = React.useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = React.useState(false);
 
@@ -53,9 +53,9 @@ export default function AnalyticsPage() {
     try {
       setIsExporting(true);
       toast.loading('Capturing high-res dashboard snapshot...', { id: 'pdf-export' });
-      
+
       const canvas = await html2canvas(dashboardRef.current, {
-        scale: 2, 
+        scale: 2,
         useCORS: true,
         backgroundColor: '#f8fafc',
         logging: false,
@@ -114,19 +114,19 @@ export default function AnalyticsPage() {
         }
 
       });
-      
+
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      
+
       // Calculate dimensions for A4 landscape
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'px',
         format: [canvas.width, canvas.height]
       });
-      
+
       pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-      pdf.save(`ScanRepeat_Analytics_${new Date().toISOString().split('T')[0]}.pdf`);
-      
+      pdf.save(`QRBold_Analytics_${new Date().toISOString().split('T')[0]}.pdf`);
+
       toast.success('Successfully exported beautiful PDF!', { id: 'pdf-export' });
     } catch (err) {
       console.error(err);
@@ -142,7 +142,7 @@ export default function AnalyticsPage() {
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
         const result = await fetchDashboardAnalytics(timeRange);
@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto pb-10" ref={dashboardRef}>
-      
+
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -175,16 +175,16 @@ export default function AnalyticsPage() {
             Real-time scanner intelligence and conversion tracking.
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-3 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <button 
+          <button
             onClick={() => setIsZeroData(!isZeroData)}
             className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${isZeroData ? 'bg-primary text-white' : 'hover:bg-slate-100 text-slate-600'}`}
           >
             Zero State
           </button>
           <div className="w-px h-6 bg-slate-200" />
-          <select 
+          <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
             className="bg-transparent text-sm font-bold text-slate-700 outline-none px-2 cursor-pointer hover:text-primary transition-colors"
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
             <option value="30">Last 30 Days</option>
             <option value="90">Last 90 Days</option>
           </select>
-          <button 
+          <button
             onClick={exportToPDF}
             disabled={isExporting}
             className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -210,10 +210,10 @@ export default function AnalyticsPage() {
 
       <AnimatePresence mode="wait">
         {loading ? (
-          <motion.div 
-            key="loading" 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="min-h-[60vh] flex flex-col items-center justify-center pt-10"
           >
@@ -226,7 +226,7 @@ export default function AnalyticsPage() {
           </motion.div>
         ) : (
           <motion.div key="data" variants={containerVar as any} initial="hidden" animate="show" className="space-y-6">
-            
+
             {/* METRICS ROW */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {metricsConfig.map((m, i) => {
@@ -254,7 +254,7 @@ export default function AnalyticsPage() {
 
             {/* CHARTS ROW 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Timeline Chart */}
               <motion.div variants={itemVar as any} className="lg:col-span-2 bg-white rounded-[24px] border border-slate-100 shadow-lg shadow-slate-200/40 p-6">
                 <div className="flex justify-between mb-8">
@@ -268,18 +268,18 @@ export default function AnalyticsPage() {
                     <AreaChart data={data.charts.timeline} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorScans" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="colorConv" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8', fontWeight: 600}} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8', fontWeight: 600}} />
-                      <Tooltip 
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8', fontWeight: 600 }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8', fontWeight: 600 }} />
+                      <Tooltip
                         contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)', background: 'hsl(var(--card))' }}
                       />
                       <Area type="monotone" dataKey="scans" stroke="hsl(var(--primary))" strokeWidth={4} fillOpacity={1} fill="url(#colorScans)" activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -300,8 +300,8 @@ export default function AnalyticsPage() {
                     <BarChart data={data.charts.funnel} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
                       <XAxis type="number" hide />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={80} tick={{fontSize: 11, fontWeight: 'bold', fill: '#64748b'}} />
-                      <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={80} tick={{ fontSize: 11, fontWeight: 'bold', fill: '#64748b' }} />
+                      <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
                       <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={28}>
                         {data.charts.funnel.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={FUNNEL_COLORS[index % FUNNEL_COLORS.length]} />
@@ -316,7 +316,7 @@ export default function AnalyticsPage() {
 
             {/* CHARTS ROW 2: Maps and Geo */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* REAL MAP - D3 Geo */}
               <motion.div variants={itemVar as any} className="lg:col-span-2 bg-[#f8fafc] rounded-[24px] border border-slate-200 shadow-lg shadow-slate-200/50 p-6 relative overflow-hidden flex flex-col">
                 <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent h-32 pointer-events-none rounded-t-[24px]" />
@@ -374,7 +374,7 @@ export default function AnalyticsPage() {
                     <p className="text-sm font-medium text-slate-400 mt-1">Ranking by scan volume</p>
                   </div>
                 </div>
-                
+
                 <div className="flex-1 space-y-5 overflow-y-auto pr-2">
                   {data.geography.sort((a, b) => b.scans - a.scans).map((loc, i) => {
                     const max = data.geography.length > 0 ? Math.max(...data.geography.map(l => l.scans)) : 1;
@@ -389,8 +389,8 @@ export default function AnalyticsPage() {
                           <span className="text-sm font-black text-slate-800">{loc.scans.toLocaleString()}</span>
                         </div>
                         <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                          <motion.div 
-                            initial={{ width: 0 }} 
+                          <motion.div
+                            initial={{ width: 0 }}
                             animate={{ width: `${percent}%` }}
                             transition={{ duration: 1, ease: 'easeOut', delay: i * 0.1 }}
                             className="h-full rounded-full bg-primary/50 relative overflow-hidden"
