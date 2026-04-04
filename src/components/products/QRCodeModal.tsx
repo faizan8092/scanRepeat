@@ -5,7 +5,9 @@ import { QRCodeDisplay, downloadQRPng, downloadQRSvg } from './QRCodeDisplay';
 import { HexColorPicker } from 'react-colorful';
 import QRCodeStyling from 'qr-code-styling';
 
-const BASE_URL = 'scanrepeat.com/p/';
+import { getBaseUrl } from '@/src/lib/api';
+
+const BASE_URL = `${getBaseUrl().replace(/^https?:\/\//, '')}/p/`;
 
 interface QRCodeModalProps {
   product: Product;
@@ -19,11 +21,11 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
   const [copied, setCopied] = useState(false);
   const [size, setSize] = useState<SizeOption>(400);
   const qrRef = useRef<QRCodeStyling | null>(null);
-  const url = `https://${BASE_URL}${product.shortCode}`;
+  const shortUrl = `${getBaseUrl().replace(/^https?:\/\//, '')}/p/${product.shortCode}`;
   const qrSettings = getProductQR(product);
 
   const copy = () => {
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(shortUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -61,7 +63,7 @@ export function QRCodeModal({ product, onClose, onEditAppearance }: QRCodeModalP
         <div className="flex flex-col items-center px-6 py-6 gap-4">
           <div className="bg-white rounded-2xl p-5 border shadow-inner">
              <QRCodeDisplay 
-                url={url} 
+                url={shortUrl} 
                 settings={qrSettings} 
                 size={220} 
                 downloadRef={qrRef}

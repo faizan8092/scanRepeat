@@ -116,6 +116,12 @@ export async function apiFetch<T = any>(
   return data;
 }
 
+export function getBaseUrl() {
+  const defaultBase = 'http://localhost:3000';
+  const raw = process.env.NEXT_PUBLIC_BASE_URL || defaultBase;
+  return raw.replace(/\/$/, '');
+}
+
 export function getApiUrl(path: string) {
   // Priority order for API base URL:
   // 1. runtime override via `globalThis.__NEXT_PUBLIC_API_URL` (allows changing without rebuild)

@@ -10,6 +10,7 @@ import {
 import { Product, upsertProduct, deleteProduct, archiveProduct, getProductQR } from '@/src/types/product';
 import { customizeQRApi, pauseProductApi, unpauseProductApi } from '@/src/lib/product-service';
 import { useToast } from '@/src/lib/toast-context';
+import { getBaseUrl } from '@/src/lib/api';
 import { QRCodeModal } from './QRCodeModal';
 import { QRCustomizer } from './QRCustomizer';
 import { QRCodeDisplay } from './QRCodeDisplay';
@@ -146,7 +147,7 @@ export function ProductCard({
   const [delConfirm, setDelConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const shortUrl = `scanrepeat.com/p/${product.shortCode}`;
+  const shortUrl = `${getBaseUrl().replace(/^https?:\/\//, '')}/p/${product.shortCode}`;
   const meta = TYPE_META[product.type];
   const qrSettings = getProductQR(product);
   const scansCount = product.totalScans ?? product.scans ?? 0;

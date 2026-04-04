@@ -8,7 +8,9 @@ import { cn } from '@/src/lib/utils';
 import QRCodeStyling from 'qr-code-styling';
 import { Loader } from "@/src/components/ui/Loader";
 
-const BASE_URL = 'scanrepeat.com/p/';
+import { getBaseUrl } from '@/src/lib/api';
+
+const BASE_URL = `${getBaseUrl().replace(/^https?:\/\//, '')}/p/`;
 
 interface QRCustomizerProps {
   productName: string;

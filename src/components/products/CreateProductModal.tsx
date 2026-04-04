@@ -7,6 +7,7 @@ import {
   Product, ProductType, QRSettings, defaultQR,
   generateShortCode, slugFromName, upsertProduct,
 } from '@/src/types/product';
+import { getBaseUrl } from '@/src/lib/api';
 import { defaultTheme } from '@/src/types/builder';
 import { QRCustomizer } from './QRCustomizer';
 import { createProductApi, uploadFileApi } from '@/src/lib/product-service';
@@ -61,7 +62,7 @@ function ShortUrlField({ slug, onChange }: { slug: string; onChange: (v: string)
     <div className="space-y-1.5">
       <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">Short URL</p>
       <div className="flex items-center gap-2 p-3 border-primary border-slate-100 rounded-xl bg-slate-50 hover:border-primary/40 transition-colors">
-        <span className="text-sm text-slate-400 whitespace-nowrap font-mono">scanrepeat.com/p/</span>
+        <span className="text-sm text-slate-400 whitespace-nowrap font-mono">{getBaseUrl().replace(/^https?:\/\//, '')}/p/</span>
         {editing ? (
           <input
             autoFocus

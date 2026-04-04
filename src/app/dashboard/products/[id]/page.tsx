@@ -32,6 +32,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { getApiUrl, getBaseUrl } from '@/src/lib/api';
 
 export default function ProductEditPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = React.useState({
@@ -44,7 +45,7 @@ export default function ProductEditPage({ params }: { params: { id: string } }) 
     isActive: true
   });
 
-  const publicUrl = `https://scanrepeat.com/p/${params.id}`;
+  const publicUrl = `${getBaseUrl()}/p/${params.id}`;
 
   return (
     <div className="space-y-8">
