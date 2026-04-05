@@ -2,7 +2,11 @@ import Link from 'next/link';
 import { Mail, Facebook, Linkedin, Twitter, Globe, Phone, Github } from 'lucide-react';
 import { Logo } from './Logo';
 
-export function Footer() {
+interface FooterProps {
+  onContactClick?: () => void;
+}
+
+export function Footer({ onContactClick }: FooterProps) {
 
   const currentYear = new Date().getFullYear();
 
@@ -91,8 +95,15 @@ export function Footer() {
               <li><Link href="/" className="hover:text-white transition-colors block">Home</Link></li>
               <li><Link href="/#how-it-works" className="hover:text-white transition-colors block">Why QRBold?</Link></li>
               <li><Link href="/#features" className="hover:text-white transition-colors block">Features</Link></li>
-              <li><Link href="/faq" className="hover:text-white transition-colors block">FAQs</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors block">Contact</Link></li>
+              <li><Link href="/#faq" className="hover:text-white transition-colors block">FAQs</Link></li>
+              <li>
+                <button 
+                  onClick={onContactClick}
+                  className="hover:text-white transition-colors block text-left w-full"
+                >
+                  Contact
+                </button>
+              </li>
             </ul>
           </div>
 

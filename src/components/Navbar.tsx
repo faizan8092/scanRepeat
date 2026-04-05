@@ -4,7 +4,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
 
-export function Navbar() {
+interface NavbarProps {
+  onContactClick?: () => void;
+}
+
+export function Navbar({ onContactClick }: NavbarProps) {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-[#e5e7eb]/80 bg-white/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -14,6 +18,12 @@ export function Navbar() {
         <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold">
           <Link href="/#features" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">Features</Link>
           <Link href="/pricing" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">Pricing</Link>
+          <button 
+            onClick={onContactClick}
+            className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors font-semibold"
+          >
+            Contact
+          </button>
           <Link href="/#faq" className="text-[#6b7280] hover:text-[#0a0a0a] transition-colors">FAQ</Link>
         </nav>
         <div className="flex items-center space-x-3">

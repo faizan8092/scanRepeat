@@ -2,9 +2,11 @@
 
 import { Navbar } from '@/src/components/Navbar';
 import { Footer } from '@/src/components/Footer';
+import { ContactModal } from '@/src/components/ui/ContactModal';
+import { FloatingHelp } from '@/src/components/ui/FloatingHelp';
 import Link from 'next/link';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
@@ -151,6 +153,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
 }
 
 export default function LandingPage() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const containerRef = useRef(null);
   const heroRef = useRef(null);
 
@@ -161,7 +164,9 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fafafa] text-[#0a0a0a] overflow-x-hidden font-sans selection:bg-[#2970ff] selection:text-white" ref={containerRef}>
-      <Navbar />
+      <Navbar onContactClick={() => setIsContactOpen(true)} />
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+      <FloatingHelp />
 
       <main className="flex-1 relative">
         <section ref={heroRef} className="relative min-h-[90vh] flex items-center pt-32 pb-24 overflow-hidden bg-[#fafafa]">
@@ -565,7 +570,7 @@ export default function LandingPage() {
 
       </main>
 
-      <Footer />
+      <Footer onContactClick={() => setIsContactOpen(true)} />
     </div>
   );
 }
