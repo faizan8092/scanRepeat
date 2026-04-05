@@ -226,6 +226,9 @@ export function ProductCard({
         qrBackground: settings.background,
         qrLogoUrl: settings.logoUrl || null,
         qrDotStyle: settings.dotStyle,
+        qrEyeStyle: settings.eyeStyle,
+        qrEyeColorOuter: settings.eyeColorOuter || settings.foreground,
+        qrEyeColorInner: settings.eyeColorInner || settings.foreground,
         qrErrorLevel: settings.errorLevel,
         qrLabelText: settings.labelText || null,
         qrMargin: settings.margin,
@@ -327,11 +330,11 @@ export function ProductCard({
                   onClick={() => setShowQREditor(true)}
                   className="relative group/qr-preview"
                 >
-                  <div className="bg-white p-1.5 rounded-xl shadow-sm border border-slate-100 group-hover/qr-preview:border-primary/30 group-hover/qr-preview:shadow-xl group-hover/qr-preview:shadow-primary/5 transition-all duration-300">
+                  <div className="bg-white group-hover/qr-preview:shadow-xl group-hover/qr-preview:shadow-primary/5 transition-all duration-300 overflow-hidden">
                     <QRCodeDisplay
                       url={`https://${shortUrl}`}
                       settings={qrSettings}
-                      size={80}
+                      size={92}
                     />
                   </div>
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/qr-preview:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">

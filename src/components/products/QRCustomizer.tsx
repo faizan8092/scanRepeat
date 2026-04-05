@@ -83,12 +83,6 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
     { key: 'leaf', label: 'Organic' },
   ];
 
-  const frameStyles: { key: QRSettings['frameStyle']; label: string }[] = [
-    { key: 'none', label: 'No Frame' },
-    { key: 'basic', label: 'Classic Border' },
-    { key: 'modern', label: 'Designer Box' },
-    { key: 'bubble', label: 'Bubble Pop' },
-  ];
 
   const templates = [
     { name: 'OG Classic', settings: defaultQR },
@@ -152,7 +146,6 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
               { id: 'eyes', label: 'Eyes', icon: <Palette size={14} /> },
               { id: 'pattern', label: 'Pattern', icon: <Layout size={14} /> },
               { id: 'background', label: 'Bg', icon: <Layout size={14} /> },
-              { id: 'frame', label: 'Frame', icon: <Type size={14} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -174,25 +167,23 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
             {activeTab === 'template' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-left-4 duration-300">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Quick Themes</p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-4 gap-2">
                   {templates.map(t => (
                     <button 
                       key={t.name}
                       onClick={() => applyTemplate(t.settings)}
-                      className="p-3 border-2 border-slate-100 rounded-3xl hover:border-primary/30 transition-all text-left group flex flex-col items-center gap-3 bg-white hover:shadow-lg hover:shadow-slate-100"
+                      className="p-1 border-2 border-slate-100 rounded-2xl hover:border-primary/30 transition-all text-left group flex flex-col items-center gap-1.5 bg-white hover:shadow-lg"
                     >
                       <div 
-                        className="w-full aspect-square rounded-2xl flex items-center justify-center p-3 overflow-hidden shadow-inner"
-                        style={{ background: t.settings.background }}
+                        className="w-full aspect-square rounded-xl flex items-center justify-center p-1 overflow-hidden shadow-inner bg-white"
                       >
-                         <div className="w-full aspect-square opacity-90 group-hover:opacity-100 transition-opacity" style={{ 
-                            background: `radial-gradient(circle at 20% 20%, ${t.settings.foreground} 0%, transparent 20%), 
-                                        radial-gradient(circle at 80% 80%, ${t.settings.foreground} 0%, transparent 20%),
-                                        linear-gradient(45deg, ${t.settings.foreground}11 25%, transparent 25%)`,
-                            backgroundSize: '8px 8px',
-                            border: `2px solid ${t.settings.foreground}44`,
-                            borderRadius: '6px'
-                         }} />
+                         <div className="scale-[0.5] origin-center">
+                            <QRCodeDisplay 
+                              url={url} 
+                              settings={t.settings} 
+                              size={180} 
+                            />
+                         </div>
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-tight text-slate-600 truncate w-full text-center">{t.name}</span>
                     </button>
@@ -351,65 +342,6 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
               </div>
             )}
 
-            {activeTab === 'frame' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-300">
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Frame Layout</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {frameStyles.map(s => (
-                      <button 
-                        key={s.key}
-                        onClick={() => set({ frameStyle: s.key })}
-                        className={cn(
-                          "px-4 py-3 rounded-xl border-2 text-[10px] font-black uppercase transition-all",
-                          settings.frameStyle === s.key ? "border-primary bg-primary/5 text-primary" : "border-slate-100 text-slate-500 hover:border-slate-200"
-                        )}
-                      >
-                        {s.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {settings.frameStyle !== 'none' && (
-                  <div className="space-y-6 pt-6 border-t animate-in slide-in-from-top-4 duration-300">
-                    <div className="space-y-3">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Frame Color</p>
-                      <ColorPickerPopover value={settings.frameColor} onChange={v => set({ frameColor: v })} label="Frame Color" />
-                    </div>
-
-                    <div className="space-y-3">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Label Text</p>
-                      <div className="flex items-center gap-3">
-                         <div
-                          onClick={() => set({ showLabel: !settings.showLabel })}
-                          className={`shrink-0 relative w-10 h-5 rounded-full transition-colors cursor-pointer ${settings.showLabel ? 'bg-primary' : 'bg-slate-200'}`}
-                        >
-                          <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full shadow transition-transform ${settings.showLabel ? 'translate-x-5' : ''}`} />
-                        </div>
-                        <span className="text-[11px] font-bold text-slate-600 uppercase">Visible</span>
-                      </div>
-                      
-                      {settings.showLabel && (
-                        <div className="space-y-4 pt-2">
-                          <input 
-                            value={settings.labelText} 
-                            onChange={e => set({ labelText: e.target.value.toUpperCase() })} 
-                            placeholder="SCAN ME" 
-                            maxLength={20}
-                            className="w-full text-sm font-black p-3.5 border-2 border-slate-100 rounded-2xl bg-slate-50 focus:bg-white focus:border-primary outline-none transition-all" 
-                          />
-                          <div className="space-y-2">
-                            <p className="text-[10px] font-bold text-slate-500 uppercase">Text Color</p>
-                            <ColorPickerPopover value={settings.labelColor} onChange={v => set({ labelColor: v })} label="Text Color" />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
@@ -425,7 +357,7 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
                   settings={settings} 
                   size={260} 
                   downloadRef={qrRef}
-                  className="shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] group-hover:scale-[1.01] transition-transform duration-500 bg-white p-2 rounded-2xl" 
+                  className="shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] group-hover:scale-[1.01] transition-transform duration-500 bg-white p-2" 
                 />
              </div>
 

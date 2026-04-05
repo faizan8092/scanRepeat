@@ -34,7 +34,7 @@ export function QRCodeDisplay({ url, settings, size = 240, className = '', downl
       type: 'canvas' as DrawType,
       data: url,
       image: settings.logoUrl || undefined,
-      margin: settings.margin * 4, // Scale margin for library
+      margin: 0, // No margin for library
       qrOptions: {
         typeNumber: 0 as TypeNumber,
         mode: 'Byte' as Mode,
@@ -88,15 +88,12 @@ export function QRCodeDisplay({ url, settings, size = 240, className = '', downl
   return (
     <div className="flex flex-col items-center gap-4">
       <div 
-        className={`relative inline-block border-8 transition-all p-1.5 duration-300 ${loading ? 'opacity-50' : 'opacity-100'} ${className}`}
+        className={`relative inline-block transition-all duration-300 ${loading ? 'opacity-50' : 'opacity-100'} ${className}`}
         style={{ 
-          borderColor: settings.frameStyle !== 'none' ? settings.frameColor : 'transparent',
-          borderRadius: settings.frameStyle === 'bubble' ? '40px' : settings.frameStyle !== 'none' ? '24px' : '12px',
           backgroundColor: settings.background,
-          paddingBottom: settings.showLabel ? '40px' : '10px'
         }}
       >
-        <div ref={containerRef} className="rounded-lg overflow-hidden flex items-center justify-center bg-white" />
+        <div ref={containerRef} className="overflow-hidden flex items-center justify-center" />
         
         {settings.showLabel && (
           <div 
