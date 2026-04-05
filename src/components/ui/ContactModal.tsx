@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Send, Phone, Mail, MapPin, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, Send, CheckCircle2, Loader2, MessageSquareText } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { getApiUrl } from '@/src/lib/api';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -15,17 +16,35 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setTimeout(() => {
-        setSubmitted(false);
-        onClose();
-    }, 2500);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const payload = Object.fromEntries(formData.entries());
+
+      const res = await fetch(getApiUrl('/contact'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Submission failed');
+
+      setSubmitted(true);
+      setTimeout(() => {
+          setSubmitted(false);
+          onClose();
+      }, 2500);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -71,39 +90,20 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               <div className="relative z-10 flex-1 flex flex-col justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold mb-4">Contact Information</h2>
-                  <p className="text-indigo-100 opacity-90 leading-relaxed">
-                    Fill up the form and our Team will get back to you within 24 hours.
+                  <h2 className="text-3xl font-bold mb-4">Let's build<br />something great.</h2>
+                  <p className="text-indigo-100 opacity-90 leading-relaxed text-lg">
+                    Fill out the form and our team will get back to you within 24 hours. We're excited to help you scale your brand.
                   </p>
                 </div>
 
-                <div className="space-y-8 my-12">
-                  <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
-                      <Phone size={20} className="text-indigo-200" />
-                    </div>
-                    <span className="text-lg font-medium">+1 (555) 000-0000</span>
-                  </div>
-                  <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
-                      <Mail size={20} className="text-indigo-200" />
-                    </div>
-                    <span className="text-lg font-medium">hello@qrbold.com</span>
-                  </div>
-                  <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
-                      <MapPin size={20} className="text-indigo-200" />
-                    </div>
-                    <span className="text-lg font-medium">123 Innovation Way, CA</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  {['tw', 'fb', 'ig', 'ln'].map(social => (
-                    <div key={social} className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white hover:text-primary transition-all cursor-pointer">
-                      <span className="text-xs font-bold uppercase">{social}</span>
-                    </div>
-                  ))}
+                {/* Abstract Graphic Element */}
+                <div className="flex-1 flex items-center justify-center py-12 relative overflow-hidden">
+                   <div className="relative w-48 h-48 sm:w-64 sm:h-64">
+                     <div className="absolute inset-0 bg-white/10 rounded-[3rem] rotate-12 backdrop-blur-sm transition-transform duration-700 hover:rotate-[24deg]" />
+                     <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent rounded-[3rem] -rotate-6 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-2xl transition-transform duration-700 hover:scale-105">
+                        <MessageSquareText size={72} className="text-white drop-shadow-xl" strokeWidth={1.5} />
+                     </div>
+                   </div>
                 </div>
               </div>
             </div>
@@ -117,6 +117,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">First Name *</label>
                     <input 
                       required
+                      name="firstName"
                       type="text" 
                       placeholder="e.g. John"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
@@ -127,6 +128,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">Last Name *</label>
                     <input 
                       required
+                      name="lastName"
                       type="text" 
                       placeholder="e.g. Doe"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
@@ -140,6 +142,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">Work Email *</label>
                     <input 
                       required
+                      name="email"
                       type="email" 
                       placeholder="john@company.com"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
@@ -149,7 +152,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   <div className="space-y-1.5 focus-within:text-primary transition-colors">
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">Phone Number</label>
                     <input 
-                      type="tel" 
+                      type="tel"
+                      name="phone"
                       placeholder="+1 (555) 000-0000"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
                     />
@@ -161,7 +165,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   <div className="space-y-1.5 focus-within:text-primary transition-colors">
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">Company Name</label>
                     <input 
-                      type="text" 
+                      type="text"
+                      name="companyName"
                       placeholder="e.g. Acme Inc"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
                     />
@@ -170,7 +175,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   <div className="space-y-1.5 focus-within:text-primary transition-colors">
                     <label className="text-sm font-bold tracking-wide uppercase text-slate-500">Total Employees</label>
                     <input 
-                      type="number" 
+                      type="number"
+                      name="totalEmployees"
                       placeholder="e.g. 15"
                       className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-3 focus:border-primary outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium"
                     />
@@ -185,6 +191,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   </p>
                   <textarea 
                     required
+                    name="message"
                     rows={4}
                     placeholder="Write your message..."
                     className="w-full bg-slate-100/50 rounded-2xl border-2 border-transparent p-4 focus:border-primary focus:bg-white outline-none transition-all placeholder:text-slate-300 text-slate-900 font-medium resize-none"
