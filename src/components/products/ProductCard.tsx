@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/src/lib/utils';
 import Link from 'next/link';
@@ -129,7 +129,7 @@ function MoreMenu({ product, isOpen, onOpenChange, onEdit, onDuplicate, onArchiv
   );
 }
 
-export function ProductCard({
+export const ProductCard = memo(function ProductCard({
   product,
   isSelected = false,
   onToggleSelect,
@@ -147,26 +147,30 @@ export function ProductCard({
   const [delConfirm, setDelConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const shortUrl = `${getBaseUrl().replace(/^https?:\/\//, '')}/p/${product.shortCode}`;
+  const shortUrl = useMemo(() => `${getBaseUrl().replace(/^https?:\/\//, '')}/p/${product.shortCode}`, [product.shortCode]);
   const meta = TYPE_META[product.type];
-  const qrSettings = getProductQR(product);
+  const qrSettings = useMemo(() => getProductQR(product), [
+    product.qrForeground, product.qrBackground, product.qrLogoUrl, product.qrDotStyle,
+    product.qrEyeStyle, product.qrEyeColorInner, product.qrEyeColorOuter,
+    product.qrErrorLevel, product.qrLabelText, product.qrMargin, product.qrShowLabel, product.qrLogoSize,
+  ]);
   const scansCount = product.totalScans ?? product.scans ?? 0;
   const countriesCount = product.uniqueCountries ?? product.countries ?? 0;
 
-  const copyUrl = () => {
+  const copyUrl = useCallback(() => {
     navigator.clipboard.writeText(`https://${shortUrl}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [shortUrl]);
 
-  const handleRename = () => {
+  const handleRename = useCallback(() => {
     if (renameDraft.trim() && renameDraft !== product.name) {
       const updated = { ...product, name: renameDraft.trim(), updatedAt: new Date().toISOString() };
       upsertProduct(updated);
       onUpdate(updated);
     }
     setRenaming(false);
-  };
+  }, [renameDraft, product, onUpdate]);
 
   const handleDuplicate = () => {
     if (onDuplicate) {
@@ -192,10 +196,10 @@ export function ProductCard({
     onUpdate(dup);
   };
 
-  const handleArchive = () => {
+  const handleArchive = useCallback(() => {
     archiveProduct(product.id);
     onUpdate({ ...product, status: product.status === 'archived' ? 'draft' : 'archived' });
-  };
+  }, [product, onUpdate]);
 
   const handleTogglePause = async () => {
     try {
@@ -213,13 +217,13 @@ export function ProductCard({
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (!delConfirm) { setDelConfirm(true); return; }
     deleteProduct(product.id);
     onDelete(product.id);
-  };
+  }, [delConfirm, product.id, onDelete]);
 
-  const saveQR = async (settings: any) => {
+  const saveQR = useCallback(async (settings: any) => {
     try {
       const mappedData = {
         qrForeground: settings.foreground,
@@ -241,7 +245,7 @@ export function ProductCard({
     } catch (err: any) {
       addToast('error', 'Save failed', err.message || 'Could not update QR settings on the server.');
     }
-  };
+  }, [product.id, onUpdate, addToast]);
 
   return (
     <>
@@ -475,4 +479,4 @@ export function ProductCard({
       )}
     </>
   );
-}
+})

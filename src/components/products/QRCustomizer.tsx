@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, X, Download, Palette, Type, Layout, Image as ImageIcon, Sparkles, RefreshCw, Plus } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { ArrowLeft, Download, Palette, Type, Layout, Image as ImageIcon, Sparkles, RefreshCw, Plus } from 'lucide-react';
 import { QRSettings, defaultQR } from '@/src/types/product';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { HexColorPicker } from 'react-colorful';
@@ -64,8 +64,8 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
   const [isUploading, setIsUploading] = useState(false);
   const qrRef = useRef<QRCodeStyling | null>(null);
   
-  const url = `https://${BASE_URL}${shortCode}`;
-  const set = (patch: Partial<QRSettings>) => setSettings(s => ({ ...s, ...patch }));
+  const url = useMemo(() => `https://${BASE_URL}${shortCode}`, [shortCode]);
+  const set = useCallback((patch: Partial<QRSettings>) => setSettings(s => ({ ...s, ...patch })), []);
 
   const dotStyles: { key: QRSettings['dotStyle']; label: string }[] = [
     { key: 'square', label: 'Classic' },
@@ -83,25 +83,60 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
     { key: 'leaf', label: 'Organic' },
   ];
 
+  const frameStyles: { key: QRSettings['frameStyle']; label: string }[] = [
+    { key: 'none', label: 'No Frame' },
+    { key: 'basic', label: 'Classic Border' },
+    { key: 'modern', label: 'Designer Box' },
+    { key: 'bubble', label: 'Bubble Pop' },
+  ];
+
+  const SOCIAL_LOGOS = [
+    { name: 'Facebook', path: 'M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z' },
+    { name: 'Twitter / X', path: 'M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z' },
+    { name: 'Instagram', path: 'M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.8-9.25a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z' },
+    { name: 'LinkedIn', path: 'M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z' },
+    { name: 'YouTube', path: 'M21.582 6.186a2.686 2.686 0 0 0-1.884-1.921C18.04 3.8 12 3.8 12 3.8s-6.04 0-7.698.465a2.686 2.686 0 0 0-1.884 1.921A28.601 28.601 0 0 0 2 12.012a28.601 28.601 0 0 0 .418 5.826 2.686 2.686 0 0 0 1.884 1.921c1.658.465 7.698.465 7.698.465s6.04 0 7.698-.465a2.686 2.686 0 0 0 1.884-1.921A28.601 28.601 0 0 0 22 12.012a28.601 28.601 0 0 0-.418-5.826zM9.993 15.535v-7.04l6.49 3.52-6.49 3.52z' },
+    { name: 'WhatsApp', path: 'M17.47 13.5v-.01c-.13-.07-2.02-1-2.33-1.12-.31-.12-.53-.18-.76.18-.23.36-.88 1.12-1.08 1.35-.2.23-.4.26-.73.1-2.12-.9-3.56-2.01-4.82-4.05-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.51.1-.21.05-.39-.02-.53-.08-.14-.76-1.83-1.04-2.51-.27-.66-.55-.57-.76-.58-.2-.01-.43-.01-.66-.01-.23 0-.6.09-.92.43-.31.35-1.2 1.17-1.2 2.85 0 1.68 1.23 3.32 1.4 3.55.17.23 2.42 3.69 5.86 5.18 2.05.89 2.85.95 3.92.8 1.17-.16 2.03-.84 2.32-1.65.28-.8.28-1.5.2-1.65-.08-.14-.3-.23-.55-.35zM12 21.03c-1.57 0-3.1-.42-4.44-1.21l-.32-.19-3.3.87.88-3.22-.21-.34A8.99 8.99 0 0 1 3 12a9 9 0 1 1 9 9.03zm0-16.7A7.7 7.7 0 1 0 19.7 19.7 7.7 7.7 0 0 0 12 4.33z' },
+  ];
+  const LOGO_PATH = typeof window !== 'undefined' ? `${window.location.origin}/assets/Logo.svg` : '/assets/Logo.svg';
 
   const templates = [
     { name: 'OG Classic', settings: defaultQR },
     { name: 'Dark Stealth', settings: { ...defaultQR, foreground: '#FFFFFF', background: '#0f172a', eyeColorOuter: '#FFFFFF', eyeColorInner: '#FFFFFF', dotStyle: 'rounded' as any } },
-    { name: 'Royal Gold', settings: { ...defaultQR, foreground: '#B8860B', eyeStyle: 'leaf' as any, dotStyle: 'classy-rounded' as any, eyeColorOuter: '#B8860B', eyeColorInner: '#8B6508' } },
-    { name: 'Cyber Neon', settings: { ...defaultQR, foreground: '#00FF41', background: '#111111', eyeStyle: 'extra-rounded' as any, dotStyle: 'dots' as any, eyeColorOuter: '#00FF41', eyeColorInner: '#00FF41' } },
     { name: 'Tropical', settings: { ...defaultQR, foreground: '#0ea5e9', background: '#f0f9ff', eyeStyle: 'rounded' as any, dotStyle: 'extra-rounded' as any, eyeColorOuter: '#0369a1', eyeColorInner: '#0ea5e9' } },
     { name: 'Midnight', settings: { ...defaultQR, foreground: '#f8fafc', background: '#1e293b', dotStyle: 'classy' as any, eyeStyle: 'square' as any, frameStyle: 'modern' as any, frameColor: '#334155', eyeColorOuter: '#f8fafc', eyeColorInner: '#38bdf8' } },
+    { name: 'Sunset Orange', settings: { ...defaultQR, foreground: '#EA580C', background: '#FFEDD5', eyeColorOuter: '#991B1B', eyeColorInner: '#EA580C', dotStyle: 'classy-rounded' as any, eyeStyle: 'extra-rounded' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Mint Green', settings: { ...defaultQR, foreground: '#0D9488', background: '#CCFBF1', eyeColorOuter: '#134E4A', eyeColorInner: '#0D9488', dotStyle: 'rounded' as any, eyeStyle: 'leaf' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Ocean Blue', settings: { ...defaultQR, foreground: '#2563EB', background: '#FEF3C7', eyeColorOuter: '#B45309', eyeColorInner: '#1D4ED8', dotStyle: 'dots' as any, eyeStyle: 'rounded' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Berry Purple', settings: { ...defaultQR, foreground: '#86198F', background: '#F3E8FF', eyeColorOuter: '#701A75', eyeColorInner: '#A21CAF', dotStyle: 'extra-rounded' as any, eyeStyle: 'leaf' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Cyber Neon', settings: { ...defaultQR, foreground: '#06B6D4', background: '#000000', eyeColorOuter: '#EC4899', eyeColorInner: '#06B6D4', dotStyle: 'classy' as any, eyeStyle: 'square' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Royal Gold', settings: { ...defaultQR, foreground: '#D97706', background: '#1E3A8A', eyeColorOuter: '#DB2777', eyeColorInner: '#D97706', dotStyle: 'rounded' as any, eyeStyle: 'extra-rounded' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Sunny Pop', settings: { ...defaultQR, foreground: '#1D4ED8', background: '#FDE047', eyeColorOuter: '#DC2626', eyeColorInner: '#1D4ED8', dotStyle: 'classy-rounded' as any, eyeStyle: 'rounded' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Olive Drab', settings: { ...defaultQR, foreground: '#658266', background: '#C1D5C0', eyeColorOuter: '#4A5D4E', eyeColorInner: '#4A5D4E', dotStyle: 'square' as any, eyeStyle: 'leaf' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
+    { name: 'Classic Mono', settings: { ...defaultQR, foreground: '#64748B', background: '#FFFFFF', eyeColorOuter: '#000000', eyeColorInner: '#000000', dotStyle: 'dots' as any, eyeStyle: 'square' as any, logoUrl: LOGO_PATH, logoSize: 20 } },
   ];
 
-  const applyTemplate = (ts: QRSettings) => setSettings(prev => ({ ...ts, logoUrl: prev.logoUrl, logoSize: prev.logoSize }));
+  const applyTemplate = (ts: QRSettings) => setSettings({ ...ts });
 
   const [dlFormat, setDlFormat] = useState<'png' | 'jpeg' | 'svg' | 'webp'>('png');
   const [dlSize, setDlSize] = useState<number>(1200);
+
+  const [socialColor, setSocialColor] = useState<string>('#475569');
+  const [activeSocialPath, setActiveSocialPath] = useState<string>('');
+
+  const handleSocialSelect = (path: string, color: string) => {
+    setActiveSocialPath(path);
+    setSocialColor(color);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="200" height="200" fill="${color}"><path d="${path}"/></svg>`;
+    const dataUrl = `data:image/svg+xml;base64,${btoa(svg)}`;
+    set({ logoUrl: dataUrl, errorLevel: 'H' });
+  };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploading(true);
+    setActiveSocialPath(''); // Clear social path if custom uploaded
     try {
       const { uploadFileApi } = require('@/src/lib/product-service');
       const res = await uploadFileApi(file);
@@ -167,25 +202,23 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
             {activeTab === 'template' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-left-4 duration-300">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Quick Themes</p>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {templates.map(t => (
                     <button 
                       key={t.name}
                       onClick={() => applyTemplate(t.settings)}
-                      className="p-1 border-2 border-slate-100 rounded-2xl hover:border-primary/30 transition-all text-left group flex flex-col items-center gap-1.5 bg-white hover:shadow-lg"
+                      className="p-1 border-2 border-slate-100 rounded-2xl hover:border-primary/30 transition-all text-left flex flex-col items-center gap-1 bg-white hover:shadow-lg relative min-h-[96px]"
                     >
-                      <div 
-                        className="w-full aspect-square rounded-xl flex items-center justify-center p-1 overflow-hidden shadow-inner bg-white"
-                      >
-                         <div className="scale-[0.5] origin-center">
+                      <div className="w-full absolute inset-0 flex items-center justify-center p-1 overflow-hidden">
+                         <div className="scale-[0.55] origin-center pointer-events-none">
                             <QRCodeDisplay 
                               url={url} 
                               settings={t.settings} 
-                              size={180} 
+                              size={160} 
                             />
                          </div>
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-tight text-slate-600 truncate w-full text-center">{t.name}</span>
+                      <span className="absolute bottom-1 w-full text-center text-[9px] font-black uppercase tracking-tight text-slate-800 bg-white/80 backdrop-blur-md py-0.5 pointer-events-none truncate px-1 rounded mx-auto">{t.name}</span>
                     </button>
                   ))}
                 </div>
@@ -301,18 +334,44 @@ export function QRCustomizer({ productName, shortCode, initialSettings, onSave, 
                       className="w-full text-sm font-bold p-3.5 border-2 border-slate-100 rounded-2xl bg-slate-50 focus:bg-white focus:border-primary outline-none transition-all placeholder:text-slate-300"
                     />
                   </div>
+                  <div className="space-y-4 pt-4 border-t border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Social Presets</p>
+                      <ColorPickerPopover value={socialColor} onChange={c => {
+                         setSocialColor(c);
+                         if (activeSocialPath) handleSocialSelect(activeSocialPath, c);
+                      }} label="Social Icon Color" />
+                    </div>
+                    <div className="grid grid-cols-6 gap-2">
+                      {SOCIAL_LOGOS.map(sl => (
+                        <button
+                          key={sl.name}
+                          onClick={() => handleSocialSelect(sl.path, socialColor)}
+                          className={cn(
+                            "aspect-square flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all",
+                            activeSocialPath === sl.path ? "border-primary bg-primary/5" : "border-slate-100 hover:border-slate-200 bg-slate-50"
+                          )}
+                          title={sl.name}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5 transition-colors" style={{ fill: activeSocialPath === sl.path ? socialColor : '#94a3b8' }}>
+                            <path d={sl.path} />
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {settings.logoUrl && (
                   <div className="space-y-6 pt-6 border-t animate-in slide-in-from-top-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                         <div className="w-12 h-12 bg-slate-50 rounded-xl border p-1 overflow-hidden">
-                            <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                         <div className="w-12 h-12 bg-slate-50 rounded-xl border p-1 overflow-hidden flex items-center justify-center">
+                            <img src={settings.logoUrl} alt="Logo" className="max-w-full max-h-full object-contain" />
                          </div>
                          <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">Active Logo</p>
-                            <button onClick={() => set({ logoUrl: '' })} className="text-[10px] font-bold text-red-500 hover:underline">Remove</button>
+                            <button onClick={() => { set({ logoUrl: '' }); setActiveSocialPath(''); }} className="text-[10px] font-bold text-red-500 hover:underline">Remove</button>
                          </div>
                       </div>
                     </div>
